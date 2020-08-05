@@ -6,33 +6,32 @@
 /*   By: gboucett <gboucett@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/02 19:04:03 by gboucett          #+#    #+#             */
-/*   Updated: 2020/08/02 19:04:06 by gboucett         ###   ########.fr       */
+/*   Updated: 2020/08/05 15:23:52 by gboucett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef LIST_HPP
 #define LIST_HPP
 
-#include <stddef.h>
+#include <cstddef>
 #include <stdexcept>
-#include <iostream>
 #include <limits>
 #include "algorithm.hpp"
 
 namespace ft
 {
-	template <typename value_type>
+	template <typename T>
 	class List;
-	template <typename value_type, typename Node>
+	template <typename T, typename Node>
 	class ListIterator;
-	template <typename value_type>
+	template <typename T, typename Node>
 	class ListReverseIterator;
-	template <typename value_type>
-	struct Node
+	template <typename T>
+	struct ListNode
 	{
-		Node *prev;
-		value_type data;
-		Node *next;
+		ListNode *prev;
+		T data;
+		ListNode *next;
 	};
 
 	template <typename T>
@@ -172,14 +171,13 @@ private:
 	Node *_node;
 }; // class ft::ListIterator
 
-template <typename T>
+template <typename T, typename Node>
 class ft::ListReverseIterator
 {
 public:
 	typedef T value_type;
 	typedef value_type &reference;
 	typedef const value_type &const_reference;
-	typedef ft::Node<value_type> Node;
 
 	ListReverseIterator() : _node(NULL)
 	{
@@ -260,10 +258,11 @@ class ft::List
 {
 public:
 	typedef T value_type;
-	typedef ft::ListReverseIterator<value_type> reverse_iterator;
-	typedef ft::Node<value_type> Node;
+	typedef ft::ListNode<value_type> Node;
 	typedef ft::ListIterator<value_type &, Node> iterator;
+	typedef ft::ListReverseIterator<value_type &, Node> reverse_iterator;
 	typedef ft::ListIterator<const value_type &, const Node> const_iterator;
+	typedef ft::ListReverseIterator<const value_type&, const Node> const_reverse_iterator;
 	typedef value_type &reference;
 	typedef const value_type &const_reference;
 	typedef size_t size_type;
@@ -409,24 +408,9 @@ public:
 		}
 	}
 
-	reverse_iterator rbegin()
-	{
-		return reverse_iterator(_end);
-	}
-
-	reverse_iterator rend()
-	{
-		return reverse_iterator(_ritend);
-	}
-
 	const_iterator begin() const
 	{
 		return const_iterator(_begin);
-	}
-
-	iterator begin()
-	{
-		return iterator(_begin);
 	}
 
 	const_iterator end() const
@@ -434,9 +418,34 @@ public:
 		return const_iterator(_itend);
 	}
 
+	const_reverse_iterator rbegin() const
+	{
+		return const_reverse_iterator(_end);
+	}
+
+	const_reverse_iterator rend() const
+	{
+		return const_reverse_iterator(_ritend);
+	}
+
+	iterator begin()
+	{
+		return iterator(_begin);
+	}
+
+	reverse_iterator rbegin()
+	{
+		return reverse_iterator(_end);
+	}
+
 	iterator end()
 	{
 		return iterator(_itend);
+	}
+
+	reverse_iterator rend()
+	{
+		return reverse_iterator(_ritend);
 	}
 
 	bool empty() const

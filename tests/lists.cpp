@@ -6,7 +6,7 @@
 /*   By: gboucett <gboucett@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/02 19:03:59 by gboucett          #+#    #+#             */
-/*   Updated: 2020/08/02 20:00:25 by gboucett         ###   ########.fr       */
+/*   Updated: 2020/08/05 15:27:08 by gboucett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -303,7 +303,7 @@ static void test_list_accessers()
 
 static void test_list_reverse_iterators()
 {
-	title("TEST LIST REVERSE ITERATORS");
+	title("TEST LIST ITERATORS (AS LVALUE AND RVALUE)");
 
 	ft::List<int> l;
 	l.push_back(1);
@@ -316,6 +316,15 @@ static void test_list_reverse_iterators()
 
 	std::cout << "The list (displayed with the reverse iterator) : ";
 	for (decltype(l)::reverse_iterator revit = l.rbegin(); revit != l.rend(); revit++)
+		std::cout << " " << *revit;
+	std::cout << std::endl;
+	const decltype(l) l1(l);
+	std::cout << "The list (displayed with the const iterator) : ";
+	for (decltype(l1)::const_iterator it = l1.begin(); it != l1.end(); it++)
+		std::cout << " " << *it;
+	std::cout << std::endl;
+	std::cout << "The list (displayed with the const reverse iterator) : ";
+	for (decltype(l1)::const_reverse_iterator revit = l1.rbegin(); revit != l1.rend(); revit++)
 		std::cout << " " << *revit;
 	std::cout << std::endl;
 }
