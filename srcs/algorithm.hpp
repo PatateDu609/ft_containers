@@ -6,7 +6,7 @@
 /*   By: gboucett <gboucett@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/31 01:18:17 by gboucett          #+#    #+#             */
-/*   Updated: 2020/08/02 05:11:54 by gboucett         ###   ########.fr       */
+/*   Updated: 2020/08/05 21:29:42 by gboucett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ namespace ft
 	template <typename T>
 	struct less
 	{
-		bool operator()(const T &a, const T &b)
+		bool operator()(const T &a, const T &b) const
 		{
 			return (a < b);
 		}
@@ -36,7 +36,7 @@ namespace ft
 	template <typename T>
 	struct great
 	{
-		bool operator()(const T &a, const T &b)
+		bool operator()(const T &a, const T &b) const
 		{
 			return (a > b);
 		}

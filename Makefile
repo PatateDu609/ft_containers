@@ -1,5 +1,5 @@
 LIST			=	0
-VECTOR			=	0
+MAP				=	1
 
 
 NAME			=	containers
@@ -10,10 +10,11 @@ LDFLAGS			=	-fsanitize=address -fsanitize=leak -g
 
 SRCS_BASENAME	=	main.cpp		\
 					lists.cpp		\
+					maps.cpp		\
 					rich.cpp		\
 
 CFLAGS			+=	-DLIST=$(LIST)		\
-					-DVECTOR=$(VECTOR)	\
+					-DMAP=$(MAP)	\
 
 SRCS			=	$(addprefix tests/, $(SRCS_BASENAME))
 
@@ -22,6 +23,7 @@ SRCS			=	$(addprefix tests/, $(SRCS_BASENAME))
 
 $(NAME):		$(OBJS)
 				$(CC) $(LDFLAGS) $(OBJS) -o $(NAME)
+				@echo "\033[31;1mCompilation done\033[0m"
 				@./$(NAME)
 
 all:			$(NAME)
