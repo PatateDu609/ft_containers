@@ -6,16 +6,14 @@
 /*   By: gboucett <gboucett@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/02 19:54:09 by gboucett          #+#    #+#             */
-/*   Updated: 2020/11/01 06:33:05 by gboucett         ###   ########.fr       */
+/*   Updated: 2021/02/10 11:29:27 by gboucett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "tests.hpp"
-#include <map>
 
 int main()
 {
 	if (LIST) lists();
-	if (MAP) maps();
 	return (0);
 }

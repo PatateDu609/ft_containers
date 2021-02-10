@@ -1,6 +1,4 @@
 LIST			=	0
-MAP				=	1
-
 
 NAME			=	containers
 CC				=	@clang++
@@ -10,7 +8,6 @@ LDFLAGS			=	-fsanitize=address -fsanitize=leak -g
 
 SRCS_BASENAME	=	main.cpp		\
 					lists.cpp		\
-					maps.cpp		\
 					rich.cpp		\
 
 CFLAGS			+=	-DLIST=$(LIST)		\
@@ -37,4 +34,3 @@ fclean:			clean
 re:				fclean all
 
 .PHONY:			all clean fclean re
-# $(shell pwd | rev | cut -d'/' -f1 | rev)
