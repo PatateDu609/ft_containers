@@ -6,7 +6,7 @@
 /*   By: gboucett <gboucett@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/02 19:04:03 by gboucett          #+#    #+#             */
-/*   Updated: 2020/08/05 15:23:52 by gboucett         ###   ########.fr       */
+/*   Updated: 2021/02/11 15:02:03 by gboucett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,9 +88,12 @@ template <typename T, typename Node>
 class ft::ListIterator
 {
 public:
+	typedef ptrdiff_t difference_type;
+	typedef std::bidirectional_iterator_tag	iterator_category;
+
 	typedef T value_type;
 	typedef value_type &reference;
-	typedef const value_type &const_reference;
+	typedef T* pointer;
 
 	ListIterator() : _node(NULL)
 	{
@@ -175,9 +178,12 @@ template <typename T, typename Node>
 class ft::ListReverseIterator
 {
 public:
+	typedef std::bidirectional_iterator_tag	iterator_category;
+	typedef ptrdiff_t difference_type;
+
 	typedef T value_type;
 	typedef value_type &reference;
-	typedef const value_type &const_reference;
+	typedef T* pointer;
 
 	ListReverseIterator() : _node(NULL)
 	{
@@ -259,10 +265,10 @@ class ft::List
 public:
 	typedef T value_type;
 	typedef ft::ListNode<value_type> Node;
-	typedef ft::ListIterator<value_type &, Node> iterator;
-	typedef ft::ListReverseIterator<value_type &, Node> reverse_iterator;
-	typedef ft::ListIterator<const value_type &, const Node> const_iterator;
-	typedef ft::ListReverseIterator<const value_type&, const Node> const_reverse_iterator;
+	typedef ft::ListIterator<value_type, Node> iterator;
+	typedef ft::ListReverseIterator<value_type, Node> reverse_iterator;
+	typedef ft::ListIterator<const value_type, const Node> const_iterator;
+	typedef ft::ListReverseIterator<const value_type, const Node> const_reverse_iterator;
 	typedef value_type &reference;
 	typedef const value_type &const_reference;
 	typedef size_t size_type;

@@ -6,7 +6,7 @@
 /*   By: gboucett <gboucett@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/02 19:03:54 by gboucett          #+#    #+#             */
-/*   Updated: 2021/02/10 11:21:46 by gboucett         ###   ########.fr       */
+/*   Updated: 2021/02/11 14:51:48 by gboucett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 #include <sstream>
 #include <cstdlib>
 #include <ctime>
+#include <algorithm>
 
 enum Rich
 {

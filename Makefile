@@ -1,4 +1,4 @@
-LIST			=	0
+LIST			=	1
 
 NAME			=	containers
 CC				=	@clang++
@@ -11,7 +11,6 @@ SRCS_BASENAME	=	main.cpp		\
 					rich.cpp		\
 
 CFLAGS			+=	-DLIST=$(LIST)		\
-					-DMAP=$(MAP)	\
 
 SRCS			=	$(addprefix tests/, $(SRCS_BASENAME))
 

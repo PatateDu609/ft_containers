@@ -6,7 +6,7 @@
 /*   By: gboucett <gboucett@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/02 19:03:59 by gboucett          #+#    #+#             */
-/*   Updated: 2020/08/05 15:27:08 by gboucett         ###   ########.fr       */
+/*   Updated: 2021/02/11 14:54:01 by gboucett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -682,6 +682,26 @@ static void test_list_binary_operations()
 	}
 }
 
+void test_list_algorithm()
+{
+	title("TEST LIST ALGORITHM FUNCTIONS");
+
+	ft::List<int> l;
+
+	l.push_back(0);
+	l.push_back(3);
+	l.push_back(4);
+	l.push_back(1);
+	l.push_back(1);
+
+	std::cout << "List :";
+	for (auto it = l.begin(); it != l.end(); it++)
+		std::cout << " " << *it;
+	std::cout << std::endl;
+
+	std::cout << "Count of 1 : " << std::count(l.begin(), l.end(), 1);
+}
+
 void lists()
 {
 	title("TESTS ABOUT FT::LISTS", -1);
@@ -698,4 +718,5 @@ void lists()
 	test_list_swap_member();
 	test_list_unary_operations();
 	test_list_binary_operations();
+	test_list_algorithm();
 }
