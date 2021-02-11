@@ -6,7 +6,7 @@
 /*   By: gboucett <gboucett@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/02 19:04:03 by gboucett          #+#    #+#             */
-/*   Updated: 2021/02/11 15:02:03 by gboucett         ###   ########.fr       */
+/*   Updated: 2021/02/11 15:54:19 by gboucett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -332,7 +332,11 @@ public:
 
 	void push_front(const_reference v)
 	{
-		Node *node = new Node({.prev = NULL, .data = v, .next = _begin});
+		Node *node = new Node;
+		node->prev = NULL;
+		node->data = v;
+		node->next = _begin;
+
 		if (_begin)
 			_begin->prev = node;
 		_begin = node;
@@ -341,15 +345,22 @@ public:
 		_size++;
 		if (_size)
 		{
-			if (!_ritend)
-				_ritend = new Node({.prev = NULL, .data = value_type(), .next = _begin});
+			if (!_ritend) {
+				_ritend = new Node;
+				_ritend->prev = NULL;
+				_ritend->data = value_type();
+				_ritend->next = _begin;
+			}
 			else
 				_ritend->next = _begin;
 			_begin->prev = _ritend;
 			if (_size == 1)
 			{
 				delete _itend;
-				_itend = new Node({.prev = _end, .data = value_type(), .next = NULL});
+				_itend = new Node;
+				_itend->prev = _end;
+				_itend->data = value_type();
+				_itend->next = NULL;
 				_end->next = _itend;
 			}
 		}
@@ -357,7 +368,10 @@ public:
 
 	void push_back(const_reference v)
 	{
-		Node *node = new Node({.prev = _end, .data = v, .next = NULL});
+		Node *node = new Node;
+		node->prev = _end;
+		node->data = v;
+		node->next = NULL;
 		if (_end)
 			_end->next = node;
 		_end = node;
@@ -367,15 +381,22 @@ public:
 
 		if (_size)
 		{
-			if (!_itend)
-				_itend = new Node({.prev = _end, .data = value_type(), .next = NULL});
+			if (!_itend) {
+				_itend = new Node;
+				_itend->prev = _end;
+				_itend->data = value_type();
+				_itend->next = NULL;
+			}
 			else
 				_itend->prev = _end;
 			_end->next = _itend;
 			if (_size == 1)
 			{
 				delete _ritend;
-				_ritend = new Node({.prev = NULL, .data = value_type(), .next = _begin});
+				_ritend = new Node;
+				_ritend->prev = NULL;
+				_ritend->data = value_type();
+				_ritend->next = _begin;
 				_begin->prev = _ritend;
 			}
 		}
@@ -516,7 +537,10 @@ public:
 			return --end();
 		}
 
-		Node *newNode = new Node({.prev = NULL, .data = val, .next = NULL});
+		Node *newNode = new Node;
+		newNode->next = NULL;
+		newNode->data = value_type();
+		newNode->prev = NULL;
 		Node *node = position.getNode();
 		newNode->prev = node->prev;
 		newNode->next = node;

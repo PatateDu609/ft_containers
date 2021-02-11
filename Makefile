@@ -3,7 +3,7 @@ LIST			=	1
 NAME			=	containers
 CC				=	@clang++
 OBJS			=	$(SRCS:.cpp=.o)
-CFLAGS			=	-Wall -Werror -Wextra -g -I./srcs
+CFLAGS			=	-Wall -Werror -Wextra -g -I./srcs -std=c++98
 LDFLAGS			=	-fsanitize=address -fsanitize=leak -g
 
 SRCS_BASENAME	=	main.cpp		\

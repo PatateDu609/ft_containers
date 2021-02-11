@@ -6,7 +6,7 @@
 /*   By: gboucett <gboucett@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/02 19:03:59 by gboucett          #+#    #+#             */
-/*   Updated: 2021/02/11 14:54:01 by gboucett         ###   ########.fr       */
+/*   Updated: 2021/02/11 15:55:03 by gboucett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,8 +80,7 @@ static void test_list_constructors()
 static void test_list_copy()
 {
 	title("TEST LIST COPY OPERATOR");
-	ft::List<std::string> l(5, "bonjour");
-	decltype(l) l1;
+	ft::List<std::string> l(5, "bonjour"), l1;
 	l1 = l;
 	std::cout << "The list constructed by fill constructor :\t" << l << std::endl;
 	std::cout << "The list after the copy :\t\t\t" << l1 << std::endl;
@@ -212,10 +211,10 @@ static void test_list_modifiers_insertions()
 			title("Inserting a single element", 2);
 			ft::List<int> l(5, 10);
 			std::cout << "The list before the insertion : " << l << std::endl;
-			decltype(l)::iterator it = l.begin();
-			for (decltype(l)::size_type i = 0; i < l.size() - 1; i++)
+			ft::List<int>::iterator it = l.begin();
+			for (ft::List<int>::size_type i = 0; i < l.size() - 1; i++)
 				it++;
-			auto res = l.insert(it, 111);
+			ft::List<int>::iterator res = l.insert(it, 111);
 			std::cout << "The list after the insertion : " << l << std::endl;
 			std::cout << "iterator returned = " << *res << std::endl;
 			res = l.insert(l.begin(), 222);
@@ -229,8 +228,8 @@ static void test_list_modifiers_insertions()
 			title("Inserting new elements", 2);
 			ft::List<int> l(5, 10);
 			std::cout << "The list before the insertion : " << l << std::endl;
-			decltype(l)::iterator it = l.begin();
-			for (decltype(l)::size_type i = 0; i < l.size() - 1; i++)
+			ft::List<int>::iterator it = l.begin();
+			for (ft::List<int>::size_type i = 0; i < l.size() - 1; i++)
 				it++;
 			l.insert(it, 5, -11);
 			std::cout << "The list after the insertion : " << l << std::endl;
@@ -315,16 +314,16 @@ static void test_list_reverse_iterators()
 	std::cout << "The list (displayed with the standard iterator) : " << l << std::endl;
 
 	std::cout << "The list (displayed with the reverse iterator) : ";
-	for (decltype(l)::reverse_iterator revit = l.rbegin(); revit != l.rend(); revit++)
+	for (ft::List<int>::reverse_iterator revit = l.rbegin(); revit != l.rend(); revit++)
 		std::cout << " " << *revit;
 	std::cout << std::endl;
-	const decltype(l) l1(l);
+	const ft::List<int> l1(l);
 	std::cout << "The list (displayed with the const iterator) : ";
-	for (decltype(l1)::const_iterator it = l1.begin(); it != l1.end(); it++)
+	for (ft::List<int>::const_iterator it = l1.begin(); it != l1.end(); it++)
 		std::cout << " " << *it;
 	std::cout << std::endl;
 	std::cout << "The list (displayed with the const reverse iterator) : ";
-	for (decltype(l1)::const_reverse_iterator revit = l1.rbegin(); revit != l1.rend(); revit++)
+	for (ft::List<int>::const_reverse_iterator revit = l1.rbegin(); revit != l1.rend(); revit++)
 		std::cout << " " << *revit;
 	std::cout << std::endl;
 }
@@ -425,9 +424,9 @@ static void test_list_deleting_elements()
 			l.push_back(10);
 			std::cout << "The list before erasing anything : " << l << std::endl;
 
-			for (decltype(l)::iterator it = l.begin(); !l.empty(); it++)
+			for (ft::List<int>::iterator it = l.begin(); !l.empty(); it++)
 			{
-				auto res = l.erase(it);
+				ft::List<int>::iterator res = l.erase(it);
 				std::cout << "The list now (element following the erased one : ";
 				if (!l.empty())
 					std::cout << *res;
@@ -449,10 +448,10 @@ static void test_list_deleting_elements()
 			l.push_back(10);
 			std::cout << "The list before erasing anything : " << l << std::endl;
 
-			decltype(l)::iterator it = l.begin();
+			ft::List<int>::iterator it = l.begin();
 			for (int i = 0; i < 3; i++)
 				it++;
-			decltype(it) it1 = it;
+			ft::List<int>::iterator it1 = it;
 			for (int i = 0; i < 3; i++)
 				it1++;
 			l.erase(it, it1);
@@ -597,7 +596,7 @@ static void test_list_binary_operations()
 			l1.push_back(3);
 			l1.push_back(4);
 			std::cout << "The source list : " << l1 << std::endl;
-			auto it = l.begin();
+			ft::List<int>::iterator it = l.begin();
 			it++; it++; it++; it++; it++;
 			l.splice(it, l1);
 			std::cout << "The source list after splice : " << l1 << std::endl;
@@ -686,6 +685,8 @@ void test_list_algorithm()
 {
 	title("TEST LIST ALGORITHM FUNCTIONS");
 
+	title("Test of std::count", 1);
+
 	ft::List<int> l;
 
 	l.push_back(0);
@@ -695,11 +696,11 @@ void test_list_algorithm()
 	l.push_back(1);
 
 	std::cout << "List :";
-	for (auto it = l.begin(); it != l.end(); it++)
+	for (ft::List<int>::iterator it = l.begin(); it != l.end(); it++)
 		std::cout << " " << *it;
 	std::cout << std::endl;
 
-	std::cout << "Count of 1 : " << std::count(l.begin(), l.end(), 1);
+	std::cout << "Count of 1 : " << std::count(l.begin(), l.end(), 1) << std::endl;
 }
 
 void lists()
