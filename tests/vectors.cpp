@@ -1,20 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   vectors.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gboucett <gboucett@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/08/02 19:54:09 by gboucett          #+#    #+#             */
-/*   Updated: 2021/02/11 17:58:46 by gboucett         ###   ########.fr       */
+/*   Created: 2021/02/11 16:04:28 by gboucett          #+#    #+#             */
+/*   Updated: 2021/02/13 23:38:06 by gboucett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "tests.hpp"
 
-int main()
+#include <cmath>
+
+void vectors()
 {
-	if (LIST) lists();
-	if (VECTOR) vectors();
-	return (0);
+	ft::Vector<int> a(10, 0);
+	ft::Vector<int> b(10, 1);
+
+	std::cout << "a == b\t-> " << (a == b) << std::endl;
+	std::cout << "a != b\t-> " << (a != b) << std::endl;
+	std::cout << "a < b\t-> " << (a < b) << std::endl;
+	std::cout << "a > b\t-> " << (a > b) << std::endl;
+	std::cout << "a <= b\t-> " << (a <= b) << std::endl;
+	std::cout << "a >= b\t-> " << (a >= b) << std::endl;
 }

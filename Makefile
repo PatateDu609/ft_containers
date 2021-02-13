@@ -1,4 +1,5 @@
-LIST			=	1
+LIST			=	0
+VECTOR			=	1
 
 NAME			=	containers
 CC				=	@clang++
@@ -7,10 +8,12 @@ CFLAGS			=	-Wall -Werror -Wextra -g -I./srcs -std=c++98
 LDFLAGS			=	-fsanitize=address -fsanitize=leak -g
 
 SRCS_BASENAME	=	main.cpp		\
-					lists.cpp		\
 					rich.cpp		\
+					lists.cpp		\
+					vectors.cpp		\
 
-CFLAGS			+=	-DLIST=$(LIST)		\
+CFLAGS			+=	-DLIST=$(LIST)			\
+					-DVECTOR=$(VECTOR)		\
 
 SRCS			=	$(addprefix tests/, $(SRCS_BASENAME))
 

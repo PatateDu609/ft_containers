@@ -6,7 +6,7 @@
 /*   By: gboucett <gboucett@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/02 19:03:54 by gboucett          #+#    #+#             */
-/*   Updated: 2021/02/11 14:51:48 by gboucett         ###   ########.fr       */
+/*   Updated: 2021/02/11 16:08:43 by gboucett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,12 @@
 #define TESTS_HPP
 
 #include "List.hpp"
+#include "Vector.hpp"
+
+#include <list>
+#include <vector>
 
 #include <iostream>
-#include <list>
 #include <typeinfo>
 #include <string>
 #include <sstream>
@@ -38,5 +41,6 @@ std::string construct(int number);
 std::string rich(Rich mode);
 void title(std::string str, int level = 0);
 void lists();
+void vectors();
 
 #endif
