@@ -6,7 +6,7 @@
 /*   By: gboucett <gboucett@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/02 19:03:54 by gboucett          #+#    #+#             */
-/*   Updated: 2021/02/11 16:08:43 by gboucett         ###   ########.fr       */
+/*   Updated: 2021/02/14 02:57:16 by gboucett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,13 @@
 
 #include "List.hpp"
 #include "Vector.hpp"
+#include "Queue.hpp"
+#include "Stack.hpp"
 
 #include <list>
 #include <vector>
+#include <queue>
+#include <stack>
 
 #include <iostream>
 #include <typeinfo>
@@ -42,5 +46,7 @@ std::string rich(Rich mode);
 void title(std::string str, int level = 0);
 void lists();
 void vectors();
+void queues();
+void stacks();
 
 #endif
