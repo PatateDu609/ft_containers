@@ -1,6 +1,6 @@
-LIST			=	1
-VECTOR			=	1
-STACK			=	0
+LIST			=	0
+VECTOR			=	0
+STACK			=	1
 QUEUE			=	0
 
 NAME			=	containers
