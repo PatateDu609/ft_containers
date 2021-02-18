@@ -6,12 +6,14 @@
 /*   By: gboucett <gboucett@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/31 01:18:17 by gboucett          #+#    #+#             */
-/*   Updated: 2020/08/05 21:29:42 by gboucett         ###   ########.fr       */
+/*   Updated: 2021/02/18 02:57:23 by gboucett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef ALGORITHM_HPP
 #define ALGORITHM_HPP
+
+#include <typeinfo>
 
 namespace ft
 {

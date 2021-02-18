@@ -1,7 +1,7 @@
-LIST			=	0
-VECTOR			=	0
+LIST			=	1
+VECTOR			=	1
 STACK			=	0
-QUEUE			=	1
+QUEUE			=	0
 
 NAME			=	containers
 CC				=	@clang++

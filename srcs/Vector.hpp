@@ -6,7 +6,7 @@
 /*   By: gboucett <gboucett@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/11 16:06:58 by gboucett          #+#    #+#             */
-/*   Updated: 2021/02/13 23:45:07 by gboucett         ###   ########.fr       */
+/*   Updated: 2021/02/18 16:12:00 by gboucett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #define VECTOR_HPP
 
 #include "algorithm.hpp"
+#include "Type_traits.hpp"
 
 #include <numeric>
 #include <cstring>
@@ -21,6 +22,8 @@
 #include <sstream>
 #include <stdexcept>
 #include <exception>
+
+#include <iostream>
 
 namespace ft
 {
@@ -52,7 +55,7 @@ namespace ft
 	}
 
 	template <typename T>
-	bool operator==(const Vector<T>& lhs, const Vector<T>& rhs)
+	bool operator==(const Vector<T> &lhs, const Vector<T> &rhs)
 	{
 		if (lhs.size() != rhs.size())
 			return false;
@@ -64,32 +67,31 @@ namespace ft
 	}
 
 	template <typename T>
-	bool operator!=(const Vector<T>& lhs, const Vector<T>& rhs)
+	bool operator!=(const Vector<T> &lhs, const Vector<T> &rhs)
 	{
 		return !(lhs == rhs);
 	}
 
-
 	template <typename T>
-	bool operator<(const Vector<T>& lhs, const Vector<T>& rhs)
+	bool operator<(const Vector<T> &lhs, const Vector<T> &rhs)
 	{
 		return lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
 	}
 
 	template <typename T>
-	bool operator>(const Vector<T>& lhs, const Vector<T>& rhs)
+	bool operator>(const Vector<T> &lhs, const Vector<T> &rhs)
 	{
 		return rhs < lhs;
 	}
 
 	template <typename T>
-	bool operator<=(const Vector<T>& lhs, const Vector<T>& rhs)
+	bool operator<=(const Vector<T> &lhs, const Vector<T> &rhs)
 	{
 		return !(rhs < lhs);
 	}
 
 	template <typename T>
-	bool operator>=(const Vector<T>& lhs, const Vector<T>& rhs)
+	bool operator>=(const Vector<T> &lhs, const Vector<T> &rhs)
 	{
 		return !(lhs < rhs);
 	}
@@ -410,12 +412,12 @@ public:
 	typedef T value_type;
 	typedef T &reference;
 	typedef T *pointer;
-	typedef const T &const_reference;
-	typedef const T *const_pointer;
-	typedef VectorIterator<T> iterator;
-	typedef const VectorIterator<T> const_iterator;
-	typedef VectorReverseIterator<T> reverse_iterator;
-	typedef const VectorReverseIterator<T> const_reverse_iterator;
+	typedef const value_type &const_reference;
+	typedef const value_type *const_pointer;
+	typedef VectorIterator<value_type> iterator;
+	typedef VectorIterator<const value_type> const_iterator;
+	typedef VectorReverseIterator<value_type> reverse_iterator;
+	typedef VectorReverseIterator<const value_type> const_reverse_iterator;
 	typedef ptrdiff_t difference_type;
 	typedef size_t size_type;
 
@@ -428,9 +430,11 @@ public:
 		assign(n, val);
 	}
 
-	Vector(iterator first, iterator last) : _data(NULL), _capacity(0), _size(0)
+	template <class InputIterator>
+	Vector(InputIterator first, InputIterator last) : _data(NULL), _capacity(0), _size(0)
 	{
-		assign(first, last);
+		typedef typename __is_integer<InputIterator>::__type Integral;
+		_init_vec(first, last, Integral());
 	}
 
 	Vector(const Vector &x) : _data(NULL), _capacity(0), _size(0)
@@ -444,7 +448,7 @@ public:
 		operator delete(_data);
 	}
 
-	Vector &operator=(const Vector &x)
+	Vector &operator=(const Vector<value_type> &x)
 	{
 		assign(x.begin(), x.end());
 		return (*this);
@@ -462,12 +466,12 @@ public:
 
 	const_iterator begin() const
 	{
-		return iterator(_data);
+		return const_iterator(_data);
 	}
 
 	const_iterator end() const
 	{
-		return iterator(_data + _size);
+		return const_iterator(_data + _size);
 	}
 
 	reverse_iterator rbegin()
@@ -482,12 +486,12 @@ public:
 
 	const_reverse_iterator rbegin() const
 	{
-		return reverse_iterator(_data);
+		return const_reverse_iterator(_data + _size - 1);
 	}
 
 	const_reverse_iterator rend() const
 	{
-		return reverse_iterator(_data + _size);
+		return const_reverse_iterator(_data - 1);
 	}
 
 	size_type size() const
@@ -527,7 +531,7 @@ public:
 			n = n ? n : 1;
 		if (_capacity < n)
 		{
-			pointer data = static_cast<pointer>(operator new(sizeof(pointer) * n));
+			pointer data = static_cast<pointer>(operator new(sizeof(value_type) * n));
 
 			if (_data)
 			{
@@ -582,10 +586,12 @@ public:
 		return _data[_size - 1];
 	}
 
-	void assign(iterator first, iterator last)
+	template <typename InputIterator>
+	void assign(InputIterator first, InputIterator last)
 	{
+		typedef typename __is_integer<InputIterator>::__type _Integral;
 		clear();
-		insert(begin(), first, last);
+		_dispatch_assignation(first, last, _Integral());
 	}
 
 	void assign(size_type n, const value_type &val)
@@ -613,38 +619,14 @@ public:
 
 	iterator insert(iterator position, size_type n, const value_type &val)
 	{
-		difference_type fs = position - begin();
-
-		if (!_capacity)
-			reserve(n);
-		else if (_size + n > _capacity)
-			reserve(next_capacity(n));
-
-		memmove(_data + fs + n, _data + fs, sizeof(value_type) * (_size - fs));
-
-		for (size_type i = 0; i < n; i++)
-			new (_data + fs + i) value_type(val);
-		_size += n;
-		return iterator(_data + fs);
+		return _fill_insert(position, n, val);
 	}
 
-	iterator insert(iterator position, iterator first, iterator last)
+	template <typename InputIterator>
+	iterator insert(iterator position, InputIterator first, InputIterator last)
 	{
-		difference_type fs = position - begin();
-		size_type n = last - first;
-
-		if (!_capacity)
-			reserve(n);
-		else if (_size + n > _capacity)
-			reserve(next_capacity(n));
-
-		memmove(_data + fs + n, _data + fs, sizeof(value_type) * (_size - fs));
-		size_type i = 0;
-		for (iterator it = first; it != last; it++, i++)
-			new (_data + fs + i) value_type(*it);
-		_size += n;
-
-		return iterator(_data + fs);
+		typedef typename __is_integer<InputIterator>::__type _Integral;
+		return _dispatch_insert(position, first, last, _Integral());
 	}
 
 	iterator erase(iterator position)
@@ -684,7 +666,7 @@ public:
 	}
 
 private:
-	void range_check(size_type n)
+	void range_check(size_type n) const
 	{
 		if (n < _size)
 			return;
@@ -700,6 +682,82 @@ private:
 		for (i = _capacity; i < n; i *= 2)
 			;
 		return i * 2;
+	}
+
+	template <typename Integral>
+	void _init_vec(Integral n, Integral val, _truth_type)
+	{
+		assign(n, val);
+	}
+
+	template <typename InputIterator>
+	void _init_vec(InputIterator first, InputIterator last, _false_type)
+	{
+		assign(first, last);
+	}
+
+	template <typename Integral>
+	void _dispatch_assignation(Integral n, Integral val, _truth_type)
+	{
+		insert(begin(), n, val);
+	}
+
+	template <typename InputIterator>
+	void _dispatch_assignation(InputIterator first, InputIterator last, _false_type)
+	{
+		insert(begin(), first, last);
+	}
+
+	template <typename Integral>
+	iterator _dispatch_insert(iterator position, Integral n, Integral val, _truth_type)
+	{
+		return _fill_insert(position, n, val);
+	}
+
+	template <typename InputIterator>
+	iterator _dispatch_insert(iterator position, InputIterator first, InputIterator last, _false_type)
+	{
+		return _range_insert(position, first, last);
+	}
+
+	template <typename InputIterator>
+	iterator _range_insert(iterator position, InputIterator first, InputIterator last)
+	{
+		difference_type fs = position - begin();
+		typename InputIterator::difference_type n = 0;
+
+		for (InputIterator it = first; it != last; it++)
+			n++;
+
+		if (!_capacity)
+			reserve(n);
+		else if (_size + n > _capacity)
+			reserve(next_capacity(n));
+
+		memmove(_data + fs + n, _data + fs, sizeof(value_type) * (_size - fs));
+		size_type i = 0;
+		for (InputIterator it = first; it != last; it++, i++)
+			new (_data + fs + i) value_type(*it);
+		_size += n;
+
+		return iterator(_data + fs);
+	}
+
+	iterator _fill_insert(iterator position, size_type n, const value_type &val)
+	{
+		difference_type fs = position - begin();
+
+		if (!_capacity)
+			reserve(n);
+		else if (_size + n > _capacity)
+			reserve(next_capacity(n));
+
+		memmove(_data + fs + n, _data + fs, sizeof(value_type) * (_size - fs));
+
+		for (size_type i = 0; i < n; i++)
+			new (_data + fs + i) value_type(val);
+		_size += n;
+		return iterator(_data + fs);
 	}
 
 	pointer _data;

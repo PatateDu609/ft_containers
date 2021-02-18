@@ -6,7 +6,7 @@
 /*   By: gboucett <gboucett@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/02 19:03:59 by gboucett          #+#    #+#             */
-/*   Updated: 2021/02/11 15:55:03 by gboucett         ###   ########.fr       */
+/*   Updated: 2021/02/18 14:43:20 by gboucett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ template <typename T>
 static std::ostream &operator<<(std::ostream &os, const ft::List<T> &x)
 {
 	if (x.empty())
-		return os;
+		return os << "is empty";
 	for (typename ft::List<T>::const_iterator it = x.begin(), it1 = ++x.begin(); it != x.end(); ++it)
 	{
 		os << *it;
@@ -59,13 +59,13 @@ static void test_list_constructors()
 		ft::List<int>::size_type size = 5;
 		int value = 100;
 		ft::List<int> l(size, value);
-		std::cout << "The list (should contain " << size << " element(s)) : " << l << std::endl;
+		std::cout << "The list (should contain " << size << " " << value << ") : " << l << std::endl;
 	}
 	{
 		title("Range constructor", 1);
 		ft::List<int> l(5, 100);
 		ft::List<int> l1(l.begin(), ++(++l.begin()));
-		std::cout << "The list constructed by fill constructor : " << l << std::endl;
+		std::cout << "The list constructed by fill constructor  : " << l << std::endl;
 		std::cout << "The list constructed by range constructor : " << l1 << std::endl;
 	}
 	{
@@ -79,11 +79,11 @@ static void test_list_constructors()
 
 static void test_list_copy()
 {
-	title("TEST LIST COPY OPERATOR");
+	title("TEST LIST ASSIGNATION OPERATOR");
 	ft::List<std::string> l(5, "bonjour"), l1;
 	l1 = l;
-	std::cout << "The list constructed by fill constructor :\t" << l << std::endl;
-	std::cout << "The list after the copy :\t\t\t" << l1 << std::endl;
+	std::cout << "The list constructed by fill constructor  :\t" << l << std::endl;
+	std::cout << "The list after the assignation			:\t\t\t" << l1 << std::endl;
 }
 
 static void test_list_capacity()
@@ -93,9 +93,9 @@ static void test_list_capacity()
 	{
 		title("Is the list empty ?", 1);
 		ft::List<int> l;
-		std::cout << "The list (" << l << ") is : " << (l.empty() ? "empty" : "not empty") << std::endl;
+		std::cout << "The list (" << l << ") is " << (l.empty() ? "empty" : "not empty") << std::endl;
 		ft::List<int> l1(5, 10);
-		std::cout << "The list (" << l1 << ") is : " << (l1.empty() ? "empty" : "not empty") << std::endl;
+		std::cout << "The list (" << l1 << ") is " << (l1.empty() ? "empty" : "not empty") << std::endl;
 	}
 	{
 		title("The size of the list", 1);
@@ -108,8 +108,8 @@ static void test_list_capacity()
 	}
 	{
 		title("The maximum size of a list is :", 1);
-		ft::List<int> l;
-		std::cout << l.max_size() << std::endl;
+		std::cout << "My list  : " << ft::List<int>().max_size() << std::endl;
+		std::cout << "STL list : " << std::list<int>().max_size() << std::endl;
 	}
 }
 
@@ -167,8 +167,8 @@ static void test_list_swap_non_member()
 static void test_list_swap_member()
 {
 	title("TEST LIST SWAP (MEMBER FUNCTION)");
-	ft::List<int> foo(3, 200);	// three ints with a value of 100
-	ft::List<int> bar(5, 1100); // five ints with a value of 200
+	ft::List<int> foo(3, 100); // three ints with a value of 100
+	ft::List<int> bar(5, 200); // five ints with a value of 200
 
 	title("Before swapping :", 1);
 	std::cout << "foo contains: " << foo << std::endl;
@@ -183,7 +183,7 @@ static void test_list_swap_member()
 
 static void test_list_modifiers_insertions()
 {
-	title("TEST LIST INSERTION METHODS");
+	title("TEST LIST INSERTION");
 
 	{
 		title("Testing push_front", 1);
@@ -705,7 +705,7 @@ void test_list_algorithm()
 
 void lists()
 {
-	title("TESTS ABOUT FT::LISTS", -1);
+	title("TESTS ABOUT FT::LIST", -1);
 	test_list_constructors();
 	test_list_copy();
 	test_list_capacity();
