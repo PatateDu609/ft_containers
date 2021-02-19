@@ -6,7 +6,7 @@
 /*   By: gboucett <gboucett@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/02 19:03:54 by gboucett          #+#    #+#             */
-/*   Updated: 2021/02/14 02:57:16 by gboucett         ###   ########.fr       */
+/*   Updated: 2021/02/18 18:31:52 by gboucett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 #include <vector>
 #include <queue>
 #include <stack>
+#include <map>
 
 #include <iostream>
 #include <typeinfo>
@@ -48,5 +49,6 @@ void lists();
 void vectors();
 void queues();
 void stacks();
+void maps();
 
 #endif

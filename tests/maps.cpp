@@ -1,23 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   maps.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gboucett <gboucett@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/08/02 19:54:09 by gboucett          #+#    #+#             */
-/*   Updated: 2021/02/18 17:22:21 by gboucett         ###   ########.fr       */
+/*   Created: 2021/02/18 17:23:13 by gboucett          #+#    #+#             */
+/*   Updated: 2021/02/18 18:32:04 by gboucett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "tests.hpp"
 
-int main()
+void maps()
 {
-	if (LIST) lists();
-	if (VECTOR) vectors();
-	if (STACK) stacks();
-	if (QUEUE) queues();
-	if (MAP) maps();
-	return (0);
+	title("TESTS ABOUT FT::MAP", -1);
+	std::map<int, char> map;
 }

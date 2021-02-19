@@ -1,7 +1,8 @@
 LIST			=	0
 VECTOR			=	0
-STACK			=	1
+STACK			=	0
 QUEUE			=	0
+MAP				=	1
 
 NAME			=	containers
 CC				=	@clang++
@@ -15,11 +16,13 @@ SRCS_BASENAME	=	main.cpp		\
 					vectors.cpp		\
 					stacks.cpp		\
 					queues.cpp		\
+					maps.cpp		\
 
 CFLAGS			+=	-DLIST=$(LIST)			\
 					-DVECTOR=$(VECTOR)		\
 					-DQUEUE=$(QUEUE)		\
 					-DSTACK=$(STACK)		\
+					-DMAP=$(MAP)			\
 
 SRCS			=	$(addprefix tests/, $(SRCS_BASENAME))
 
