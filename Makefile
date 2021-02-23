@@ -4,6 +4,8 @@ STACK			=	0
 QUEUE			=	0
 MAP				=	1
 
+DEBUG			=	1
+
 NAME			=	containers
 CC				=	@clang++
 OBJS			=	$(SRCS:.cpp=.o)
@@ -23,6 +25,7 @@ CFLAGS			+=	-DLIST=$(LIST)			\
 					-DQUEUE=$(QUEUE)		\
 					-DSTACK=$(STACK)		\
 					-DMAP=$(MAP)			\
+					-DDEBUG=$(DEBUG)		\
 
 SRCS			=	$(addprefix tests/, $(SRCS_BASENAME))
 

@@ -6,7 +6,7 @@
 /*   By: gboucett <gboucett@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/02 19:03:54 by gboucett          #+#    #+#             */
-/*   Updated: 2021/02/18 18:31:52 by gboucett         ###   ########.fr       */
+/*   Updated: 2021/02/19 19:29:21 by gboucett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include "Vector.hpp"
 #include "Queue.hpp"
 #include "Stack.hpp"
+#include "Map.hpp"
 
 #include <list>
 #include <vector>
