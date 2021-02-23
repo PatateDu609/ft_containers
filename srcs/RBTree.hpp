@@ -6,7 +6,7 @@
 /*   By: teyber <teyber@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/19 16:32:16 by gboucett          #+#    #+#             */
-/*   Updated: 2021/02/23 02:08:13 by teyber           ###   ########.fr       */
+/*   Updated: 2021/02/23 03:07:27 by teyber           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -194,6 +194,16 @@ public:
 			rightRotate(root);
 		else if (type == LEFT)
 			leftRotate(root);
+	}
+
+	SelfPtr successor(SelfPtr sentinel) const
+	{
+
+	}
+
+	SelfPtr predecessor(SelfPtr sentinel) const
+	{
+
 	}
 
 #if defined DEBUG && DEBUG == 1
@@ -471,7 +481,7 @@ private:
 			os << std::endl;
 		else if (!root->left() && !root->right())
 		{
-			os << "\t" << root->data() << " [style = filled, fontcolor = white, fillcolor = " << root->dumpColor() << "]\n";
+			os << "\t" << root->data() << " [shape = point]\n";
 			os << "\t" << root->data() << ";" << endl;
 		}
 		else
