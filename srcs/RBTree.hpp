@@ -6,7 +6,7 @@
 /*   By: teyber <teyber@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/19 16:32:16 by gboucett          #+#    #+#             */
-/*   Updated: 2021/02/23 03:07:27 by teyber           ###   ########.fr       */
+/*   Updated: 2021/02/23 20:40:38 by teyber           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,14 +174,19 @@ public:
 		return _parent;
 	}
 
-	SelfPtr grand_father()
+	SelfPtr father() const
+	{
+		return _parent;
+	}
+
+	SelfPtr grand_father() const
 	{
 		if (father())
 			return father()->father();
 		return NULL;
 	}
 
-	SelfPtr uncle()
+	SelfPtr uncle() const
 	{
 		if (grand_father())
 			return father()->sibling();
@@ -196,14 +201,32 @@ public:
 			leftRotate(root);
 	}
 
-	SelfPtr successor(SelfPtr sentinel) const
+	SelfPtr successor(SelfPtr sentinel)
 	{
-
+		if (_right)
+			return _right->__min(sentinel);
+		else if (this == _parent->_left)
+			return _parent;
+		return grand_father();
 	}
 
-	SelfPtr predecessor(SelfPtr sentinel) const
+	SelfPtr predecessor(SelfPtr sentinel)
 	{
+		if (_left)
+			return _left->__max(sentinel);
+		else if (this == _parent->_right)
+			return _parent;
+		return grand_father();
+	}
 
+	SelfPtr min(SelfPtr sentinel)
+	{
+		return __min(sentinel);
+	}
+
+	SelfPtr max(SelfPtr sentinel)
+	{
+		return __max(sentinel);
 	}
 
 #if defined DEBUG && DEBUG == 1
@@ -261,6 +284,24 @@ private:
 
 		pt_right->_left = this;
 		_parent = pt_right;
+	}
+
+	SelfPtr __min(SelfPtr sentinel)
+	{
+		SelfPtr current = this;
+
+		while (current->_left && current->_left != sentinel)
+			current = current->_left;
+		return current;
+	}
+
+	SelfPtr __max(SelfPtr sentinel)
+	{
+		SelfPtr current = this;
+
+		while (current && current->_right && current->_right != sentinel)
+			current = current->_right;
+		return current;
 	}
 };
 
@@ -322,6 +363,32 @@ public:
 	size_type size() const
 	{
 		return _size;
+	}
+
+	void printInOrder() const
+	{
+		Node current = _root->min(_sentinelStart);
+
+		std::cout << "Tree :";
+		while (current != _sentinelEnd)
+		{
+			std::cout << " " << current->data();
+			current = current->successor(_sentinelStart);
+		}
+		std::cout << std::endl;
+	}
+
+	void printInReverseOrder() const
+	{
+		Node current = _root->max(_sentinelEnd);
+
+		std::cout << "Tree :";
+		while (current != _sentinelStart)
+		{
+			std::cout << " " << current->data();
+			current = current->predecessor(_sentinelEnd);
+		}
+		std::cout << std::endl;
 	}
 
 private:

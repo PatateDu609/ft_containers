@@ -6,7 +6,7 @@
 /*   By: teyber <teyber@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/18 17:23:13 by gboucett          #+#    #+#             */
-/*   Updated: 2021/02/23 02:22:29 by teyber           ###   ########.fr       */
+/*   Updated: 2021/02/23 20:39:51 by teyber           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,27 +21,22 @@ void maps()
 	dumpRBT(rbt, "rbtstart.dot");
 	std::cout << "Start size : " << rbt.size() << std::endl;
 
-	rbt.insert(2);
-	std::cout << "size : " << rbt.size() << std::endl;
-	rbt.insert(5);
-	std::cout << "size : " << rbt.size() << std::endl;
-	rbt.insert(1);
-	std::cout << "size : " << rbt.size() << std::endl;
-	rbt.insert(4);
-	std::cout << "size : " << rbt.size() << std::endl;
-	rbt.insert(7);
-	std::cout << "size : " << rbt.size() << std::endl;
-	rbt.insert(3);
-	std::cout << "size : " << rbt.size() << std::endl;
-	rbt.insert(6);
-	std::cout << "size : " << rbt.size() << std::endl;
-	rbt.insert(65);
-	std::cout << "size : " << rbt.size() << std::endl;
-	rbt.insert(98);
-	std::cout << "size : " << rbt.size() << std::endl;
-	rbt.insert(8);
+	rbt.printInOrder();
+	rbt.printInReverseOrder();
 
-	std::cout << "Final size : " << rbt.size() << std::endl;
+	rbt.insert(2);
+	rbt.insert(5);
+	rbt.insert(1);
+	rbt.insert(4);
+	rbt.insert(7);
+
+	rbt.printInOrder();
+	rbt.printInReverseOrder();
+	//rbt.insert(3);
+	//rbt.insert(6);
+	//rbt.insert(65);
+	//rbt.insert(98);
+	//rbt.insert(8);
 
 	dumpRBT(rbt, "rbtfinal.dot");
 }
