@@ -6,7 +6,7 @@
 /*   By: teyber <teyber@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/19 16:32:16 by gboucett          #+#    #+#             */
-/*   Updated: 2021/02/23 20:40:38 by teyber           ###   ########.fr       */
+/*   Updated: 2021/02/27 15:41:02 by teyber           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,6 +142,13 @@ public:
 		return _color;
 	}
 
+	static Color color(SelfPtr n)
+	{
+		if (n)
+			return n->color();
+		return BLACK;
+	}
+
 	reference data()
 	{
 		return _data;
@@ -229,6 +236,7 @@ public:
 		return __max(sentinel);
 	}
 
+
 #if defined DEBUG && DEBUG == 1
 
 	std::string dumpColor() const
@@ -244,6 +252,7 @@ private:
 	value_type _data;
 	SelfPtr _right;
 	Color _color;
+	SelfPtr _equivalent;
 
 	void rightRotate(SelfPtr& root)
 	{
@@ -349,7 +358,20 @@ public:
 		_size++;
 	}
 
-	Node search(const_reference val)
+	void erase(const_reference val)
+	{
+		if (_root == _sentinelEnd)
+			return ;
+
+		Node v = __search(_root, val);
+
+		if (!v)
+			return ;
+		__erase(v);
+		_size--;
+	}
+
+	Node search(const_reference val) const
 	{
 		return __search(_root, val);
 	}
@@ -398,10 +420,10 @@ private:
 	size_type _size;
 	Compare comp;
 
-	Node __search(Node node, const_reference val)
+	Node __search(Node node, const_reference val) const
 	{
 		if (node == NULL || node == _sentinelStart || node == _sentinelEnd || node->data() == val)
-			return node;
+			return node == _sentinelEnd || node == _sentinelStart ? NULL : node;
 		if (comp(node->data(), val))
 			return __search(node->right(), val);
 		return __search(node->left(), val);
@@ -474,13 +496,13 @@ private:
 				bool rel_father = node->father()->left() == node;
 
 				if (rel_grand_father && rel_father)
-					__left_left_rotation(node);
+					__insert_left_left_rotation(node);
 				else if (rel_grand_father && !rel_father)
-					__left_right_rotation(node);
+					__insert_left_right_rotation(node);
 				else if (!rel_grand_father && !rel_father)
-					__right_right_rotation(node);
+					__insert_right_right_rotation(node);
 				else
-					__right_left_rotation(node);
+					__insert_right_left_rotation(node);
 				node = node->father();
 			}
 		}
@@ -488,7 +510,7 @@ private:
 		_root->color() = RawNode::BLACK;
 	}
 
-	void __left_left_rotation(Node node)
+	void __insert_left_left_rotation(Node node)
 	{
 		Node gf = node->grand_father();
 		Node f = node->father();
@@ -500,13 +522,13 @@ private:
 		f->color() = tmp;
 	}
 
-	void __left_right_rotation(Node node)
+	void __insert_left_right_rotation(Node node)
 	{
 		node->father()->rotate(RawNode::LEFT, _root);
-		__left_left_rotation(node);
+		__insert_left_left_rotation(node);
 	}
 
-	void __right_right_rotation(Node node)
+	void __insert_right_right_rotation(Node node)
 	{
 		Node gf = node->grand_father();
 		Node f = node->father();
@@ -518,10 +540,163 @@ private:
 		f->color() = tmp;
 	}
 
-	void __right_left_rotation(Node node)
+	void __insert_right_left_rotation(Node node)
 	{
 		node->father()->rotate(RawNode::RIGHT, _root);
-		__right_right_rotation(node);
+		__insert_right_right_rotation(node);
+	}
+
+	Node __BST_erase(Node x)
+	{
+		if (x->left() && x->right()
+			&& x->left() != _sentinelStart
+			&& x->right() != _sentinelEnd) // If node is internal node
+			return x->successor(_sentinelStart);
+		if (x->left() && x->left() != _sentinelStart) // If node has only left child
+			return x->left();
+		return x->right() == _sentinelEnd ? NULL : x->right(); // Other cases (only right child and no child at all)
+	}
+
+	void __erase(Node v)
+	{
+		Node u = __BST_erase(v);
+
+		bool uvBlack = (RawNode::color(u) && v->color() == RawNode::BLACK); // Check if double black
+
+		if (u == NULL) // v is a leaf
+		{
+			__erase_leaf(v, uvBlack);
+			return ;
+		}
+		if ((v->left() && v->left() == _sentinelStart)
+			|| (v->right() && v->right() == _sentinelEnd)) // v is a single child
+		{
+			__erase_single_child(v, u, uvBlack);
+			return ;
+		}
+
+		// v is internal node, therefore swap u and v and recurse
+		swap(u->data(), v->data());
+		__erase(u);
+	}
+
+	void __erase_single_child(Node v, Node u, bool uvBlack)
+	{
+		Node parent = v->father();
+
+		if (v == _root)
+		{
+			_root->data() = u->data();
+			_root->left() = _sentinelStart;
+			_root->right() = _sentinelEnd;
+			_root->father() = NULL;
+			delete u;
+		}
+		else
+		{
+			if (v == parent->left())
+				parent->left() = u;
+			else
+				parent->right() = u;
+			delete v;
+			u->father() = parent;
+			if (uvBlack)
+				__fix_erase(v);
+			else
+				u->color() = RawNode::BLACK;
+		}
+	}
+
+	void __erase_leaf(Node v, bool uvBlack)
+	{
+		Node parent = v->father();
+
+		if (v == _root)
+			_root = _sentinelEnd;
+		else
+		{
+			if (uvBlack)
+				__fix_erase(v);
+			else if (v->sibling())
+				v->sibling()->color() = RawNode::RED;
+
+			if (v == parent->left())
+				parent->left() = NULL;
+			else
+				parent->right() = NULL;
+		}
+		delete v;
+	}
+
+	void __fix_erase(Node x)
+	{
+		if (x == _root)
+			return ;
+
+		Node sibling = x->sibling(), parent = x->father();
+
+		if (!sibling)
+			__fix_erase(parent);
+		else
+		{
+			if (sibling->color() == RawNode::RED)
+			{
+				parent->color() = RawNode::RED;
+				sibling->recolor();
+				parent->rotate(sibling == parent->left() ? RawNode::RIGHT : RawNode::LEFT, _root);
+				__fix_erase(x);
+			}
+			else
+			{
+				if (RawNode::color(sibling->right()) == RawNode::RED ||
+					RawNode::color(sibling->left()) == RawNode::RED)
+					__fix_erase_has_one_red(sibling, parent);
+				else
+				{
+					sibling->recolor();
+					if (parent->color() == RawNode::BLACK)
+						__fix_erase(parent);
+					else
+						parent->recolor();
+				}
+			}
+		}
+	}
+
+	void __fix_erase_has_one_red(Node sibling, Node parent)
+	{
+		if (sibling->left() != NULL && sibling->left() != _sentinelStart &&
+			sibling->left()->color() == RawNode::RED)
+		{
+			if (sibling == parent->left())
+			{
+				sibling->left()->color() = sibling->color();
+				sibling->color() = parent->color();
+				parent->rotate(RawNode::RIGHT, _root);
+			}
+			else
+			{
+				sibling->left()->color() = parent->color();
+				sibling->rotate(RawNode::RIGHT, _root);
+				parent->rotate(RawNode::LEFT, _root);
+			}
+		}
+		else
+		{
+			if (sibling == parent->left())
+			{
+				sibling->right()->color() = parent->color();
+				sibling->rotate(RawNode::LEFT, _root);
+				parent->rotate(RawNode::RIGHT, _root);
+			}
+			else
+			{
+				sibling->right()->color() = sibling->color();
+				sibling->color() = parent->color();
+				parent->rotate(RawNode::LEFT, _root);
+			}
+		}
+		parent->color() = RawNode::BLACK;
 	}
 
 	void __clear(Node node)
