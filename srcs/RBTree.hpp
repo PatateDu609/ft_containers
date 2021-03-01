@@ -6,7 +6,7 @@
 /*   By: teyber <teyber@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/19 16:32:16 by gboucett          #+#    #+#             */
-/*   Updated: 2021/03/01 03:38:03 by teyber           ###   ########.fr       */
+/*   Updated: 2021/03/01 20:30:07 by teyber           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ void print_equivalent(std::ostream& os, ft::RBTreeNode<T, Compare> *node)
 	while (current)
 	{
 		os << "\t" << (long)current << " [label = " << current->data()
-			<< ", style = filled, fontcolor = white, fillcolor = brown]\n";
+			<< ", style = filled, fontcolor = white, fillcolor = blue]\n";
 
 		os << "\t" << (long)current << " -> " << (long)current->father() << " [color = turquoise];\n";
 		os << "\t" << (long)current->father() << " -> " << (long)current << " [color = sienna];\n";
@@ -302,7 +302,6 @@ public:
 			node->_parent = this;
 			return ;
 		}
-		//(void)old;
 		node->_parent = old;
 		old->_equivalent = node;
 	}
@@ -310,8 +309,10 @@ public:
 	void remove_equivalents(SelfPtr oldPlace)
 	{
 		delete _equivalent;
+
 		_equivalent = oldPlace->_equivalent;
-		_equivalent->_parent = this;
+		if (_equivalent)
+			_equivalent->_parent = this;
 		_equivalent_root = this;
 		_equivalent_last = oldPlace->_equivalent_last;
 		_nb_equivalent = oldPlace->_nb_equivalent;
@@ -668,15 +669,15 @@ private:
 	{
 		Node u = __BST_erase(v);
 
-		bool uvBlack = (RawNode::color(u) && v->color() == RawNode::BLACK); // Check if double black
+		bool uvBlack = (RawNode::color(u) == RawNode::BLACK && v->color() == RawNode::BLACK); // Check if double black
 
 		if (u == NULL) // v is a leaf
 		{
 			__erase_leaf(v, uvBlack);
 			return ;
 		}
-		if ((v->left() && v->left() == _sentinelStart)
-			|| (v->right() && v->right() == _sentinelEnd)) // v is a single child
+		if (!v->left() || v->left() == _sentinelStart
+			|| !v->right() || v->right() == _sentinelEnd) // v have only a single child
 		{
 			__erase_single_child(v, u, uvBlack);
 			return ;
