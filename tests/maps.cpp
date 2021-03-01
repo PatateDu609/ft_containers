@@ -6,7 +6,7 @@
 /*   By: teyber <teyber@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/18 17:23:13 by gboucett          #+#    #+#             */
-/*   Updated: 2021/03/01 03:20:14 by teyber           ###   ########.fr       */
+/*   Updated: 2021/03/01 03:36:59 by teyber           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,8 @@ void maps()
 	rbt.erase(1);
 	rbt.insert(8);
 	rbt.insert(8);
+
+	std::cout << "erasing 6s : " << rbt.erase(6) << std::endl;
 
 
 	dumpRBT(rbt, "rbt.dot");

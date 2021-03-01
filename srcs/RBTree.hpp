@@ -6,7 +6,7 @@
 /*   By: teyber <teyber@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/19 16:32:16 by gboucett          #+#    #+#             */
-/*   Updated: 2021/03/01 03:22:11 by teyber           ###   ########.fr       */
+/*   Updated: 2021/03/01 03:38:03 by teyber           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -314,6 +314,7 @@ public:
 		_equivalent->_parent = this;
 		_equivalent_root = this;
 		_equivalent_last = oldPlace->_equivalent_last;
+		_nb_equivalent = oldPlace->_nb_equivalent;
 
 		oldPlace->_equivalent = NULL;
 		oldPlace->_equivalent_root = NULL;
