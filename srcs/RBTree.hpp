@@ -6,7 +6,7 @@
 /*   By: teyber <teyber@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/19 16:32:16 by gboucett          #+#    #+#             */
-/*   Updated: 2021/02/27 15:41:02 by teyber           ###   ########.fr       */
+/*   Updated: 2021/03/01 03:22:11 by teyber           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,16 +33,37 @@ namespace ft
 #include <algorithm>
 
 template<typename T, typename Compare>
+void print_equivalent(std::ostream& os, ft::RBTreeNode<T, Compare> *node)
+{
+	typedef ft::RBTreeNode<T, Compare> *Node;
+
+	Node current = node->equivalent();
+
+	while (current)
+	{
+		os << "\t" << (long)current << " [label = " << current->data()
+			<< ", style = filled, fontcolor = white, fillcolor = brown]\n";
+
+		os << "\t" << (long)current << " -> " << (long)current->father() << " [color = turquoise];\n";
+		os << "\t" << (long)current->father() << " -> " << (long)current << " [color = sienna];\n";
+		current = current->equivalent();
+	}
+}
+
+template<typename T, typename Compare>
 void print_dot(std::ostream& os, ft::RBTreeNode<T, Compare> *node, ft::RBTreeNode<T, Compare> *sentinelStart,
 	ft::RBTreeNode<T, Compare> *sentinelEnd, std::vector<ft::RBTreeNode<T, Compare> *>& data)
 {
+	bool seen = true;
+
 	if (std::find(data.begin(), data.end(), node) == data.end())
 	{
 		if (node == sentinelStart || node == sentinelEnd)
 			os << "\t\"" << node << "\"[shape = point]\n";
 		else
-			os << "\t" << node->data() <<
-				" [style = filled, fontcolor = white, fillcolor = " << node->dumpColor() << "]\n";
+			os << "\t" << (long)node << " [label = " << node->data() <<
+				", style = filled, fontcolor = white, fillcolor = " << node->dumpColor() << "]\n";
+		seen = false;
 		data.push_back(node);
 	}
 	if (node->father())
@@ -51,26 +72,34 @@ void print_dot(std::ostream& os, ft::RBTreeNode<T, Compare> *node, ft::RBTreeNod
 		if (node == sentinelStart || node == sentinelEnd)
 			os << '"' << node << '"';
 		else
-			os << node->data();
-		os << " -> " << node->father()->data() << " [color = turquoise];\n";
+			os << (long)node;
+		os << " -> " << (long)node->father() << " [color = turquoise];\n";
 	}
 	if (node->left())
 	{
-		os << "\t" << node->data() << " -> ";
+		os << "\t" << (long)node << " -> ";
 		if (node->left() == sentinelStart || node->left() == sentinelEnd)
 			os << '"' << node->left() << '"';
 		else
-			os << node->left()->data();
+			os << (long)node->left();
 		os << " [color = sienna];\n";
 		print_dot(os, node->left(), sentinelStart, sentinelEnd, data);
 	}
+
+	if (!seen)
+	{
+		os << "\n";
+		print_equivalent(os, node);
+		os << "\n";
+	}
+
 	if (node->right())
 	{
-		os << "\t" << node->data() << " -> ";
+		os << "\t" << (long)node << " -> ";
 		if (node->right() == sentinelStart || node->right() == sentinelEnd)
 			os << '"' << node->right() << '"';
 		else
-			os << node->right()->data();
+			os << (long)node->right();
 		os << " [color = sienna];\n";
 		print_dot(os, node->right(), sentinelStart, sentinelEnd, data);
 	}
@@ -87,6 +116,8 @@ public:
 	typedef const value_type& const_reference;
 	typedef value_type* pointer;
 	typedef const value_type* const_pointer;
+	typedef size_t size_type;
+
 	enum RotateType
 	{
 		LEFT,
@@ -103,13 +134,19 @@ private:
 	typedef Self* SelfPtr;
 
 public:
-	RBTreeNode() : _parent(NULL), _left(NULL), _right(NULL), _color(BLACK)
+	RBTreeNode() :
+		_parent(NULL), _left(NULL), _right(NULL), _color(BLACK),
+		_equivalent(NULL), _equivalent_root(NULL), _equivalent_last(NULL), _nb_equivalent(0)
 	{}
 
-	RBTreeNode(SelfPtr parent, SelfPtr left, value_type data, SelfPtr right, Color color = BLACK) : _parent(parent), _left(left), _data(data), _right(right), _color(color)
+	RBTreeNode(SelfPtr parent, SelfPtr left, value_type data, SelfPtr right, Color color = BLACK) :
+		_parent(parent), _left(left), _data(data), _right(right), _color(color),
+		_equivalent(NULL), _equivalent_root(NULL), _equivalent_last(NULL), _nb_equivalent(0)
 	{}
 
-	RBTreeNode(const_reference data) : _parent(NULL), _left(NULL), _data(data), _right(NULL), _color(BLACK)
+	RBTreeNode(const_reference data) :
+		_parent(NULL), _left(NULL), _data(data), _right(NULL), _color(BLACK),
+		_equivalent(NULL), _equivalent_root(NULL), _equivalent_last(NULL), _nb_equivalent(0)
 	{}
 
 	RBTreeNode(const Self& other)
@@ -120,6 +157,7 @@ public:
 	~RBTreeNode()
 	{
 		_data.~value_type();
+		delete _equivalent;
 	}
 
 	RBTreeNode& operator=(const Self& other)
@@ -129,6 +167,10 @@ public:
 		_data = other._data;
 		_right = other._right;
 		_color = other._color;
+		_equivalent = other._equivalent;
+		_equivalent_root = other._equivalent_root;
+		_equivalent_last = other._equivalent_last;
+		_nb_equivalent = other._nb_equivalent;
 		return *this;
 	}
 
@@ -236,6 +278,47 @@ public:
 		return __max(sentinel);
 	}
 
+	SelfPtr equivalent() const
+	{
+		return _equivalent;
+	}
+
+	size_type duplicates() const
+	{
+		return _nb_equivalent;
+	}
+
+	void add_equivalent(SelfPtr node)
+	{
+		SelfPtr old = _equivalent_last;
+
+		node->_equivalent_root = _equivalent_root;
+		_equivalent_last = node->_equivalent_last = node;
+		_nb_equivalent++;
+
+		if (_equivalent == NULL)
+		{
+			_equivalent = node;
+			node->_parent = this;
+			return ;
+		}
+		//(void)old;
+		node->_parent = old;
+		old->_equivalent = node;
+	}
+
+	void remove_equivalents(SelfPtr oldPlace)
+	{
+		delete _equivalent;
+		_equivalent = oldPlace->_equivalent;
+		_equivalent->_parent = this;
+		_equivalent_root = this;
+		_equivalent_last = oldPlace->_equivalent_last;
+
+		oldPlace->_equivalent = NULL;
+		oldPlace->_equivalent_root = NULL;
+		oldPlace->_equivalent_last = NULL;
+	}
 
 #if defined DEBUG && DEBUG == 1
 
@@ -252,7 +335,11 @@ private:
 	value_type _data;
 	SelfPtr _right;
 	Color _color;
+
 	SelfPtr _equivalent;
+	SelfPtr _equivalent_root;
+	SelfPtr _equivalent_last;
+	size_type _nb_equivalent;
 
 	void rightRotate(SelfPtr& root)
 	{
@@ -346,29 +433,44 @@ public:
 	void insert(const_reference val)
 	{
 		Node node = new RawNode(val);
+		bool dup = false;
 
 		if (_root == _sentinelEnd || _root == NULL)
-			_root = __insert(_root, node);
+			_root = __insert(_root, node, dup);
 		else
-			__insert(_root, node);
+			__insert(_root, node, dup);
 
-		node->recolor();
-		__fix_insertion(node);
+		if (!dup)
+		{
+			node->recolor();
+			__fix_insertion(node);
+		}
 
 		_size++;
 	}
 
-	void erase(const_reference val)
+	size_type erase(const_reference val)
 	{
 		if (_root == _sentinelEnd)
-			return ;
+			return (0);
 
 		Node v = __search(_root, val);
 
 		if (!v)
-			return ;
+			return (0);
+
+		size_type result = v->duplicates() + 1;
 		__erase(v);
+
+		Node min = _root->min(_sentinelStart), max = _root->max(_sentinelEnd);
+		min->left() = _sentinelStart;
+		max->right() = _sentinelEnd;
+
+		_sentinelStart->father() = min;
+		_sentinelEnd->father() = max;
+
 		_size--;
+		return result;
 	}
 
 	Node search(const_reference val) const
@@ -429,7 +531,7 @@ private:
 		return __search(node->left(), val);
 	}
 
-	Node __insert(Node node, Node newNode)
+	Node __insert(Node node, Node newNode, bool& dup)
 	{
 		Node target = NULL, x = node;
 
@@ -441,7 +543,11 @@ private:
 			else if (comp(x->data(), newNode->data()))
 				x = x->right();
 			else
-				return (node);
+			{
+				dup = true;
+				x->add_equivalent(newNode);
+				return node;
+			}
 		}
 
 		if (!target)
@@ -551,7 +657,7 @@ private:
 		if (x->left() && x->right()
 			&& x->left() != _sentinelStart
 			&& x->right() != _sentinelEnd) // If node is internal node
-			return x->successor(_sentinelStart);
+			return x->right()->min(_sentinelStart);
 		if (x->left() && x->left() != _sentinelStart) // If node has only left child
 			return x->left();
 		return x->right() == _sentinelEnd ? NULL : x->right(); // Other cases (only right child and no child at all)
@@ -577,6 +683,7 @@ private:
 
 		// v is internal node, therefore swap u and v and recurse
 		swap(u->data(), v->data());
+		v->remove_equivalents(u);
 		__erase(u);
 	}
 
