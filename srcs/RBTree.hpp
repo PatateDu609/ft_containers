@@ -6,7 +6,7 @@
 /*   By: teyber <teyber@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/19 16:32:16 by gboucett          #+#    #+#             */
-/*   Updated: 2021/03/01 20:30:07 by teyber           ###   ########.fr       */
+/*   Updated: 2021/03/01 20:34:50 by teyber           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -463,13 +463,6 @@ public:
 
 		size_type result = v->duplicates() + 1;
 		__erase(v);
-
-		Node min = _root->min(_sentinelStart), max = _root->max(_sentinelEnd);
-		min->left() = _sentinelStart;
-		max->right() = _sentinelEnd;
-
-		_sentinelStart->father() = min;
-		_sentinelEnd->father() = max;
 
 		_size--;
 		return result;
