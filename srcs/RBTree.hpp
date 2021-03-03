@@ -6,7 +6,7 @@
 /*   By: teyber <teyber@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/19 16:32:16 by gboucett          #+#    #+#             */
-/*   Updated: 2021/03/03 11:08:43 by teyber           ###   ########.fr       */
+/*   Updated: 2021/03/03 11:14:15 by teyber           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,12 @@ namespace ft
 
 	template <typename T, typename Compare>
 	class RBTreeNode;
+
+	template <typename T, typename Compare>
+	class RBTreeIterator;
+
+	template <typename T, typename Compare>
+	class RBTreeReverseIterator;
 } // namespace ft
 
 #if defined DEBUG && DEBUG == 1
@@ -106,6 +112,18 @@ void print_dot(std::ostream& os, ft::RBTreeNode<T, Compare> *node, ft::RBTreeNod
 }
 
 #endif
+
+template <typename T, typename Compare>
+class ft::RBTreeIterator
+{
+
+};
+
+template <typename T, typename Compare>
+class ft::RBTreeReverseIterator
+{
+
+};
 
 template <typename T, typename Compare>
 class ft::RBTreeNode
