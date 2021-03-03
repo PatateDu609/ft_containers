@@ -6,7 +6,7 @@
 /*   By: teyber <teyber@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/19 16:32:16 by gboucett          #+#    #+#             */
-/*   Updated: 2021/03/01 20:34:50 by teyber           ###   ########.fr       */
+/*   Updated: 2021/03/03 11:08:43 by teyber           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -252,20 +252,24 @@ public:
 
 	SelfPtr successor(SelfPtr sentinel)
 	{
+		if (_equivalent_root && this != _equivalent_root)
+			return _parent;
 		if (_right)
 			return _right->__min(sentinel);
 		else if (this == _parent->_left)
-			return _parent;
-		return grand_father();
+			return _parent->_equivalent ? _parent->_equivalent_last : _parent;
+		return grand_father()->_equivalent ? grand_father()->_equivalent_last : grand_father();
 	}
 
 	SelfPtr predecessor(SelfPtr sentinel)
 	{
+		if (_equivalent_root && this != _equivalent_root)
+			return _parent;
 		if (_left)
 			return _left->__max(sentinel);
 		else if (this == _parent->_right)
-			return _parent;
-		return grand_father();
+			return _parent->_equivalent ? _parent->_equivalent_last : _parent;
+		return grand_father()->_equivalent ? grand_father()->_equivalent_last : grand_father();
 	}
 
 	SelfPtr min(SelfPtr sentinel)
@@ -283,6 +287,11 @@ public:
 		return _equivalent;
 	}
 
+	SelfPtr equivalent_root() const
+	{
+		return _equivalent_root;
+	}
+
 	size_type duplicates() const
 	{
 		return _nb_equivalent;
@@ -298,8 +307,10 @@ public:
 
 		if (_equivalent == NULL)
 		{
+			_equivalent_root = this;
 			_equivalent = node;
 			node->_parent = this;
+			node->_equivalent_root = _equivalent_root;
 			return ;
 		}
 		node->_parent = old;
@@ -311,15 +322,13 @@ public:
 		delete _equivalent;
 
 		_equivalent = oldPlace->_equivalent;
+		_equivalent_last = oldPlace->_equivalent_last;
+		_equivalent_root = _equivalent ? this : NULL;
+
 		if (_equivalent)
 			_equivalent->_parent = this;
-		_equivalent_root = this;
-		_equivalent_last = oldPlace->_equivalent_last;
-		_nb_equivalent = oldPlace->_nb_equivalent;
 
 		oldPlace->_equivalent = NULL;
-		oldPlace->_equivalent_root = NULL;
-		oldPlace->_equivalent_last = NULL;
 	}
 
 #if defined DEBUG && DEBUG == 1
@@ -327,6 +336,18 @@ public:
 	std::string dumpColor() const
 	{
 		return _color == BLACK ? "black" : "red";
+	}
+
+	void dump() const
+	{
+		std::cout << "current node : " << this << std::endl;
+		std::cout << "left : " << _left << std::endl;
+		std::cout << "right : " << _right << std::endl;
+		std::cout << "father : " << _parent << std::endl;
+		std::cout << "data : " << _data << std::endl;
+		std::cout << "equivalent : " << _equivalent << std::endl;
+		std::cout << "equivalent root : " << _equivalent_root << std::endl;
+		std::cout << "equivalent last : " << _equivalent_last << std::endl;
 	}
 
 #endif
@@ -390,7 +411,7 @@ private:
 
 		while (current->_left && current->_left != sentinel)
 			current = current->_left;
-		return current;
+		return current->_equivalent ? current->_equivalent_last : current;
 	}
 
 	SelfPtr __max(SelfPtr sentinel)
@@ -399,7 +420,7 @@ private:
 
 		while (current && current->_right && current->_right != sentinel)
 			current = current->_right;
-		return current;
+		return current->_equivalent ? current->_equivalent_last : current;
 	}
 };
 
@@ -430,6 +451,16 @@ public:
 	{
 		clear();
 		delete _sentinelEnd;
+	}
+
+	Node begin()
+	{
+		return _root->min(_sentinelStart);
+	}
+
+	Node end()
+	{
+		return _sentinelEnd;
 	}
 
 	void insert(const_reference val)
@@ -464,7 +495,7 @@ public:
 		size_type result = v->duplicates() + 1;
 		__erase(v);
 
-		_size--;
+		_size -= result;
 		return result;
 	}
 
@@ -652,7 +683,10 @@ private:
 		if (x->left() && x->right()
 			&& x->left() != _sentinelStart
 			&& x->right() != _sentinelEnd) // If node is internal node
-			return x->right()->min(_sentinelStart);
+		{
+			Node min = x->right()->min(_sentinelStart);
+			return min->equivalent_root() ? min->equivalent_root() : min;
+		}
 		if (x->left() && x->left() != _sentinelStart) // If node has only left child
 			return x->left();
 		return x->right() == _sentinelEnd ? NULL : x->right(); // Other cases (only right child and no child at all)
@@ -700,6 +734,16 @@ private:
 				parent->left() = u;
 			else
 				parent->right() = u;
+			if (v->left() == _sentinelStart)
+			{
+				u->left() = _sentinelStart;
+				_sentinelStart->father() = u;
+			}
+			if (v->right() == _sentinelEnd)
+			{
+				u->right() = _sentinelEnd;
+				_sentinelEnd->father() = u;
+			}
 			delete v;
 			u->father() = parent;
 			if (uvBlack)
@@ -722,10 +766,14 @@ private:
 			else if (v->sibling())
 				v->sibling()->color() = RawNode::RED;
 
+			Node remplacement;
 			if (v == parent->left())
-				parent->left() = NULL;
+				remplacement = parent->left() = v->left();
 			else
-				parent->right() = NULL;
+				remplacement = parent->right() = v->right();
+
+			if (remplacement)
+				remplacement->father() = parent;
 		}
 		delete v;
 	}
