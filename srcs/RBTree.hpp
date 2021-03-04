@@ -6,7 +6,7 @@
 /*   By: gboucett <gboucett@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/19 16:32:16 by gboucett          #+#    #+#             */
-/*   Updated: 2021/03/04 17:36:19 by gboucett         ###   ########.fr       */
+/*   Updated: 2021/03/04 17:43:46 by gboucett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ namespace ft
 	template <typename T, typename Compare>
 	class RBTree;
 
-	template <typename T, typename Compare>
+	template <typename T>
 	class RBTreeNode;
 
 	template <typename T, typename RawNode>
@@ -38,10 +38,10 @@ namespace ft
 #include <vector>
 #include <algorithm>
 
-template<typename T, typename Compare>
-void print_equivalent(std::ostream& os, ft::RBTreeNode<T, Compare> *node)
+template<typename T>
+void print_equivalent(std::ostream& os, ft::RBTreeNode<T> *node)
 {
-	typedef ft::RBTreeNode<T, Compare> *Node;
+	typedef ft::RBTreeNode<T> *Node;
 
 	Node current = node->equivalent();
 
@@ -56,9 +56,9 @@ void print_equivalent(std::ostream& os, ft::RBTreeNode<T, Compare> *node)
 	}
 }
 
-template<typename T, typename Compare>
-void print_dot(std::ostream& os, ft::RBTreeNode<T, Compare> *node, ft::RBTreeNode<T, Compare> *sentinelStart,
-	ft::RBTreeNode<T, Compare> *sentinelEnd, std::vector<ft::RBTreeNode<T, Compare> *>& data)
+template<typename T>
+void print_dot(std::ostream& os, ft::RBTreeNode<T> *node, ft::RBTreeNode<T> *sentinelStart,
+	ft::RBTreeNode<T> *sentinelEnd, std::vector<ft::RBTreeNode<T> *>& data)
 {
 	bool seen = true;
 
@@ -311,7 +311,7 @@ private:
 	Node _sentinelEnd;
 };
 
-template <typename T, typename Compare>
+template <typename T>
 class ft::RBTreeNode
 {
 public:
@@ -334,7 +334,7 @@ public:
 	};
 
 private:
-	typedef RBTreeNode<value_type, Compare> Self;
+	typedef RBTreeNode<value_type> Self;
 	typedef Self* SelfPtr;
 
 public:
@@ -637,8 +637,8 @@ public:
 	typedef size_t size_type;
 
 private:
-	typedef RBTreeNode<value_type, Compare>* Node;
-	typedef RBTreeNode<value_type, Compare> RawNode;
+	typedef RBTreeNode<value_type>* Node;
+	typedef RBTreeNode<value_type> RawNode;
 
 public:
 	typedef RBTreeIterator<value_type, RawNode> iterator;
@@ -1133,7 +1133,7 @@ private:
 		}
 		else
 		{
-			std::vector<ft::RBTreeNode<T, Compare> *> data;
+			std::vector<ft::RBTreeNode<T> *> data;
 			print_dot(os, root, rbt._sentinelStart, rbt._sentinelEnd, data);
 		}
 
