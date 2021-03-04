@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   maps.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: teyber <teyber@student.42.fr>              +#+  +:+       +#+        */
+/*   By: gboucett <gboucett@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/18 17:23:13 by gboucett          #+#    #+#             */
-/*   Updated: 2021/03/03 11:08:29 by teyber           ###   ########.fr       */
+/*   Updated: 2021/03/04 16:53:39 by gboucett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,88 +18,93 @@ void maps()
 
 	ft::RBTree<int, std::less<int> > rbt;
 
-	rbt.insert(2);
-	rbt.insert(2);
-	rbt.insert(2);
-	rbt.insert(2);
-	rbt.insert(2);
-
-	rbt.insert(5);
-	rbt.insert(5);
-	rbt.insert(5);
-	rbt.insert(5);
-
-	rbt.insert(1);
-	rbt.insert(1);
-
-	rbt.insert(4);
-	rbt.insert(4);
-	rbt.insert(4);
-	rbt.insert(4);
-	rbt.insert(4);
-	rbt.insert(4);
-
-	rbt.insert(7);
-	rbt.insert(7);
-	rbt.insert(7);
-	rbt.insert(7);
-	rbt.insert(7);
-	rbt.insert(7);
-	rbt.insert(7);
-	rbt.insert(7);
-	rbt.insert(7);
-
-	rbt.insert(3);
-	rbt.insert(3);
-	rbt.insert(3);
-
-	rbt.insert(6);
-	rbt.insert(6);
-	rbt.insert(6);
-	rbt.insert(6);
-	rbt.insert(6);
-	rbt.insert(6);
-	rbt.insert(6);
-	rbt.insert(6);
-
-	rbt.insert(65);
-	rbt.insert(65);
-	rbt.insert(65);
-	rbt.insert(65);
-	rbt.insert(65);
-
-	rbt.insert(98);
-	rbt.insert(98);
-	rbt.insert(98);
-	rbt.insert(98);
-
-	rbt.insert(8);
-	rbt.insert(8);
-	rbt.insert(8);
-
-	rbt.erase(1);
 	rbt.printInOrder();
-	rbt.printInReverseOrder();
+
+	rbt.insert(2);
+	rbt.insert(2);
+	rbt.insert(2);
+	rbt.insert(2);
+	rbt.insert(2);
+
+	rbt.insert(5);
+	rbt.insert(5);
+	rbt.insert(5);
+	rbt.insert(5);
+
+	rbt.insert(1);
+	rbt.insert(1);
+
+	rbt.insert(4);
+	rbt.insert(4);
+	rbt.insert(4);
+	rbt.insert(4);
+	rbt.insert(4);
+	rbt.insert(4);
+
+	rbt.insert(7);
+	rbt.insert(7);
+	rbt.insert(7);
+	rbt.insert(7);
+	rbt.insert(7);
+	rbt.insert(7);
+	rbt.insert(7);
+	rbt.insert(7);
+	rbt.insert(7);
+
+	rbt.insert(3);
+	rbt.insert(3);
+	rbt.insert(3);
+
+	rbt.insert(6);
+	rbt.insert(6);
+	rbt.insert(6);
+	rbt.insert(6);
+	rbt.insert(6);
+	rbt.insert(6);
+	rbt.insert(6);
+	rbt.insert(6);
+
+	rbt.insert(65);
+	rbt.insert(65);
+	rbt.insert(65);
+	rbt.insert(65);
+	rbt.insert(65);
+
+	rbt.insert(98);
+	rbt.insert(98);
+	rbt.insert(98);
+	rbt.insert(98);
+
+	rbt.insert(8);
+	rbt.insert(8);
+	rbt.insert(8);
+
+	rbt.printInOrder();
+
+	rbt.erase(5);
+	dumpRBT(rbt, "rbt2.dot");
+	rbt.printInOrder();
+	//rbt.printInReverseOrder();
 
 	rbt.erase(2);
 	rbt.printInOrder();
-	rbt.printInReverseOrder();
+	//rbt.printInReverseOrder();
 
 	rbt.erase(3);
 	rbt.printInOrder();
-	rbt.printInReverseOrder();
+	//rbt.printInReverseOrder();
 
 	rbt.erase(8);
 	rbt.printInOrder();
-	rbt.printInReverseOrder();
+	//rbt.printInReverseOrder();
 
 	rbt.erase(65);
 	rbt.printInOrder();
-	rbt.printInReverseOrder();
+	//rbt.printInReverseOrder();
 
 	rbt.erase(4);
 	rbt.printInOrder();
-	rbt.printInReverseOrder();
+	//rbt.printInReverseOrder();
 
 	rbt.erase(98);
 
@@ -108,7 +113,7 @@ void maps()
 	//rbt.insert(252);
 
 	rbt.printInOrder();
-	rbt.printInReverseOrder();
+	//rbt.printInReverseOrder();
 
 	std::cout << "new size = " << rbt.size() << std::endl;
 
