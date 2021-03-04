@@ -6,7 +6,7 @@
 /*   By: gboucett <gboucett@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/19 16:32:16 by gboucett          #+#    #+#             */
-/*   Updated: 2021/03/04 20:13:38 by gboucett         ###   ########.fr       */
+/*   Updated: 2021/03/04 20:22:09 by gboucett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -763,6 +763,13 @@ public:
 			insert(*first);
 	}
 
+	void insert(iterator hint, const_reference val)
+	{
+		// TODO: use hint
+		(void)hint;
+		insert(val);
+	}
+
 	size_type erase(const_reference val)
 	{
 		if (_root == _sentinelEnd)
@@ -780,9 +787,10 @@ public:
 		return result;
 	}
 
-	Node search(const_reference val) const
+	iterator search(const_reference val) const
 	{
-		return __search(_root, val);
+		Node result = __search(_root, val);
+		return iterator(result ? result : _sentinelEnd, _sentinelStart, _sentinelEnd);
 	}
 
 	void clear()
