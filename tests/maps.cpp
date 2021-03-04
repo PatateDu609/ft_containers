@@ -6,7 +6,7 @@
 /*   By: gboucett <gboucett@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/18 17:23:13 by gboucett          #+#    #+#             */
-/*   Updated: 2021/03/04 20:32:19 by gboucett         ###   ########.fr       */
+/*   Updated: 2021/03/04 22:10:46 by gboucett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,21 +77,15 @@ void maps()
 	rbt.insert(8);
 	rbt.insert(8);
 
-	ft::RBTree<int, std::less<int> > rbt1;
+	typedef ft::RBTree<int, std::less<int> >::const_iterator iterator;
 
-	rbt1.insert(5);
-	rbt1.insert(4);
-	rbt1.insert(3);
-	rbt1.insert(2);
-	rbt1.insert(1);
+	const ft::RBTree<int, std::less<int> > rbt1 = rbt;
 
-	rbt1.printInOrder();
-	rbt.printInOrder();
+	std::pair<iterator, iterator> eq = rbt1.equal_range(98);
 
-	rbt.swap(rbt1);
-
-	rbt1.printInOrder();
-	rbt.printInOrder();
-
+	std::cout << "Range :";
+	for (; eq.first != eq.second; eq.first++)
+		std::cout << " " << *eq.first;
+	std::cout << std::endl;
 	dumpRBT(rbt, "rbt.dot");
 }

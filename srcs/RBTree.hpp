@@ -6,7 +6,7 @@
 /*   By: gboucett <gboucett@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/19 16:32:16 by gboucett          #+#    #+#             */
-/*   Updated: 2021/03/04 20:32:34 by gboucett         ###   ########.fr       */
+/*   Updated: 2021/03/04 22:09:38 by gboucett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -775,7 +775,7 @@ public:
 		if (_root == _sentinelEnd)
 			return (0);
 
-		Node v = __search(_root, val);
+		Node v = __find(_root, val);
 
 		if (!v)
 			return (0);
@@ -785,12 +785,6 @@ public:
 
 		_size -= result;
 		return result;
-	}
-
-	iterator search(const_reference val) const
-	{
-		Node result = __search(_root, val);
-		return iterator(result ? result : _sentinelEnd, _sentinelStart, _sentinelEnd);
 	}
 
 	void clear()
@@ -817,6 +811,68 @@ public:
 		RBTree tmp = other;
 		other = *this;
 		*this = tmp;
+	}
+
+	iterator find(const_reference val)
+	{
+		Node result = __find(_root, val);
+		return iterator(result ? result : _sentinelEnd, _sentinelStart, _sentinelEnd);
+	}
+
+	const_iterator find(const_reference val) const
+	{
+		Node result = __find(_root, val);
+		return const_iterator(result ? result : _sentinelEnd, _sentinelStart, _sentinelEnd);
+	}
+
+	size_type count(const_reference val) const
+	{
+		Node result = __find(_root, val);
+		return result ? result->duplicates() + 1 : 0;
+	}
+
+	iterator lower_bound(const_reference k)
+	{
+		iterator result = begin();
+
+		for (; result != end() && _comp(*result, k); result++);
+		return result;
+	}
+
+	const_iterator lower_bound(const_reference k) const
+	{
+		const_iterator result = begin();
+
+		for (; result != end() && _comp(*result, k); result++);
+		return result;
+	}
+
+	iterator upper_bound(const_reference k)
+	{
+		iterator result = lower_bound(k);
+
+		while (*result == k)
+			result++;
+		return result;
+	}
+
+	const_iterator upper_bound(const_reference k) const
+	{
+		const_iterator result = lower_bound(k);
+
+		while (*result == k)
+			result++;
+		return result;
+	}
+
+	std::pair<iterator, iterator> equal_range(const_reference k)
+	{
+		return std::make_pair(lower_bound(k), upper_bound(k));
+	}
+
+	std::pair<const_iterator, const_iterator> equal_range(const_reference k) const
+	{
+		return std::make_pair(lower_bound(k), upper_bound(k));
 	}
 
 #if defined DEBUG && DEBUG == 1
@@ -859,13 +915,13 @@ private:
 		_root = _sentinelEnd;
 	}
 
-	Node __search(Node node, const_reference val) const
+	Node __find(Node node, const_reference val) const
 	{
 		if (node == NULL || node == _sentinelStart || node == _sentinelEnd || node->data() == val)
 			return node == _sentinelEnd || node == _sentinelStart ? NULL : node;
 		if (_comp(node->data(), val))
-			return __search(node->right(), val);
-		return __search(node->left(), val);
+			return __find(node->right(), val);
+		return __find(node->left(), val);
 	}
 
 	Node __insert(Node node, Node newNode, bool& dup)
