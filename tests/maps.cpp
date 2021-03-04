@@ -6,7 +6,7 @@
 /*   By: gboucett <gboucett@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/18 17:23:13 by gboucett          #+#    #+#             */
-/*   Updated: 2021/03/04 16:53:39 by gboucett         ###   ########.fr       */
+/*   Updated: 2021/03/04 17:35:28 by gboucett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,6 @@ void maps()
 
 	ft::RBTree<int, std::less<int> > rbt;
 
-	rbt.printInOrder();
-
 	rbt.insert(2);
 	rbt.insert(2);
 	rbt.insert(2);
@@ -78,44 +76,39 @@ void maps()
 	rbt.insert(8);
 	rbt.insert(8);
 	rbt.insert(8);
-
-	rbt.printInOrder();
 
 	rbt.erase(5);
-	dumpRBT(rbt, "rbt2.dot");
 	rbt.printInOrder();
-	//rbt.printInReverseOrder();
+	rbt.printInReverseOrder();
 
 	rbt.erase(2);
 	rbt.printInOrder();
-	//rbt.printInReverseOrder();
+	rbt.printInReverseOrder();
 
 	rbt.erase(3);
 	rbt.printInOrder();
-	//rbt.printInReverseOrder();
+	rbt.printInReverseOrder();
 
 	rbt.erase(8);
 	rbt.printInOrder();
-	//rbt.printInReverseOrder();
+	rbt.printInReverseOrder();
 
 	rbt.erase(65);
 	rbt.printInOrder();
-	//rbt.printInReverseOrder();
+	rbt.printInReverseOrder();
 
 	rbt.erase(4);
 	rbt.printInOrder();
-	//rbt.printInReverseOrder();
+	rbt.printInReverseOrder();
 
 	rbt.erase(98);
 
-	dumpRBT(rbt, "rbt1.dot");
 	rbt.insert(252);
-	//rbt.insert(252);
+	rbt.erase(1);
+	rbt.insert(1);
 
 	rbt.printInOrder();
-	//rbt.printInReverseOrder();
-
-	std::cout << "new size = " << rbt.size() << std::endl;
+	rbt.printInReverseOrder();
 
 	dumpRBT(rbt, "rbt.dot");
 }

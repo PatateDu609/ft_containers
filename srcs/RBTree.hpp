@@ -6,7 +6,7 @@
 /*   By: gboucett <gboucett@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/19 16:32:16 by gboucett          #+#    #+#             */
-/*   Updated: 2021/03/04 17:06:10 by gboucett         ###   ########.fr       */
+/*   Updated: 2021/03/04 17:36:19 by gboucett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,8 @@ namespace ft
 	template <typename T, typename RawNode>
 	class RBTreeIterator;
 
-	//template <typename T, typename RawNode>
-	//class RBTreeReverseIterator;
+	template <typename T, typename RawNode>
+	class RBTreeReverseIterator;
 } // namespace ft
 
 #if defined DEBUG && DEBUG == 1
@@ -212,11 +212,104 @@ private:
 	Node _sentinelEnd;
 };
 
-//template <typename T, typename Compare>
-//class ft::RBTreeReverseIterator
-//{
+template <typename T, typename RawNode>
+class ft::RBTreeReverseIterator
+{
+public:
+	typedef std::bidirectional_iterator_tag iterator_category;
+	typedef ptrdiff_t difference_type;
 
-//};
+	typedef T value_type;
+	typedef value_type &reference;
+	typedef const value_type &const_reference;
+	typedef value_type* pointer;
+	typedef const value_type *const_pointer;
+
+private:
+	typedef RawNode* Node;
+
+public:
+	RBTreeReverseIterator() : _ptr(NULL)
+	{}
+
+	RBTreeReverseIterator(Node ptr, Node sentinelStart, Node sentinelEnd) :
+		_ptr(ptr), _sentinelStart(sentinelStart), _sentinelEnd(sentinelEnd)
+	{}
+
+	RBTreeReverseIterator(const RBTreeReverseIterator& other)
+	{
+		*this = other;
+	}
+
+	RBTreeReverseIterator& operator=(const RBTreeReverseIterator& other)
+	{
+		_ptr = other._ptr;
+		_sentinelStart = other._sentinelStart;
+		_sentinelEnd = other._sentinelEnd;
+		return *this;
+	}
+
+	bool operator==(const RBTreeReverseIterator& b) const
+	{
+		return _ptr == b._ptr;
+	}
+
+	bool operator!=(const RBTreeReverseIterator& b) const
+	{
+		return !(operator==(b));
+	}
+
+	reference operator*()
+	{
+		return _ptr->data();
+	}
+
+	const_reference operator*() const
+	{
+		return _ptr->data();
+	}
+
+	pointer operator->()
+	{
+		return &_ptr->data();
+	}
+
+	const_pointer operator->() const
+	{
+		return &_ptr->data();
+	}
+
+	RBTreeReverseIterator& operator++()
+	{
+		_ptr = RawNode::predecessor(_ptr, _sentinelEnd);
+		return *this;
+	}
+
+	RBTreeReverseIterator operator++(int)
+	{
+		RBTreeReverseIterator rbti(*this);
+		_ptr = RawNode::predecessor(_ptr, _sentinelEnd);
+		return rbti;
+	}
+
+	RBTreeReverseIterator& operator--()
+	{
+		_ptr = RawNode::successor(_ptr, _sentinelStart);
+		return *this;
+	}
+
+	RBTreeReverseIterator operator--(int)
+	{
+		RBTreeReverseIterator rbti(*this);
+		_ptr = RawNode::successor(_ptr, _sentinelStart);
+		return rbti;
+	}
+
+private:
+	Node _ptr;
+	Node _sentinelStart;
+	Node _sentinelEnd;
+};
 
 template <typename T, typename Compare>
 class ft::RBTreeNode
@@ -371,6 +464,11 @@ public:
 		return _equivalent_root;
 	}
 
+	SelfPtr equivalent_last() const
+	{
+		return _equivalent_last;
+	}
+
 	size_type duplicates() const
 	{
 		return _nb_equivalent;
@@ -393,7 +491,7 @@ public:
 		if (node->_equivalent_root && node != node->_equivalent_root)
 			return node->_parent;
 		if (node->_left)
-			return max(node, sentinel);
+			return max(node->_left, sentinel);
 		else if (node == node->_parent->_right)
 			return node->_parent->_equivalent ? node->_parent->_equivalent_last : node->_parent;
 		return node->grand_father()->_equivalent ?
@@ -413,7 +511,7 @@ public:
 	{
 		SelfPtr current = node;
 
-		while (current && current->_right && current->_right != sentinel)
+		while (current->_right && current->_right != sentinel)
 			current = current->_right;
 		return current->_equivalent ? current->_equivalent_last : current;
 	}
@@ -545,6 +643,8 @@ private:
 public:
 	typedef RBTreeIterator<value_type, RawNode> iterator;
 	typedef RBTreeIterator<const value_type, RawNode> const_iterator;
+	typedef RBTreeReverseIterator<value_type, RawNode> reverse_iterator;
+	typedef RBTreeReverseIterator<const value_type, RawNode> const_reverse_iterator;
 
 	RBTree() : _root(NULL), _sentinelStart(new RawNode()), _sentinelEnd(new RawNode()), _size(0)
 	{
@@ -560,8 +660,11 @@ public:
 
 	iterator begin()
 	{
-		return iterator(empty() ?
-			_sentinelEnd : _sentinelStart->father(), _sentinelStart, _sentinelEnd);
+		if (empty())
+			return iterator(_root, _sentinelStart, _sentinelEnd);
+		return iterator(_sentinelStart->father()->equivalent() ?
+			_sentinelStart->father()->equivalent_last() : _sentinelStart->father(),
+			_sentinelStart, _sentinelEnd);
 	}
 
 	iterator end()
@@ -571,13 +674,46 @@ public:
 
 	const_iterator begin() const
 	{
-		return const_iterator(empty() ?
-			_sentinelEnd : _sentinelStart->father(), _sentinelStart, _sentinelEnd);
+		if (empty())
+			return const_iterator(_root, _sentinelStart, _sentinelEnd);
+		return const_iterator(_sentinelStart->father()->equivalent() ?
+			_sentinelStart->father()->equivalent_last() : _sentinelStart->father(),
+			_sentinelStart, _sentinelEnd);
 	}
 
 	const_iterator end() const
 	{
 		return const_iterator(_sentinelEnd, _sentinelStart, _sentinelEnd);
+	}
+
+	reverse_iterator rbegin()
+	{
+		if (empty())
+			return reverse_iterator(_sentinelStart, _sentinelStart, _sentinelEnd);
+		else
+			return reverse_iterator(_sentinelEnd->father()->equivalent() ?
+				_sentinelEnd->father()->equivalent_last() : _sentinelEnd->father(),
+				_sentinelStart, _sentinelEnd);
+	}
+
+	reverse_iterator rend()
+	{
+		return reverse_iterator(_sentinelStart, _sentinelStart, _sentinelEnd);
+	}
+
+	const_reverse_iterator rbegin() const
+	{
+		if (empty())
+			return const_reverse_iterator(_sentinelStart, _sentinelStart, _sentinelEnd);
+		else
+			return const_reverse_iterator(_sentinelEnd->father()->equivalent() ?
+				_sentinelEnd->father()->equivalent_last() : _sentinelEnd->father(),
+				_sentinelStart, _sentinelEnd);
+	}
+
+	const_reverse_iterator rend() const
+	{
+		return const_reverse_iterator(_sentinelStart, _sentinelStart, _sentinelEnd);
 	}
 
 	void insert(const_reference val)
@@ -624,6 +760,9 @@ public:
 	void clear()
 	{
 		__clear(_root);
+		_root = _sentinelEnd;
+		_root->father() = NULL;
+		_sentinelStart->father() = NULL;
 		_size = 0;
 	}
 
@@ -649,14 +788,11 @@ public:
 
 	void printInReverseOrder() const
 	{
-		Node current = _root->max(_sentinelEnd);
+		const_reverse_iterator rit = rbegin();
 
 		std::cout << "Tree :";
-		while (current != _sentinelStart)
-		{
-			std::cout << " " << current->data();
-			current = current->predecessor(_sentinelEnd);
-		}
+		for (; rit != rend(); rit++)
+			std::cout << " " << *rit;
 		std::cout << std::endl;
 	}
 
