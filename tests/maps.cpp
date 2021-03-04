@@ -6,7 +6,7 @@
 /*   By: gboucett <gboucett@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/18 17:23:13 by gboucett          #+#    #+#             */
-/*   Updated: 2021/03/04 22:10:46 by gboucett         ###   ########.fr       */
+/*   Updated: 2021/03/04 22:14:50 by gboucett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,8 @@ void maps()
 	rbt.insert(8);
 	rbt.insert(8);
 	rbt.insert(8);
+
+	std::cout << "max_size : " << rbt.max_size() << std::endl;
 
 	typedef ft::RBTree<int, std::less<int> >::const_iterator iterator;
 

@@ -6,7 +6,7 @@
 /*   By: gboucett <gboucett@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/19 16:32:16 by gboucett          #+#    #+#             */
-/*   Updated: 2021/03/04 22:09:38 by gboucett         ###   ########.fr       */
+/*   Updated: 2021/03/04 22:13:55 by gboucett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -636,6 +636,7 @@ public:
 	typedef const value_type* const_pointer;
 	typedef size_t size_type;
 	typedef Compare value_compare;
+	typedef ptrdiff_t difference_type;
 
 private:
 	typedef RBTreeNode<value_type>* Node;
@@ -799,6 +800,11 @@ public:
 	size_type size() const
 	{
 		return _size;
+	}
+
+	size_type max_size() const
+	{
+		return std::numeric_limits<difference_type>().max() / sizeof(RawNode);
 	}
 
 	bool empty() const
