@@ -6,7 +6,7 @@
 /*   By: gboucett <gboucett@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/18 17:23:13 by gboucett          #+#    #+#             */
-/*   Updated: 2021/03/04 20:23:26 by gboucett         ###   ########.fr       */
+/*   Updated: 2021/03/04 20:32:19 by gboucett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,12 +77,21 @@ void maps()
 	rbt.insert(8);
 	rbt.insert(8);
 
-	rbt.insert(rbt.search(65), 80);
+	ft::RBTree<int, std::less<int> > rbt1;
 
-	const ft::RBTree<int, std::less<int> > rbt1(rbt);
+	rbt1.insert(5);
+	rbt1.insert(4);
+	rbt1.insert(3);
+	rbt1.insert(2);
+	rbt1.insert(1);
 
 	rbt1.printInOrder();
-	rbt1.printInReverseOrder();
+	rbt.printInOrder();
+
+	rbt.swap(rbt1);
+
+	rbt1.printInOrder();
+	rbt.printInOrder();
 
 	dumpRBT(rbt, "rbt.dot");
 }

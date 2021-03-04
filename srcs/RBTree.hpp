@@ -6,7 +6,7 @@
 /*   By: gboucett <gboucett@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/19 16:32:16 by gboucett          #+#    #+#             */
-/*   Updated: 2021/03/04 20:22:09 by gboucett         ###   ########.fr       */
+/*   Updated: 2021/03/04 20:32:34 by gboucett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -812,6 +812,15 @@ public:
 		return size() == 0;
 	}
 
+	void swap(RBTree& other)
+	{
+		RBTree tmp = other;
+		other = *this;
+		*this = tmp;
+	}
+
+#if defined DEBUG && DEBUG == 1
+
 	void printInOrder() const
 	{
 		const_iterator current = begin();
@@ -831,6 +840,8 @@ public:
 			std::cout << " " << *rit;
 		std::cout << std::endl;
 	}
+
+#endif
 
 private:
 	Node _root;
