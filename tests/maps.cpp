@@ -6,7 +6,7 @@
 /*   By: gboucett <gboucett@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/18 17:23:13 by gboucett          #+#    #+#             */
-/*   Updated: 2021/03/04 17:35:28 by gboucett         ###   ########.fr       */
+/*   Updated: 2021/03/04 20:13:46 by gboucett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,38 +77,10 @@ void maps()
 	rbt.insert(8);
 	rbt.insert(8);
 
-	rbt.erase(5);
-	rbt.printInOrder();
-	rbt.printInReverseOrder();
+	const ft::RBTree<int, std::less<int> > rbt1(rbt);
 
-	rbt.erase(2);
-	rbt.printInOrder();
-	rbt.printInReverseOrder();
-
-	rbt.erase(3);
-	rbt.printInOrder();
-	rbt.printInReverseOrder();
-
-	rbt.erase(8);
-	rbt.printInOrder();
-	rbt.printInReverseOrder();
-
-	rbt.erase(65);
-	rbt.printInOrder();
-	rbt.printInReverseOrder();
-
-	rbt.erase(4);
-	rbt.printInOrder();
-	rbt.printInReverseOrder();
-
-	rbt.erase(98);
-
-	rbt.insert(252);
-	rbt.erase(1);
-	rbt.insert(1);
-
-	rbt.printInOrder();
-	rbt.printInReverseOrder();
+	rbt1.printInOrder();
+	rbt1.printInReverseOrder();
 
 	dumpRBT(rbt, "rbt.dot");
 }

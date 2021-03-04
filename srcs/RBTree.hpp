@@ -6,7 +6,7 @@
 /*   By: gboucett <gboucett@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/19 16:32:16 by gboucett          #+#    #+#             */
-/*   Updated: 2021/03/04 17:43:46 by gboucett         ###   ########.fr       */
+/*   Updated: 2021/03/04 20:13:38 by gboucett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -635,6 +635,7 @@ public:
 	typedef value_type* pointer;
 	typedef const value_type* const_pointer;
 	typedef size_t size_type;
+	typedef Compare value_compare;
 
 private:
 	typedef RBTreeNode<value_type>* Node;
@@ -646,16 +647,36 @@ public:
 	typedef RBTreeReverseIterator<value_type, RawNode> reverse_iterator;
 	typedef RBTreeReverseIterator<const value_type, RawNode> const_reverse_iterator;
 
-	RBTree() : _root(NULL), _sentinelStart(new RawNode()), _sentinelEnd(new RawNode()), _size(0)
+	RBTree(const value_compare& comp = value_compare())
 	{
-		_root = _sentinelEnd;
-		_sentinelEnd->father() = NULL;
+		init(comp);
+	}
+
+	RBTree(const RBTree& other)
+	{
+		init(other._comp);
+		*this = other;
+	}
+
+	template <typename InputIterator>
+	RBTree(InputIterator first, InputIterator last, const value_compare& comp = value_compare())
+	{
+		init(comp);
+		insert(first, last);
 	}
 
 	~RBTree()
 	{
 		clear();
 		delete _sentinelEnd;
+		delete _sentinelStart;
+	}
+
+	RBTree& operator=(const RBTree& other)
+	{
+		clear();
+		insert(other.begin(), other.end());
+		return *this;
 	}
 
 	iterator begin()
@@ -735,6 +756,13 @@ public:
 		_size++;
 	}
 
+	template <typename InputIterator>
+	void insert(InputIterator first, InputIterator last)
+	{
+		for (; first != last; first++)
+			insert(*first);
+	}
+
 	size_type erase(const_reference val)
 	{
 		if (_root == _sentinelEnd)
@@ -801,13 +829,22 @@ private:
 	Node _sentinelStart;
 	Node _sentinelEnd;
 	size_type _size;
-	Compare comp;
+	value_compare _comp;
+
+	void init(const value_compare& comp)
+	{
+		_comp = comp;
+		_sentinelStart = new RawNode();
+		_sentinelEnd = new RawNode();
+		_size = 0;
+		_root = _sentinelEnd;
+	}
 
 	Node __search(Node node, const_reference val) const
 	{
 		if (node == NULL || node == _sentinelStart || node == _sentinelEnd || node->data() == val)
 			return node == _sentinelEnd || node == _sentinelStart ? NULL : node;
-		if (comp(node->data(), val))
+		if (_comp(node->data(), val))
 			return __search(node->right(), val);
 		return __search(node->left(), val);
 	}
@@ -819,9 +856,9 @@ private:
 		while (x != NULL && x != _sentinelStart && x != _sentinelEnd)
 		{
 			target = x;
-			if (comp(newNode->data(), x->data()))
+			if (_comp(newNode->data(), x->data()))
 				x = x->left();
-			else if (comp(x->data(), newNode->data()))
+			else if (_comp(x->data(), newNode->data()))
 				x = x->right();
 			else
 			{
@@ -839,7 +876,7 @@ private:
 			_sentinelStart->father() = target;
 			_sentinelEnd->father() = target;
 		}
-		else if (comp(newNode->data(), target->data()))
+		else if (_comp(newNode->data(), target->data()))
 		{
 			if (x == _sentinelStart)
 			{
@@ -848,7 +885,7 @@ private:
 			}
 			target->left() = newNode;
 		}
-		else if (comp(target->data(), newNode->data()))
+		else if (_comp(target->data(), newNode->data()))
 		{
 			if (x == _sentinelEnd)
 			{
@@ -1106,9 +1143,9 @@ private:
 
 	void __clear(Node node)
 	{
-		if (!node || node == _sentinelEnd)
+		if (!node || node == _sentinelEnd || node == _sentinelStart)
 			return ;
-		if (node->left() && node->left() != _sentinelEnd)
+		if (node->left() && node->left() != _sentinelStart)
 			__clear(node->left());
 		if (node->right() && node->right() != _sentinelEnd)
 			__clear(node->right());
