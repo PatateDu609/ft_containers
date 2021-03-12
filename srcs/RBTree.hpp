@@ -47,7 +47,7 @@ void print_equivalent(std::ostream& os, ft::RBTreeNode<T> *node)
 
 	while (current)
 	{
-		os << "\t\"" << current << "\" [label = " << current->data()
+		os << "\t\"" << current << "\" [label = \"" << current->data() << " (" << current << ")\""
 			<< ", style = filled, fontcolor = white, fillcolor = blue]\n";
 
 		os << "\t\"" << current << "\" -> \"" << current->father() << "\" [color = turquoise];\n";
@@ -67,7 +67,7 @@ void print_dot(std::ostream& os, ft::RBTreeNode<T> *node, ft::RBTreeNode<T> *sen
 		if (node == sentinelStart || node == sentinelEnd)
 			os << "\t\"" << node << "\"[shape = point]\n";
 		else
-			os << "\t\"" << node << "\" [label = " << node->data() <<
+			os << "\t\"" << node << "\" [label = \"" << node->data() << " (" << node << ")\"" <<
 				", style = filled, fontcolor = white, fillcolor = " << node->dumpColor() << "]\n";
 		seen = false;
 		data.push_back(node);
@@ -305,6 +305,16 @@ public:
 		return rbti;
 	}
 
+#if DEBUG && DEBUG == 1
+
+	friend std::ostream& operator<<(std::ostream& os, const RBTreeReverseIterator& rit)
+	{
+		rit._ptr->dump(os);
+		return os;
+	}
+
+#endif
+
 private:
 	Node _ptr;
 	Node _sentinelStart;
@@ -488,14 +498,18 @@ public:
 
 	static SelfPtr predecessor(SelfPtr node, const SelfPtr sentinel)
 	{
-		if (node->_equivalent_root && node != node->_equivalent_root)
-			return node->_parent;
+		if (node->_equivalent_last && node != node->_equivalent_last)
+			return node->_equivalent;
+		if (node->_equivalent_last == node)
+			node = node->_equivalent_root;
 		if (node->_left)
-			return max(node->_left, sentinel);
-		else if (node == node->_parent->_right)
-			return node->_parent->_equivalent ? node->_parent->_equivalent_last : node->_parent;
-		return node->grand_father()->_equivalent ?
-			node->grand_father()->_equivalent_last : node->grand_father();
+		{
+			SelfPtr max = Self::max(node->_left, sentinel);
+			return max->_equivalent_root ? max->_equivalent_root : max;
+		}
+		if (node == node->_parent->_right)
+			return node->_parent;
+		return node->grand_father();
 	}
 
 	static SelfPtr min(SelfPtr node, const SelfPtr sentinel)
@@ -519,10 +533,12 @@ public:
 	void add_equivalent(SelfPtr node)
 	{
 		SelfPtr old = _equivalent_last;
+		_equivalent_last = node;
 
 		node->_equivalent_root = _equivalent_root;
-		_equivalent_last = node->_equivalent_last = node;
+		node->_equivalent_last = _equivalent_last;
 		_nb_equivalent++;
+
 
 		if (_equivalent == NULL)
 		{
@@ -534,6 +550,7 @@ public:
 		}
 		node->_parent = old;
 		old->_equivalent = node;
+		old->_equivalent_last = node;
 	}
 
 	void remove_equivalents(SelfPtr oldPlace)
@@ -557,16 +574,16 @@ public:
 		return _color == BLACK ? "black" : "red";
 	}
 
-	void dump() const
+	void dump(std::ostream& os = std::cout) const
 	{
-		std::cout << "current node : " << this << std::endl;
-		std::cout << "left : " << _left << std::endl;
-		std::cout << "right : " << _right << std::endl;
-		std::cout << "father : " << _parent << std::endl;
-		std::cout << "data : " << _data << std::endl;
-		std::cout << "equivalent : " << _equivalent << std::endl;
-		std::cout << "equivalent root : " << _equivalent_root << std::endl;
-		std::cout << "equivalent last : " << _equivalent_last << std::endl;
+		os << "current node : " << this << std::endl;
+		os << "left : " << _left << std::endl;
+		os << "right : " << _right << std::endl;
+		os << "father : " << _parent << std::endl;
+		os << "data : " << _data << std::endl;
+		os << "equivalent : " << _equivalent << std::endl;
+		os << "equivalent root : " << _equivalent_root << std::endl;
+		os << "equivalent last : " << _equivalent_last << std::endl;
 	}
 
 #endif
@@ -710,12 +727,8 @@ public:
 
 	reverse_iterator rbegin()
 	{
-		if (empty())
-			return reverse_iterator(_sentinelStart, _sentinelStart, _sentinelEnd);
-		else
-			return reverse_iterator(_sentinelEnd->father()->equivalent() ?
-				_sentinelEnd->father()->equivalent_last() : _sentinelEnd->father(),
-				_sentinelStart, _sentinelEnd);
+		return reverse_iterator(empty() ? _sentinelStart : _sentinelEnd->father(),
+			_sentinelStart, _sentinelEnd);
 	}
 
 	reverse_iterator rend()
@@ -725,12 +738,8 @@ public:
 
 	const_reverse_iterator rbegin() const
 	{
-		if (empty())
-			return const_reverse_iterator(_sentinelStart, _sentinelStart, _sentinelEnd);
-		else
-			return const_reverse_iterator(_sentinelEnd->father()->equivalent() ?
-				_sentinelEnd->father()->equivalent_last() : _sentinelEnd->father(),
-				_sentinelStart, _sentinelEnd);
+		return const_reverse_iterator(empty() ? _sentinelStart : _sentinelEnd->father(),
+			_sentinelStart, _sentinelEnd);
 	}
 
 	const_reverse_iterator rend() const
@@ -899,7 +908,9 @@ public:
 
 		std::cout << "Tree :";
 		for (; rit != rend(); rit++)
+		{
 			std::cout << " " << *rit;
+		}
 		std::cout << std::endl;
 	}
 

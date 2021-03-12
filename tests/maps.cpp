@@ -77,17 +77,6 @@ void maps()
 	rbt.insert(8);
 	rbt.insert(8);
 
-	std::cout << "max_size : " << rbt.max_size() << std::endl;
-
-	typedef ft::RBTree<int, std::less<int> >::const_iterator iterator;
-
-	const ft::RBTree<int, std::less<int> > rbt1 = rbt;
-
-	std::pair<iterator, iterator> eq = rbt1.equal_range(98);
-
-	std::cout << "Range :";
-	for (; eq.first != eq.second; eq.first++)
-		std::cout << " " << *eq.first;
-	std::cout << std::endl;
+	rbt.printInReverseOrder();
 	dumpRBT(rbt, "rbt.dot");
 }
