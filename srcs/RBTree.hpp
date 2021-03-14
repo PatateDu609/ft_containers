@@ -6,7 +6,7 @@
 /*   By: gboucett <gboucett@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/19 16:32:16 by gboucett          #+#    #+#             */
-/*   Updated: 2021/03/04 22:13:55 by gboucett         ###   ########.fr       */
+/*   Updated: 2021/03/14 07:52:35 by gboucett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -204,6 +204,11 @@ public:
 		RBTreeIterator rbti(*this);
 		_ptr = RawNode::predecessor(_ptr, _sentinelEnd);
 		return rbti;
+	}
+
+	Node ptr() const
+	{
+		return _ptr;
 	}
 
 private:
@@ -538,6 +543,7 @@ public:
 		node->_equivalent_root = _equivalent_root;
 		node->_equivalent_last = _equivalent_last;
 		_nb_equivalent++;
+		node->_nb_equivalent = _nb_equivalent;
 
 
 		if (_equivalent == NULL)
@@ -565,6 +571,37 @@ public:
 			_equivalent->_parent = this;
 
 		oldPlace->_equivalent = NULL;
+	}
+
+	SelfPtr remove_itself()
+	{
+		SelfPtr old = _equivalent;
+		swap(_data, old->_data);
+		remove_equivalent();
+		return old;
+	}
+
+	void remove_equivalent()
+	{
+		SelfPtr old = _equivalent;
+		_nb_equivalent--;
+
+		if (!_nb_equivalent)
+		{
+			_equivalent_root = NULL;
+			_equivalent_last = NULL;
+			_equivalent = NULL;
+			return ;
+		}
+
+		_equivalent = old->_equivalent;
+		if (_equivalent)
+			_equivalent->_parent = this;
+
+		if (old == _equivalent_last)
+			_equivalent_last = this;
+
+		old->_equivalent = NULL;
 	}
 
 #if defined DEBUG && DEBUG == 1
@@ -795,6 +832,36 @@ public:
 
 		_size -= result;
 		return result;
+	}
+
+	void erase(iterator it)
+	{
+		Node node = it.ptr();
+
+		if (!node->duplicates())
+		{
+			erase(node->data());
+			return;
+		}
+		else if (node == node->equivalent_root())
+			node = node->remove_itself();
+		else
+			node->father()->remove_equivalent();
+
+		delete node;
+	}
+
+	void erase(iterator first, iterator last)
+	{
+		iterator tmp;
+
+		while (first != last)
+		{
+			tmp = first;
+			tmp++;
+			erase(first);
+			first = tmp;
+		}
 	}
 
 	void clear()
@@ -1095,7 +1162,7 @@ private:
 		}
 
 		// v is internal node, therefore swap u and v and recurse
-		swap(u->data(), v->data());
+		ft::swap(u->data(), v->data());
 		v->remove_equivalents(u);
 		__erase(u);
 	}
