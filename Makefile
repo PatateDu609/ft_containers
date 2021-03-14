@@ -4,7 +4,7 @@ STACK			=	0
 QUEUE			=	0
 MAP				=	1
 
-DEBUG			=	1
+DEBUG			=	0
 
 NAME			=	containers
 CC				=	@clang++

@@ -6,7 +6,7 @@
 /*   By: gboucett <gboucett@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/18 17:23:13 by gboucett          #+#    #+#             */
-/*   Updated: 2021/03/14 07:53:01 by gboucett         ###   ########.fr       */
+/*   Updated: 2021/03/14 11:41:02 by gboucett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,75 +14,24 @@
 
 void maps()
 {
-	// title("TESTS ABOUT FT::MAP", -1);
+	ft::Map<int, int> m;
+	std::vector<std::pair<int, int> > v;
+	//std::string s[] = {"false", "true"};
 
-	ft::RBTree<int, std::less<int> > rbt;
+	typedef ft::Map<int, int>::iterator iterator;
 
-	rbt.insert(2);
-	rbt.insert(2);
-	rbt.insert(2);
-	rbt.insert(2);
-	rbt.insert(2);
+	for (int i = 0; i < 10; i++)
+		v.push_back(std::make_pair(i % 10, i));
 
-	rbt.insert(5);
-	rbt.insert(5);
-	rbt.insert(5);
-	rbt.insert(5);
+	m.insert(v.begin(), v.end());
 
-	rbt.insert(1);
-	rbt.insert(1);
+	std::cout << "before erase\n";
+	for (iterator it = m.begin(); it != m.end(); it++)
+		std::cout << it->first << " -> " << it->second << "\n";
 
-	rbt.insert(4);
-	rbt.insert(4);
-	rbt.insert(4);
-	rbt.insert(4);
-	rbt.insert(4);
-	rbt.insert(4);
-
-	rbt.insert(7);
-	rbt.insert(7);
-	rbt.insert(7);
-	rbt.insert(7);
-	rbt.insert(7);
-	rbt.insert(7);
-	rbt.insert(7);
-	rbt.insert(7);
-	rbt.insert(7);
-
-	rbt.insert(3);
-	rbt.insert(3);
-	rbt.insert(3);
-
-	rbt.insert(6);
-	rbt.insert(6);
-	rbt.insert(6);
-	rbt.insert(6);
-	rbt.insert(6);
-	rbt.insert(6);
-	rbt.insert(6);
-	rbt.insert(6);
-
-	rbt.insert(65);
-	rbt.insert(65);
-	rbt.insert(65);
-	rbt.insert(65);
-	rbt.insert(65);
-
-	rbt.insert(98);
-	rbt.insert(98);
-	rbt.insert(98);
-	rbt.insert(98);
-
-	rbt.insert(8);
-	rbt.insert(8);
-	rbt.insert(8);
-
-	typedef ft::RBTree<int, std::less<int> >::iterator iterator;
-	//typedef ft::RBTree<int, std::less<int> >::const_iterator const_iterator;
-
-	std::pair<iterator, iterator> it = rbt.equal_range(8);
-
-	dumpRBT(rbt, "rbtb.dot");
-	rbt.erase(--it.first, ++it.second);
-	dumpRBT(rbt, "rbta.dot");
+	iterator it = m.find(5);
+	m.erase(it);
+	std::cout << "after erase\n";
+	for (iterator it = m.begin(); it != m.end(); it++)
+		std::cout << it->first << " -> " << it->second << "\n";
 }

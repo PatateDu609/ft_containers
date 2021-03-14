@@ -6,7 +6,7 @@
 /*   By: gboucett <gboucett@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/19 16:32:16 by gboucett          #+#    #+#             */
-/*   Updated: 2021/03/14 07:52:35 by gboucett         ###   ########.fr       */
+/*   Updated: 2021/03/14 11:16:27 by gboucett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,14 @@
 #define RBTREE_HPP
 
 #include "algorithm.hpp"
+#include "MapUtils.hpp"
 
 #include <limits>
 #include <cstddef>
 
 namespace ft
 {
-	template <typename T, typename Compare>
+	template <typename T, typename Compare, bool Duplicates>
 	class RBTree;
 
 	template <typename T>
@@ -679,7 +680,7 @@ private:
 	}
 };
 
-template <typename T, typename Compare>
+template <typename T, typename Compare, bool Duplicates>
 class ft::RBTree
 {
 public:
@@ -702,7 +703,7 @@ public:
 	typedef RBTreeReverseIterator<value_type, RawNode> reverse_iterator;
 	typedef RBTreeReverseIterator<const value_type, RawNode> const_reverse_iterator;
 
-	RBTree(const value_compare& comp = value_compare())
+	RBTree(const value_compare& comp) : _comp(comp)
 	{
 		init(comp);
 	}
@@ -714,7 +715,7 @@ public:
 	}
 
 	template <typename InputIterator>
-	RBTree(InputIterator first, InputIterator last, const value_compare& comp = value_compare())
+	RBTree(InputIterator first, InputIterator last, const value_compare& comp) : _comp(comp)
 	{
 		init(comp);
 		insert(first, last);
@@ -784,7 +785,7 @@ public:
 		return const_reverse_iterator(_sentinelStart, _sentinelStart, _sentinelEnd);
 	}
 
-	void insert(const_reference val)
+	iterator insert(const_reference val)
 	{
 		Node node = new RawNode(val);
 		bool dup = false;
@@ -793,28 +794,33 @@ public:
 			_root = __insert(_root, node, dup);
 		else
 			__insert(_root, node, dup);
+		_size++;
 
 		if (!dup)
 		{
 			node->recolor();
 			__fix_insertion(node);
 		}
-
-		_size++;
+		else if (!Duplicates)
+		{
+			delete node;
+			return find(val);
+		}
+		return iterator(node, _sentinelStart, _sentinelEnd);
 	}
 
 	template <typename InputIterator>
 	void insert(InputIterator first, InputIterator last)
 	{
 		for (; first != last; first++)
-			insert(*first);
+			(void)insert(*first);
 	}
 
-	void insert(iterator hint, const_reference val)
+	iterator insert(iterator hint, const_reference val)
 	{
 		// TODO: use hint
 		(void)hint;
-		insert(val);
+		return insert(val);
 	}
 
 	size_type erase(const_reference val)
@@ -947,12 +953,12 @@ public:
 		return result;
 	}
 
-	std::pair<iterator, iterator> equal_range(const_reference k)
+	ft::pair<iterator, iterator> equal_range(const_reference k)
 	{
 		return std::make_pair(lower_bound(k), upper_bound(k));
 	}
 
-	std::pair<const_iterator, const_iterator> equal_range(const_reference k) const
+	ft::pair<const_iterator, const_iterator> equal_range(const_reference k) const
 	{
 		return std::make_pair(lower_bound(k), upper_bound(k));
 	}
@@ -1001,7 +1007,12 @@ private:
 
 	Node __find(Node node, const_reference val) const
 	{
-		if (node == NULL || node == _sentinelStart || node == _sentinelEnd || node->data() == val)
+		bool isEq = false;
+
+		if (!_comp(val, node->data()) && !_comp(node->data(), val))
+			isEq = true;
+
+		if (node == NULL || node == _sentinelStart || node == _sentinelEnd || isEq)
 			return node == _sentinelEnd || node == _sentinelStart ? NULL : node;
 		if (_comp(node->data(), val))
 			return __find(node->right(), val);
@@ -1022,7 +1033,8 @@ private:
 			else
 			{
 				dup = true;
-				x->add_equivalent(newNode);
+				if (Duplicates)
+					x->add_equivalent(newNode);
 				return node;
 			}
 		}
