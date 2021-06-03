@@ -1,8 +1,8 @@
 LIST			=	0
 VECTOR			=	0
-STACK			=	0
-QUEUE			=	0
-MAP				=	1
+STACK			=	1
+QUEUE			=	1
+MAP				=	0
 
 DEBUG			=	0
 

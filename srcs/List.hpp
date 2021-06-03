@@ -16,11 +16,12 @@
 #include <cstddef>
 #include <stdexcept>
 #include <limits>
+#include <memory>
 #include "algorithm.hpp"
 
 namespace ft
 {
-	template <typename T>
+	template <typename T, typename Alloc = std::allocator<T> >
 	class List;
 	template <typename T, typename Node>
 	class ListIterator;
@@ -194,7 +195,7 @@ public:
 		*this = other;
 	}
 
-	ListReverseIterator(Node *node)
+	explicit ListReverseIterator(Node *node)
 	{
 		_node = node;
 	}
@@ -259,39 +260,47 @@ private:
 	Node *_node;
 }; // class ft::ListReverseIterator
 
-template <typename T>
+template <typename T, typename Alloc>
 class ft::List
 {
 public:
+	typedef Alloc allocator_type;
 	typedef T value_type;
+
 	typedef ft::ListNode<value_type> Node;
+
 	typedef ft::ListIterator<value_type, Node> iterator;
 	typedef ft::ListReverseIterator<value_type, Node> reverse_iterator;
 	typedef ft::ListIterator<const value_type, const Node> const_iterator;
 	typedef ft::ListReverseIterator<const value_type, const Node> const_reverse_iterator;
-	typedef value_type &reference;
-	typedef const value_type &const_reference;
-	typedef size_t size_type;
-	typedef std::ptrdiff_t difference_type;
 
-	List()
+	typedef typename allocator_type::reference reference;
+	typedef typename allocator_type::const_reference const_reference;
+	typedef typename allocator_type::pointer pointer;
+	typedef typename allocator_type::const_pointer const_pointer;
+
+	typedef typename allocator_type::size_type size_type;
+	typedef typename allocator_type::difference_type difference_type;
+
+public:
+	explicit List(const allocator_type& alloc = allocator_type()) : _size(0), _destructor(false), allocator(alloc)
 	{
 		reset(true);
 	}
 
-	List(size_type size, const_reference val = value_type())
+	explicit List(size_type size, const_reference val = value_type(), const allocator_type& alloc = allocator_type()) : _size(0), _destructor(false), allocator(alloc)
 	{
 		reset(true);
 		assign(size, val);
 	}
 
-	List(const List<value_type> &other)
+	explicit List(const List<value_type> &other, const allocator_type& alloc = allocator_type()) : _size(0), _destructor(false), allocator(alloc)
 	{
 		reset(true);
 		*this = other;
 	}
 
-	List(iterator first, iterator last)
+	explicit List(iterator first, iterator last, const allocator_type& alloc = allocator_type()) : _size(0), _destructor(false), allocator(alloc)
 	{
 		reset(true);
 		assign(first, last);
@@ -332,9 +341,7 @@ public:
 
 	void push_front(const_reference v)
 	{
-		Node *node = new Node;
-		node->prev = NULL;
-		node->data = v;
+		Node *node = newElement(v);
 		node->next = _begin;
 
 		if (_begin)
@@ -345,10 +352,9 @@ public:
 		_size++;
 		if (_size)
 		{
-			if (!_ritend) {
-				_ritend = new Node;
-				_ritend->prev = NULL;
-				_ritend->data = value_type();
+			if (!_ritend)
+			{
+				_ritend = newElement();
 				_ritend->next = _begin;
 			}
 			else
@@ -357,10 +363,8 @@ public:
 			if (_size == 1)
 			{
 				delete _itend;
-				_itend = new Node;
+				_itend = newElement();
 				_itend->prev = _end;
-				_itend->data = value_type();
-				_itend->next = NULL;
 				_end->next = _itend;
 			}
 		}
@@ -368,10 +372,9 @@ public:
 
 	void push_back(const_reference v)
 	{
-		Node *node = new Node;
+		Node *node = newElement(v);
 		node->prev = _end;
-		node->data = v;
-		node->next = NULL;
+
 		if (_end)
 			_end->next = node;
 		_end = node;
@@ -382,10 +385,8 @@ public:
 		if (_size)
 		{
 			if (!_itend) {
-				_itend = new Node;
+				_itend = newElement();
 				_itend->prev = _end;
-				_itend->data = value_type();
-				_itend->next = NULL;
 			}
 			else
 				_itend->prev = _end;
@@ -393,9 +394,7 @@ public:
 			if (_size == 1)
 			{
 				delete _ritend;
-				_ritend = new Node;
-				_ritend->prev = NULL;
-				_ritend->data = value_type();
+				_ritend = newElement();
 				_ritend->next = _begin;
 				_begin->prev = _ritend;
 			}
@@ -487,7 +486,7 @@ public:
 
 	size_type max_size() const
 	{
-		return (std::numeric_limits<size_type>::max() / sizeof(Node));
+		return allocator_node.max_size();
 	}
 
 	void assign(const_iterator first, const_iterator last)
@@ -517,7 +516,8 @@ public:
 		{
 			Node *temp = _ritend;
 			_ritend = _ritend->next;
-			delete temp;
+			allocator.destroy(&temp->data);
+			allocator_node.deallocate(temp, 1);
 		}
 		_ritend = NULL;
 		_itend = NULL;
@@ -537,10 +537,7 @@ public:
 			return --end();
 		}
 
-		Node *newNode = new Node;
-		newNode->next = NULL;
-		newNode->data = value_type();
-		newNode->prev = NULL;
+		Node *newNode = newElement(val);
 		Node *node = position.getNode();
 		newNode->prev = node->prev;
 		newNode->next = node;
@@ -602,7 +599,7 @@ public:
 
 	void resize(size_type n, value_type val = value_type())
 	{
-		size_type i = 0;
+		size_type i;
 		iterator it = begin();
 
 		if (n < _size)
@@ -772,6 +769,11 @@ public:
 		splice(l1, x);
 	}
 
+	allocator_type get_allocator() const
+	{
+		return allocator;
+	}
+
 private:
 	void reset(bool constructor = false)
 	{
@@ -788,12 +790,24 @@ private:
 		_size = 0;
 	}
 
+	Node *newElement(const_reference val = value_type())
+	{
+		Node *element = allocator_node.allocate(1);
+
+		allocator.construct(&element->data, val);
+		element->next = NULL;
+		element->prev = NULL;
+		return element;
+	}
+
 	Node *_begin;
 	Node *_end;
 	size_type _size;
 	Node *_itend;
 	Node *_ritend;
 	bool _destructor;
+	allocator_type allocator;
+	typename allocator_type::template rebind<Node>::other allocator_node;
 }; //class ft::List
 
 #endif

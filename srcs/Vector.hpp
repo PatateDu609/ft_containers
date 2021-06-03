@@ -22,12 +22,11 @@
 #include <sstream>
 #include <stdexcept>
 #include <exception>
-
-#include <iostream>
+#include <memory>
 
 namespace ft
 {
-	template <typename T>
+	template <typename T, typename Alloc = std::allocator<T> >
 	class Vector;
 
 	template <typename T>
@@ -405,39 +404,43 @@ private:
 	pointer _ptr;
 };
 
-template <typename T>
+template <typename T, typename Alloc>
 class ft::Vector
 {
 public:
 	typedef T value_type;
-	typedef T &reference;
-	typedef T *pointer;
-	typedef const value_type &const_reference;
-	typedef const value_type *const_pointer;
+	typedef Alloc allocator_type;
+
+	typedef typename allocator_type::reference reference;
+	typedef typename allocator_type::const_reference const_reference;
+	typedef typename allocator_type::pointer pointer;
+	typedef typename allocator_type::const_pointer const_pointer;
+
 	typedef VectorIterator<value_type> iterator;
 	typedef VectorIterator<const value_type> const_iterator;
 	typedef VectorReverseIterator<value_type> reverse_iterator;
 	typedef VectorReverseIterator<const value_type> const_reverse_iterator;
-	typedef ptrdiff_t difference_type;
-	typedef size_t size_type;
 
-	explicit Vector() : _data(NULL), _capacity(0), _size(0)
+	typedef typename allocator_type::size_type size_type;
+	typedef typename allocator_type::difference_type difference_type;
+
+	explicit Vector(const allocator_type& alloc = allocator_type()) : _data(NULL), _capacity(0), _size(0), allocator(alloc)
 	{
 	}
 
-	explicit Vector(size_type n, const value_type &val = value_type()) : _data(NULL), _capacity(0), _size(0)
+	explicit Vector(size_type n, const value_type &val = value_type(), const allocator_type& alloc = allocator_type()) : _data(NULL), _capacity(0), _size(0), allocator(alloc)
 	{
 		assign(n, val);
 	}
 
 	template <class InputIterator>
-	Vector(InputIterator first, InputIterator last) : _data(NULL), _capacity(0), _size(0)
+	Vector(InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type()) : _data(NULL), _capacity(0), _size(0), allocator(alloc)
 	{
 		typedef typename __is_integer<InputIterator>::__type Integral;
 		_init_vec(first, last, Integral());
 	}
 
-	Vector(const Vector &x) : _data(NULL), _capacity(0), _size(0)
+	Vector(const Vector &x, const allocator_type& alloc = allocator_type()) : _data(NULL), _capacity(0), _size(0), allocator(alloc)
 	{
 		*this = x;
 	}
@@ -445,7 +448,7 @@ public:
 	~Vector()
 	{
 		clear();
-		operator delete(_data);
+		allocator.deallocate(_data, _capacity);
 	}
 
 	Vector &operator=(const Vector<value_type> &x)
@@ -501,7 +504,7 @@ public:
 
 	size_type max_size() const
 	{
-		return std::numeric_limits<difference_type>().max() / sizeof(value_type);
+		return allocator.max_size();
 	}
 
 	void resize(size_type n, value_type val = value_type())
@@ -531,12 +534,12 @@ public:
 			n = n ? n : 1;
 		if (_capacity < n)
 		{
-			pointer data = static_cast<pointer>(operator new(sizeof(value_type) * n));
+			pointer data = allocator.allocate(n);
 
 			if (_data)
 			{
 				memcpy(data, _data, sizeof(value_type) * _size);
-				operator delete(_data);
+				allocator.deallocate(_data, _capacity);
 			}
 
 			_capacity = n;
@@ -604,7 +607,7 @@ public:
 	{
 		if (_size == _capacity || _capacity == 0)
 			reserve(_capacity * 2);
-		new (_data + _size++) value_type(val);
+		allocator.construct(_data + _size++, val);
 	}
 
 	void pop_back()
@@ -661,8 +664,13 @@ public:
 		if (!_data)
 			return;
 		for (size_type i = 0; i < _size; i++)
-			_data[i].~value_type();
+			allocator.destroy(_data + i);
 		_size = 0;
+	}
+
+	allocator_type get_allocator() const
+	{
+		return allocator;
 	}
 
 private:
@@ -737,7 +745,7 @@ private:
 		memmove(_data + fs + n, _data + fs, sizeof(value_type) * (_size - fs));
 		size_type i = 0;
 		for (InputIterator it = first; it != last; it++, i++)
-			new (_data + fs + i) value_type(*it);
+			allocator.construct(_data + fs + i, *it);
 		_size += n;
 
 		return iterator(_data + fs);
@@ -755,7 +763,7 @@ private:
 		memmove(_data + fs + n, _data + fs, sizeof(value_type) * (_size - fs));
 
 		for (size_type i = 0; i < n; i++)
-			new (_data + fs + i) value_type(val);
+			allocator.construct(_data + fs + i, val);
 		_size += n;
 		return iterator(_data + fs);
 	}
@@ -763,6 +771,7 @@ private:
 	pointer _data;
 	size_type _capacity;
 	size_type _size;
+	allocator_type allocator;
 };
 
 #endif
