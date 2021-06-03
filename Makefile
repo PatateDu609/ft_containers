@@ -1,10 +1,10 @@
 LIST			=	0
 VECTOR			=	0
-STACK			=	1
-QUEUE			=	1
-MAP				=	0
+STACK			=	0
+QUEUE			=	0
+MAP				=	1
 
-DEBUG			=	0
+DEBUG			=	1
 
 NAME			=	containers
 CC				=	@clang++
@@ -26,6 +26,10 @@ CFLAGS			+=	-DLIST=$(LIST)			\
 					-DSTACK=$(STACK)		\
 					-DMAP=$(MAP)			\
 					-DDEBUG=$(DEBUG)		\
+
+ifeq ($(DEBUG), 1)
+	CFLAGS		+=	-ferror-limit=100
+endif
 
 SRCS			=	$(addprefix tests/, $(SRCS_BASENAME))
 
