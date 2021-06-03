@@ -453,6 +453,7 @@ public:
 
 	Vector &operator=(const Vector<value_type> &x)
 	{
+		allocator = x.allocator;
 		assign(x.begin(), x.end());
 		return (*this);
 	}

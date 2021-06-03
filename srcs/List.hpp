@@ -314,6 +314,7 @@ public:
 
 	List &operator=(const List<value_type> &other)
 	{
+		allocator = other.allocator;
 		reset();
 		assign(other.begin(), other.end());
 		return *this;
