@@ -878,14 +878,13 @@ public:
 			clear();
 			return;
 		}
-		iterator tmp;
+		Node *tmp;
 
 		while (first != last)
 		{
-			tmp = first;
-			tmp++;
+			tmp = first.ptr();
 			erase(first);
-			first = tmp;
+			first = iterator(tmp, _sentinelStart, _sentinelEnd);
 		}
 	}
 
