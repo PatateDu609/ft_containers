@@ -859,7 +859,8 @@ public:
 
 		if (!node->duplicates())
 		{
-			erase(node->data());
+			__erase(node);
+			_size--;
 			return;
 		}
 		else if (node == node->equivalent_root())
@@ -872,6 +873,11 @@ public:
 
 	void erase(iterator first, iterator last)
 	{
+		if (first == begin() && last == end())
+		{
+			clear();
+			return;
+		}
 		iterator tmp;
 
 		while (first != last)
@@ -1224,7 +1230,7 @@ private:
 			_root->left() = _sentinelStart;
 			_root->right() = _sentinelEnd;
 			_root->father() = NULL;
-			delete u;
+			destroyNode(u);
 		}
 		else
 		{
@@ -1242,7 +1248,7 @@ private:
 				u->right() = _sentinelEnd;
 				_sentinelEnd->father() = u;
 			}
-			delete v;
+			destroyNode(v);
 			u->father() = parent;
 			if (uvBlack)
 				__fix_erase(v);
@@ -1264,7 +1270,7 @@ private:
 			else if (v->sibling())
 				v->sibling()->color() = Node::RED;
 
-			Node *remplacement;
+			Node *remplacement; // Reconnects node child (it may be NULL or a sentinel)
 			if (v == parent->left())
 				remplacement = parent->left() = v->left();
 			else
@@ -1273,7 +1279,7 @@ private:
 			if (remplacement)
 				remplacement->father() = parent;
 		}
-		delete v;
+		destroyNode(v);
 	}
 
 	void __fix_erase(Node *x)

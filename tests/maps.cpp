@@ -29,8 +29,8 @@ void maps()
 	for (iterator it = m.begin(); it != m.end(); it++)
 		std::cout << it->first << " -> " << it->second << "\n";
 
-	iterator it = m.find(5);
-	m.erase(it);
+	iterator start = m.find(1), end = m.find(3);
+	m.erase(start, end);
 	std::cout << "after erase\n";
 	for (iterator it = m.begin(); it != m.end(); it++)
 		std::cout << it->first << " -> " << it->second << "\n";
