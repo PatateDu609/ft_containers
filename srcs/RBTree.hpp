@@ -850,6 +850,8 @@ public:
 		__erase(v);
 
 		_size -= result;
+		if (empty())
+			clear();
 		return result;
 	}
 
@@ -1005,6 +1007,16 @@ public:
 			std::cout << " " << *rit;
 		}
 		std::cout << std::endl;
+	}
+
+	const Node *getSentinelStart() const
+	{
+		return _sentinelStart;
+	}
+
+	const Node *getSentinelEnd() const
+	{
+		return _sentinelEnd;
 	}
 
 #endif
@@ -1179,7 +1191,7 @@ private:
 		__insert_right_right_rotation(node);
 	}
 
-	Node *__BST_erase(Node *x)
+	Node *__BST_erase(Node *x) // Return the target erase
 	{
 		if (x->left() && x->right() && x->left() != _sentinelStart && x->right() != _sentinelEnd) // If node is internal node
 		{
@@ -1224,7 +1236,7 @@ private:
 			_root->left() = _sentinelStart;
 			_root->right() = _sentinelEnd;
 			_root->father() = NULL;
-			delete u;
+			destroyNode(u);
 		}
 		else
 		{
@@ -1242,7 +1254,7 @@ private:
 				u->right() = _sentinelEnd;
 				_sentinelEnd->father() = u;
 			}
-			delete v;
+			destroyNode(v);
 			u->father() = parent;
 			if (uvBlack)
 				__fix_erase(v);
@@ -1371,8 +1383,8 @@ private:
 			os << std::endl;
 		else if (!root->left() && !root->right())
 		{
-			os << "\t" << root->data() << " [shape = point]\n";
-			os << "\t" << root->data() << ";" << endl;
+			os << "\t\"" << root->data() << "\" [shape = point]\n";
+			os << "\t\"" << root->data() << "\";" << endl;
 		}
 		else
 		{
@@ -1397,6 +1409,10 @@ template <typename T, typename Compare, typename Alloc, bool Duplicates>
 void dumpRBT(const ft::RBTree<T, Compare, Alloc, Duplicates> &rbt, const std::string &name = "rbt.dot")
 {
 	std::ofstream ofs(name.c_str());
+
+	std::cout << "\n\nSentinels :\n";
+	std::cout << "\t- start : " << rbt.getSentinelStart() << std::endl;
+	std::cout << "\t- end : " << rbt.getSentinelEnd() << std::endl;
 
 	ofs << rbt;
 

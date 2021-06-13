@@ -246,6 +246,15 @@ public:
 		return _tree.get_allocator();
 	}
 
+#if defined(DEBUG) && DEBUG == 1
+
+	void dump_tree(const std::string &filename) const
+	{
+		dumpRBT(_tree, filename);
+	}
+
+#endif
+
 private:
 	Tree_type _tree;
 	key_compare _comp;

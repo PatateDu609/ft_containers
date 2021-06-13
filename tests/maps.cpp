@@ -29,9 +29,15 @@ void maps()
 	for (iterator it = m.begin(); it != m.end(); it++)
 		std::cout << it->first << " -> " << it->second << "\n";
 
-	iterator it = m.find(5);
-	m.erase(it);
-	std::cout << "after erase\n";
+	//iterator it = m.find(1);
+
+	m.dump_tree("map_before_erase.dot");
+
+	m.erase(--(--m.begin()), --m.end());
+
+	m.dump_tree("map_after_erase.dot");
+
+	std::cout << "after erase, size : " << m.size() << "\n";
 	for (iterator it = m.begin(); it != m.end(); it++)
 		std::cout << it->first << " -> " << it->second << "\n";
 }
