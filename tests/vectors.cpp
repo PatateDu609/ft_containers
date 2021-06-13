@@ -319,13 +319,13 @@ static void test_vector_accessers()
 			try {
 				v.at(4);
 			}
-			catch (std::out_of_range e) {
+			catch (const std::out_of_range& e) {
 				std::cout << e.what() << std::endl;
 			}
 			try {
 				v.at(-1);
 			}
-			catch (std::out_of_range e) {
+			catch (const std::out_of_range& e) {
 				std::cout << e.what() << std::endl;
 			}
 		}

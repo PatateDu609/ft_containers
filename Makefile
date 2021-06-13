@@ -7,7 +7,13 @@ MAP				=	1
 DEBUG			=	1
 
 NAME			=	containers
-CC				=	@clang++
+
+ifeq (, $(shell which clang++))
+	CC			= g++
+else
+	CC			= clang++
+endif
+
 OBJS			=	$(SRCS:.cpp=.o)
 CFLAGS			=	-Wall -Werror -Wextra -g -I./srcs -std=c++98
 LDFLAGS			=	-fsanitize=address -fsanitize=leak -g
@@ -28,7 +34,9 @@ CFLAGS			+=	-DLIST=$(LIST)			\
 					-DDEBUG=$(DEBUG)		\
 
 ifeq ($(DEBUG), 1)
-	CFLAGS		+=	-ferror-limit=100
+	ifeq ($(CC), "clang++")
+		CFLAGS		+=	-ferror-limit=100
+	endif
 endif
 
 SRCS			=	$(addprefix tests/, $(SRCS_BASENAME))

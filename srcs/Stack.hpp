@@ -20,6 +20,36 @@ namespace ft
 {
 	template <typename T, typename Container = List<T> >
 	class Stack;
+	
+	template <typename T, typename Container>
+	bool operator==(const ft::Stack<T, Container>& lhs, const ft::Stack<T, Container>& rhs)
+	{
+		return !(lhs < rhs) && !(rhs < lhs);
+	}
+
+	template <typename T, typename Container>
+	bool operator!=(const ft::Stack<T, Container>& lhs, const ft::Stack<T, Container>& rhs)
+	{
+		return !(lhs == rhs);
+	}
+
+	template <typename T, typename Container>
+	bool operator>(const ft::Stack<T, Container>& lhs, const ft::Stack<T, Container>& rhs)
+	{
+		return rhs < lhs;
+	}
+
+	template <typename T, typename Container>
+	bool operator<=(const ft::Stack<T, Container>& lhs, const ft::Stack<T, Container>& rhs)
+	{
+		return !(lhs < rhs && lhs == rhs);
+	}
+
+	template <typename T, typename Container>
+	bool operator>=(const ft::Stack<T, Container>& lhs, const ft::Stack<T, Container>& rhs)
+	{
+		return !(lhs < rhs);
+	}
 }
 
 template <typename T, typename Container>
@@ -64,34 +94,9 @@ public:
 		_c.pop_back();
 	}
 
-	friend bool operator==(const ft::Stack<T, Container> &lhs, const ft::Stack<T, Container> &rhs)
-	{
-		return lhs._c == rhs._c;
-	}
-
-	friend bool operator!=(const ft::Stack<T, Container> &lhs, const ft::Stack<T, Container> &rhs)
-	{
-		return lhs._c != rhs._c;
-	}
-
 	friend bool operator<(const ft::Stack<T, Container> &lhs, const ft::Stack<T, Container> &rhs)
 	{
 		return lhs._c < rhs._c;
-	}
-
-	friend bool operator>(const ft::Stack<T, Container> &lhs, const ft::Stack<T, Container> &rhs)
-	{
-		return lhs._c > rhs._c;
-	}
-
-	friend bool operator<=(const ft::Stack<T, Container> &lhs, const ft::Stack<T, Container> &rhs)
-	{
-		return lhs._c <= rhs._c;
-	}
-
-	friend bool operator>=(const ft::Stack<T, Container> &lhs, const ft::Stack<T, Container> &rhs)
-	{
-		return lhs._c >= rhs._c;
 	}
 
 protected:
