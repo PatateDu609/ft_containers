@@ -16,8 +16,6 @@ void maps()
 {
 	ft::Map<int, int> m;
 	std::vector<std::pair<int, int> > v;
-	//std::string s[] = {"false", "true"};
-
 	typedef ft::Map<int, int>::iterator iterator;
 
 	for (int i = 0; i < 10; i++)
@@ -29,13 +27,15 @@ void maps()
 	for (iterator it = m.begin(); it != m.end(); it++)
 		std::cout << it->first << " -> " << it->second << "\n";
 
-	//iterator it = m.find(1);
-
+#if defined(DEBUG) && DEBUG == 1
 	m.dump_tree("map_before_erase.dot");
+#endif
 
-	m.erase(--(--m.begin()), --m.end());
+	m.erase(m.find(6), ++(++m.find(6)));
 
+#if defined(DEBUG) && DEBUG == 1
 	m.dump_tree("map_after_erase.dot");
+#endif
 
 	std::cout << "after erase, size : " << m.size() << "\n";
 	for (iterator it = m.begin(); it != m.end(); it++)

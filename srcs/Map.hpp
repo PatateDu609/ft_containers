@@ -65,7 +65,7 @@ public:
 	typedef typename Tree_type::difference_type difference_type;
 	typedef typename Tree_type::size_type size_type;
 
-	explicit Map(const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()) : _tree(value_compare(comp), alloc), _comp(comp)
+	explicit Map(const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()) : _tree(comp, alloc), _comp(comp)
 	{}
 
 	template <typename InputIterator>
@@ -168,7 +168,7 @@ public:
 
 	size_type erase(const key_type& t)
 	{
-		return _tree.erase(find(t));
+		return _tree.erase(std::make_pair(t, mapped_type()));
 	}
 
 	void erase(iterator first, iterator last)

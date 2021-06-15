@@ -885,7 +885,8 @@ public:
 		while (first != last)
 		{
 			tmp = first.ptr();
-			erase(first);
+			_size--;
+			tmp = __erase(tmp);
 			first = iterator(tmp, _sentinelStart, _sentinelEnd);
 		}
 	}
@@ -1208,27 +1209,28 @@ private:
 		return x->right() == _sentinelEnd ? NULL : x->right(); // Other cases (only right child and no child at all)
 	}
 
-	void __erase(Node *v)
+	Node *__erase(Node *v)
 	{
 		Node *u = __BST_erase(v);
+		Node *suc = Node::successor(v, _sentinelStart);
 
 		bool uvBlack = (Node::color(u) == Node::BLACK && v->color() == Node::BLACK); // Check if double black
 
 		if (u == NULL) // v is a leaf
 		{
 			__erase_leaf(v, uvBlack);
-			return;
+			return suc;
 		}
 		if (!v->left() || v->left() == _sentinelStart || !v->right() || v->right() == _sentinelEnd) // v have only a single child
 		{
 			__erase_single_child(v, u, uvBlack);
-			return;
+			return u;
 		}
 
 		// v is internal node, therefore swap u and v and recurse
 		ft::swap(u->data(), v->data());
 		v->remove_equivalents(u);
-		__erase(u);
+		return __erase(u);
 	}
 
 	void __erase_single_child(Node *v, Node *u, bool uvBlack)
