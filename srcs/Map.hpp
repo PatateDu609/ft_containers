@@ -19,7 +19,7 @@
 namespace ft
 {
 	template <typename Key, typename T, typename Compare = less<Key>,
-		typename Alloc = std::allocator<pair<Key, T> > >
+			  typename Alloc = std::allocator<pair<Key, T> > >
 	class Map;
 }
 
@@ -29,7 +29,7 @@ class ft::Map
 public:
 	typedef Key key_type;
 	typedef T mapped_type;
-	typedef ft::pair<key_type, mapped_type> value_type;
+	typedef pair<key_type, mapped_type> value_type;
 	typedef Alloc allocator_type;
 
 	typedef Compare key_compare;
@@ -37,13 +37,15 @@ public:
 	class value_compare
 	{
 	public:
-		value_compare(const key_compare& compare) : _comp(compare)
-		{}
+		value_compare(const key_compare &compare) : _comp(compare)
+		{
+		}
 
-		bool operator() (const value_type& a, const value_type& b) const
+		bool operator()(const value_type &a, const value_type &b) const
 		{
 			return _comp(a.first, b.first);
 		}
+
 	private:
 		key_compare _comp;
 	};
@@ -65,20 +67,24 @@ public:
 	typedef typename Tree_type::difference_type difference_type;
 	typedef typename Tree_type::size_type size_type;
 
-	explicit Map(const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()) : _tree(comp, alloc), _comp(comp)
-	{}
+	explicit Map(const key_compare &comp = key_compare(), const allocator_type &alloc = allocator_type()) : _tree(comp, alloc), _comp(comp)
+	{
+	}
 
 	template <typename InputIterator>
-	Map(InputIterator first, InputIterator last, const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()) : _tree(first, last, value_compare(comp), alloc), _comp(comp)
-	{}
+	Map(InputIterator first, InputIterator last, const key_compare &comp = key_compare(), const allocator_type &alloc = allocator_type()) : _tree(first, last, value_compare(comp), alloc), _comp(comp)
+	{
+	}
 
-	Map(const Map& other) : _tree(other._tree), _comp(other._comp)
-	{}
+	Map(const Map &other) : _tree(other._tree), _comp(other._comp)
+	{
+	}
 
 	~Map()
-	{}
+	{
+	}
 
-	Map& operator=(const Map& other)
+	Map &operator=(const Map &other)
 	{
 		_tree = other._tree;
 		_comp = other._comp;
@@ -139,15 +145,15 @@ public:
 		return _tree.max_size();
 	}
 
-	mapped_type& operator[](const key_type& k)
+	mapped_type &operator[](const key_type &k)
 	{
-		return ((insert(std::make_pair(k, mapped_type()))).first)->second;
+		return ((insert(make_pair(k, mapped_type()))).first)->second;
 	}
 
-	ft::pair<iterator, bool> insert(const_reference val)
+	pair<iterator, bool> insert(const_reference val)
 	{
 		iterator it = _tree.find(val);
-		return std::make_pair(it != end() ? it : _tree.insert(val), it == end());
+		return make_pair(it != end() ? it : _tree.insert(val), it == end());
 	}
 
 	iterator insert(iterator hint, const_reference val)
@@ -166,9 +172,9 @@ public:
 		_tree.erase(position);
 	}
 
-	size_type erase(const key_type& t)
+	size_type erase(const key_type &t)
 	{
-		return _tree.erase(std::make_pair(t, mapped_type()));
+		return _tree.erase(make_pair(t, mapped_type()));
 	}
 
 	void erase(iterator first, iterator last)
@@ -176,7 +182,7 @@ public:
 		return _tree.erase(first, last);
 	}
 
-	void swap(Map& other)
+	void swap(Map &other)
 	{
 		_tree.swap(other.swap());
 	}
@@ -196,49 +202,49 @@ public:
 		return value_compare(_comp);
 	}
 
-	iterator find(const key_type& t)
+	iterator find(const key_type &t)
 	{
-		return _tree.find(std::make_pair(t, mapped_type()));
+		return _tree.find(make_pair(t, mapped_type()));
 	}
 
-	const_iterator find(const key_type& t) const
+	const_iterator find(const key_type &t) const
 	{
-		return _tree.find(std::make_pair(t, mapped_type()));
+		return _tree.find(make_pair(t, mapped_type()));
 	}
 
-	size_type count(const key_type& t) const
+	size_type count(const key_type &t) const
 	{
-		return _tree.count(std::make_pair(t, mapped_type()));
+		return _tree.count(make_pair(t, mapped_type()));
 	}
 
-	iterator lower_bound(const key_type& t)
+	iterator lower_bound(const key_type &t)
 	{
-		return _tree.lower_bound(std::make_pair(t, mapped_type()));
+		return _tree.lower_bound(make_pair(t, mapped_type()));
 	}
 
-	const_iterator lower_bound(const key_type& t) const
+	const_iterator lower_bound(const key_type &t) const
 	{
-		return _tree.lower_bound(std::make_pair(t, mapped_type()));
+		return _tree.lower_bound(make_pair(t, mapped_type()));
 	}
 
-	iterator upper_bound(const key_type& t)
+	iterator upper_bound(const key_type &t)
 	{
-		return _tree.upper_bound(std::make_pair(t, mapped_type()));
+		return _tree.upper_bound(make_pair(t, mapped_type()));
 	}
 
-	const_iterator upper_bound(const key_type& t) const
+	const_iterator upper_bound(const key_type &t) const
 	{
-		return _tree.upper_bound(std::make_pair(t, mapped_type()));
+		return _tree.upper_bound(make_pair(t, mapped_type()));
 	}
 
-	iterator equal_range(const key_type& t)
+	iterator equal_range(const key_type &t)
 	{
-		return _tree.equal_range(std::make_pair(t, mapped_type()));
+		return _tree.equal_range(make_pair(t, mapped_type()));
 	}
 
-	const_iterator equal_range(const key_type& t) const
+	const_iterator equal_range(const key_type &t) const
 	{
-		return _tree.equal_range(std::make_pair(t, mapped_type()));
+		return _tree.equal_range(make_pair(t, mapped_type()));
 	}
 
 	allocator_type get_allocator() const

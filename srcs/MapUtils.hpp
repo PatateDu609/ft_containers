@@ -17,6 +17,12 @@ namespace ft
 {
 	template <typename T1, typename T2>
 	struct pair;
+
+	template <typename T1, typename T2>
+	pair<T1, T2> make_pair(T1 t, T2 u)
+	{
+		return pair<T1, T2>(t, u);
+	}
 }
 
 template <typename T1, typename T2>
@@ -26,26 +32,23 @@ struct ft::pair
 	T2 second;
 
 	pair()
-	{}
-
-	template <typename U, typename V>
-	pair(const pair<U, V>& pr) : first(pr.first), second(pr.second)
-	{}
-
-	template <typename U, typename V>
-	pair(const std::pair<U, V>& pr) : first(pr.first), second(pr.second)
-	{}
-
-	template <typename U, typename V>
-	operator std::pair<U, V>() const
 	{
-		return std::make_pair(first, second);
 	}
 
-	pair& operator=(const pair& other)
+	pair(const T1 &t, const T2 &u) : first(t), second(u)
 	{
-		first = other.first;
-		second = other.second;
+	}
+
+	template <typename U, typename V>
+	pair(const pair<U, V> &pr) : first(pr.first), second(pr.second)
+	{
+	}
+
+	template <typename U, typename V>
+	pair &operator=(const pair<U, V> &pr)
+	{
+		first = pr.first;
+		second = pr.second;
 		return *this;
 	}
 };
@@ -55,7 +58,7 @@ struct ft::pair
 #include <iostream>
 
 template <typename T1, typename T2>
-std::ostream& operator<<(std::ostream& os, const ft::pair<T1, T2>& p)
+std::ostream &operator<<(std::ostream &os, const ft::pair<T1, T2> &p)
 {
 	os << "(" << p.first << ", " << p.second << ")";
 	return os;

@@ -101,7 +101,7 @@ class ft::VectorIterator
 {
 public:
 	typedef std::random_access_iterator_tag iterator_category;
-	typedef ptrdiff_t difference_type;
+	typedef std::ptrdiff_t difference_type;
 
 	typedef T value_type;
 	typedef value_type &reference;
@@ -255,7 +255,7 @@ class ft::VectorReverseIterator
 {
 public:
 	typedef std::random_access_iterator_tag iterator_category;
-	typedef ptrdiff_t difference_type;
+	typedef std::ptrdiff_t difference_type;
 
 	typedef T value_type;
 	typedef value_type &reference;
@@ -424,23 +424,23 @@ public:
 	typedef typename allocator_type::size_type size_type;
 	typedef typename allocator_type::difference_type difference_type;
 
-	explicit Vector(const allocator_type& alloc = allocator_type()) : _data(NULL), _capacity(0), _size(0), allocator(alloc)
+	explicit Vector(const allocator_type &alloc = allocator_type()) : _data(NULL), _capacity(0), _size(0), allocator(alloc)
 	{
 	}
 
-	explicit Vector(size_type n, const value_type &val = value_type(), const allocator_type& alloc = allocator_type()) : _data(NULL), _capacity(0), _size(0), allocator(alloc)
+	explicit Vector(size_type n, const value_type &val = value_type(), const allocator_type &alloc = allocator_type()) : _data(NULL), _capacity(0), _size(0), allocator(alloc)
 	{
 		assign(n, val);
 	}
 
 	template <class InputIterator>
-	Vector(InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type()) : _data(NULL), _capacity(0), _size(0), allocator(alloc)
+	Vector(InputIterator first, InputIterator last, const allocator_type &alloc = allocator_type()) : _data(NULL), _capacity(0), _size(0), allocator(alloc)
 	{
 		typedef typename __is_integer<InputIterator>::__type Integral;
 		_init_vec(first, last, Integral());
 	}
 
-	Vector(const Vector &x, const allocator_type& alloc = allocator_type()) : _data(NULL), _capacity(0), _size(0), allocator(alloc)
+	Vector(const Vector &x, const allocator_type &alloc = allocator_type()) : _data(NULL), _capacity(0), _size(0), allocator(alloc)
 	{
 		*this = x;
 	}

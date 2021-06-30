@@ -14,10 +14,11 @@
 
 int main()
 {
-	if (LIST) lists();
-	if (VECTOR) vectors();
-	if (STACK) stacks();
-	if (QUEUE) queues();
-	if (MAP) maps();
+	if (VECTOR)
+		vectors();
+	if (STACK)
+		stacks();
+	if (MAP)
+		maps();
 	return (0);
 }

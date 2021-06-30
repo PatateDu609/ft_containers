@@ -14,39 +14,39 @@
 #define STACK_HPP
 
 #include "algorithm.hpp"
-#include "List.hpp"
+#include "Vector.hpp"
 
 namespace ft
 {
-	template <typename T, typename Container = List<T> >
+	template <typename T, typename Container = Vector<T> >
 	class Stack;
-	
+
 	template <typename T, typename Container>
-	bool operator==(const ft::Stack<T, Container>& lhs, const ft::Stack<T, Container>& rhs)
+	bool operator==(const ft::Stack<T, Container> &lhs, const ft::Stack<T, Container> &rhs)
 	{
 		return !(lhs < rhs) && !(rhs < lhs);
 	}
 
 	template <typename T, typename Container>
-	bool operator!=(const ft::Stack<T, Container>& lhs, const ft::Stack<T, Container>& rhs)
+	bool operator!=(const ft::Stack<T, Container> &lhs, const ft::Stack<T, Container> &rhs)
 	{
 		return !(lhs == rhs);
 	}
 
 	template <typename T, typename Container>
-	bool operator>(const ft::Stack<T, Container>& lhs, const ft::Stack<T, Container>& rhs)
+	bool operator>(const ft::Stack<T, Container> &lhs, const ft::Stack<T, Container> &rhs)
 	{
 		return rhs < lhs;
 	}
 
 	template <typename T, typename Container>
-	bool operator<=(const ft::Stack<T, Container>& lhs, const ft::Stack<T, Container>& rhs)
+	bool operator<=(const ft::Stack<T, Container> &lhs, const ft::Stack<T, Container> &rhs)
 	{
 		return !(lhs < rhs && lhs == rhs);
 	}
 
 	template <typename T, typename Container>
-	bool operator>=(const ft::Stack<T, Container>& lhs, const ft::Stack<T, Container>& rhs)
+	bool operator>=(const ft::Stack<T, Container> &lhs, const ft::Stack<T, Container> &rhs)
 	{
 		return !(lhs < rhs);
 	}

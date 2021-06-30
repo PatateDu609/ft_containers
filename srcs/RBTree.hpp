@@ -365,7 +365,7 @@ public:
 	}
 
 	RBTreeNode(SelfPtr parent, SelfPtr left, value_type data, SelfPtr right, Color color = BLACK) : _parent(parent), _left(left), _data(data), _right(right), _color(color),
-	_equivalent(NULL), _equivalent_root(NULL), _equivalent_last(NULL), _nb_equivalent(0)
+																									_equivalent(NULL), _equivalent_root(NULL), _equivalent_last(NULL), _nb_equivalent(0)
 	{
 	}
 
@@ -978,12 +978,12 @@ public:
 
 	ft::pair<iterator, iterator> equal_range(const_reference k)
 	{
-		return std::make_pair(lower_bound(k), upper_bound(k));
+		return ft::make_pair(lower_bound(k), upper_bound(k));
 	}
 
 	ft::pair<const_iterator, const_iterator> equal_range(const_reference k) const
 	{
-		return std::make_pair(lower_bound(k), upper_bound(k));
+		return ft::make_pair(lower_bound(k), upper_bound(k));
 	}
 
 	allocator_type get_allocator() const

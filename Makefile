@@ -1,7 +1,5 @@
-LIST			=	0
 VECTOR			=	0
 STACK			=	0
-QUEUE			=	0
 MAP				=	1
 
 DEBUG			=	0
@@ -20,15 +18,11 @@ LDFLAGS			=	-fsanitize=address -fsanitize=leak -g
 
 SRCS_BASENAME	=	main.cpp		\
 					rich.cpp		\
-					lists.cpp		\
 					vectors.cpp		\
 					stacks.cpp		\
-					queues.cpp		\
 					maps.cpp		\
 
-CFLAGS			+=	-DLIST=$(LIST)			\
-					-DVECTOR=$(VECTOR)		\
-					-DQUEUE=$(QUEUE)		\
+CFLAGS			+=	-DVECTOR=$(VECTOR)		\
 					-DSTACK=$(STACK)		\
 					-DMAP=$(MAP)			\
 					-DDEBUG=$(DEBUG)		\

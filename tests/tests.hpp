@@ -13,9 +13,7 @@
 #ifndef TESTS_HPP
 #define TESTS_HPP
 
-#include "List.hpp"
 #include "Vector.hpp"
-#include "Queue.hpp"
 #include "Stack.hpp"
 #include "Map.hpp"
 

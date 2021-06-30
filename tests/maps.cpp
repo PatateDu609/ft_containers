@@ -15,11 +15,11 @@
 void maps()
 {
 	ft::Map<int, int> m;
-	std::vector<std::pair<int, int> > v;
+	std::vector<ft::pair<int, int> > v;
 	typedef ft::Map<int, int>::iterator iterator;
 
 	for (int i = 0; i < 10; i++)
-		v.push_back(std::make_pair(i % 10, i));
+		v.push_back(ft::make_pair(i % 10, i));
 
 	m.insert(v.begin(), v.end());
 
