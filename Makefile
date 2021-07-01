@@ -1,6 +1,6 @@
-VECTOR			=	0
+VECTOR			=	1
 STACK			=	0
-MAP				=	1
+MAP				=	0
 
 DEBUG			=	0
 
