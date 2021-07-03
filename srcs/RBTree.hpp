@@ -22,7 +22,7 @@
 
 namespace ft
 {
-	template <typename T, typename Compare, typename Alloc, bool Duplicates>
+	template <typename T, typename Compare, typename Alloc>
 	class RBTree;
 
 	template <typename T>
@@ -40,6 +40,8 @@ namespace ft
 #include <vector>
 #include <algorithm>
 #include <iostream>
+#include <fstream>
+#include <string>
 
 template <typename T>
 void print_equivalent(std::ostream &os, ft::RBTreeNode<T> *node)
@@ -95,13 +97,6 @@ void print_dot(std::ostream &os, ft::RBTreeNode<T> *node, ft::RBTreeNode<T> *sen
 		print_dot(os, node->left(), sentinelStart, sentinelEnd, data);
 	}
 
-	if (!seen)
-	{
-		os << "\n";
-		print_equivalent(os, node);
-		os << "\n";
-	}
-
 	if (node->right())
 	{
 		os << "\t\"" << node << "\" -> ";
@@ -112,6 +107,20 @@ void print_dot(std::ostream &os, ft::RBTreeNode<T> *node, ft::RBTreeNode<T> *sen
 		os << " [color = sienna];\n";
 		print_dot(os, node->right(), sentinelStart, sentinelEnd, data);
 	}
+}
+
+template <typename T, typename Compare, typename Alloc>
+void dumpRBT(const ft::RBTree<T, Compare, Alloc> &rbt, const std::string &name = "rbt.dot")
+{
+	std::ofstream ofs(name.c_str());
+
+	std::cout << "\n\nSentinels :\n";
+	std::cout << "\t- start : " << rbt.getSentinelStart() << std::endl;
+	std::cout << "\t- end : " << rbt.getSentinelEnd() << std::endl;
+
+	ofs << rbt;
+
+	ofs.close();
 }
 
 #endif
@@ -359,17 +368,15 @@ private:
 	typedef Self *SelfPtr;
 
 public:
-	RBTreeNode() : _parent(NULL), _left(NULL), _right(NULL), _color(BLACK),
-				   _equivalent(NULL), _equivalent_root(NULL), _equivalent_last(NULL), _nb_equivalent(0)
+	RBTreeNode() : _parent(NULL), _left(NULL), _right(NULL), _color(BLACK)
 	{
 	}
 
-	RBTreeNode(SelfPtr parent, SelfPtr left, value_type data, SelfPtr right, Color color = BLACK) : _parent(parent), _left(left), _data(data), _right(right), _color(color),
-																									_equivalent(NULL), _equivalent_root(NULL), _equivalent_last(NULL), _nb_equivalent(0)
+	RBTreeNode(SelfPtr parent, SelfPtr left, value_type data, SelfPtr right, Color color = BLACK) : _parent(parent), _left(left), _data(data), _right(right), _color(color)
 	{
 	}
 
-	RBTreeNode(const_reference data) : _parent(NULL), _left(NULL), _data(data), _right(NULL), _color(BLACK), _equivalent(NULL), _equivalent_root(NULL), _equivalent_last(NULL), _nb_equivalent(0)
+	RBTreeNode(const_reference data) : _parent(NULL), _left(NULL), _data(data), _right(NULL), _color(BLACK)
 	{
 	}
 
@@ -381,7 +388,6 @@ public:
 	~RBTreeNode()
 	{
 		_data.~value_type();
-		delete _equivalent;
 	}
 
 	RBTreeNode &operator=(const Self &other)
@@ -391,10 +397,6 @@ public:
 		_data = other._data;
 		_right = other._right;
 		_color = other._color;
-		_equivalent = other._equivalent;
-		_equivalent_root = other._equivalent_root;
-		_equivalent_last = other._equivalent_last;
-		_nb_equivalent = other._nb_equivalent;
 		return *this;
 	}
 
@@ -484,48 +486,19 @@ public:
 			leftRotate(root);
 	}
 
-	SelfPtr equivalent() const
-	{
-		return _equivalent;
-	}
-
-	SelfPtr equivalent_root() const
-	{
-		return _equivalent_root;
-	}
-
-	SelfPtr equivalent_last() const
-	{
-		return _equivalent_last;
-	}
-
-	size_type duplicates() const
-	{
-		return _nb_equivalent;
-	}
-
 	static SelfPtr successor(SelfPtr node, const SelfPtr sentinel)
 	{
-		if (node->_equivalent_root && node != node->_equivalent_root)
-			return node->_parent;
-		if (node->_right)
+		if (node->_right && node->_right != sentinel)
 			return min(node->_right, sentinel);
 		if (node == node->_parent->_left)
-			return node->_parent->_equivalent ? node->_parent->_equivalent_last : node->_parent;
-		return node->grand_father()->_equivalent ? node->grand_father()->_equivalent_last : node->grand_father();
+			return node->_parent;
+		return node->_parent->_parent;
 	}
 
 	static SelfPtr predecessor(SelfPtr node, const SelfPtr sentinel)
 	{
-		if (node->_equivalent_last && node != node->_equivalent_last)
-			return node->_equivalent;
-		if (node->_equivalent_last == node)
-			node = node->_equivalent_root;
 		if (node->_left)
-		{
-			SelfPtr max = Self::max(node->_left, sentinel);
-			return max->_equivalent_root ? max->_equivalent_root : max;
-		}
+			return Self::max(node->_left, sentinel);
 		if (node == node->_parent->_right)
 			return node->_parent;
 		return node->grand_father();
@@ -537,7 +510,7 @@ public:
 
 		while (current->_left && current->_left != sentinel)
 			current = current->_left;
-		return current->_equivalent ? current->_equivalent_last : current;
+		return current;
 	}
 
 	static SelfPtr max(SelfPtr node, const SelfPtr sentinel)
@@ -546,75 +519,7 @@ public:
 
 		while (current->_right && current->_right != sentinel)
 			current = current->_right;
-		return current->_equivalent ? current->_equivalent_last : current;
-	}
-
-	void add_equivalent(SelfPtr node)
-	{
-		SelfPtr old = _equivalent_last;
-		_equivalent_last = node;
-
-		node->_equivalent_root = _equivalent_root;
-		node->_equivalent_last = _equivalent_last;
-		_nb_equivalent++;
-		node->_nb_equivalent = _nb_equivalent;
-
-		if (_equivalent == NULL)
-		{
-			_equivalent_root = this;
-			_equivalent = node;
-			node->_parent = this;
-			node->_equivalent_root = _equivalent_root;
-			return;
-		}
-		node->_parent = old;
-		old->_equivalent = node;
-		old->_equivalent_last = node;
-	}
-
-	void remove_equivalents(SelfPtr oldPlace)
-	{
-		delete _equivalent;
-
-		_equivalent = oldPlace->_equivalent;
-		_equivalent_last = oldPlace->_equivalent_last;
-		_equivalent_root = _equivalent ? this : NULL;
-
-		if (_equivalent)
-			_equivalent->_parent = this;
-
-		oldPlace->_equivalent = NULL;
-	}
-
-	SelfPtr remove_itself()
-	{
-		SelfPtr old = _equivalent;
-		swap(_data, old->_data);
-		remove_equivalent();
-		return old;
-	}
-
-	void remove_equivalent()
-	{
-		SelfPtr old = _equivalent;
-		_nb_equivalent--;
-
-		if (!_nb_equivalent)
-		{
-			_equivalent_root = NULL;
-			_equivalent_last = NULL;
-			_equivalent = NULL;
-			return;
-		}
-
-		_equivalent = old->_equivalent;
-		if (_equivalent)
-			_equivalent->_parent = this;
-
-		if (old == _equivalent_last)
-			_equivalent_last = this;
-
-		old->_equivalent = NULL;
+		return current;
 	}
 
 #if defined DEBUG && DEBUG == 1
@@ -631,9 +536,6 @@ public:
 		os << "right : " << _right << std::endl;
 		os << "father : " << _parent << std::endl;
 		os << "data : " << _data << std::endl;
-		os << "equivalent : " << _equivalent << std::endl;
-		os << "equivalent root : " << _equivalent_root << std::endl;
-		os << "equivalent last : " << _equivalent_last << std::endl;
 	}
 
 #endif
@@ -644,11 +546,6 @@ private:
 	value_type _data;
 	SelfPtr _right;
 	Color _color;
-
-	SelfPtr _equivalent;
-	SelfPtr _equivalent_root;
-	SelfPtr _equivalent_last;
-	size_type _nb_equivalent;
 
 	void rightRotate(SelfPtr &root)
 	{
@@ -692,7 +589,7 @@ private:
 	}
 };
 
-template <typename T, typename Compare, typename Alloc, bool Duplicates>
+template <typename T, typename Compare, typename Alloc>
 class ft::RBTree
 {
 public:
@@ -722,7 +619,7 @@ public:
 		init(comp);
 	}
 
-	RBTree(const RBTree &other)
+	RBTree(const RBTree &other) : _comp(other._comp)
 	{
 		allocator = other.allocator;
 		init(other._comp);
@@ -754,8 +651,7 @@ public:
 	{
 		if (empty())
 			return iterator(_root, _sentinelStart, _sentinelEnd);
-		return iterator(_sentinelStart->father()->equivalent() ? _sentinelStart->father()->equivalent_last() : _sentinelStart->father(),
-						_sentinelStart, _sentinelEnd);
+		return iterator(_sentinelStart->father(), _sentinelStart, _sentinelEnd);
 	}
 
 	iterator end()
@@ -767,8 +663,7 @@ public:
 	{
 		if (empty())
 			return const_iterator(_root, _sentinelStart, _sentinelEnd);
-		return const_iterator(_sentinelStart->father()->equivalent() ? _sentinelStart->father()->equivalent_last() : _sentinelStart->father(),
-							  _sentinelStart, _sentinelEnd);
+		return const_iterator(_sentinelStart->father(), _sentinelStart, _sentinelEnd);
 	}
 
 	const_iterator end() const
@@ -801,24 +696,24 @@ public:
 	iterator insert(const_reference val)
 	{
 		Node *node = newNode(val);
-		bool dup = false;
 
 		if (_root == _sentinelEnd || _root == NULL)
-			_root = __insert(_root, node, dup);
-		else
-			__insert(_root, node, dup);
+		{
+			_root = __insert(_root, node);
+			return iterator(_root, _sentinelStart, _sentinelEnd);
+		}
+
+		node->recolor();
+		__insert(_root, node);
+		//if ()
+		//return iterator(find);
 		_size++;
 
-		if (!dup)
-		{
-			node->recolor();
-			__fix_insertion(node);
-		}
-		else if (!Duplicates)
-		{
-			destroyNode(node);
-			return find(val);
-		}
+		if (!node->grand_father())
+			return iterator(node, _sentinelStart, _sentinelEnd);
+
+		__fix_insertion(node);
+
 		return iterator(node, _sentinelStart, _sentinelEnd);
 	}
 
@@ -831,7 +726,6 @@ public:
 
 	iterator insert(iterator hint, const_reference val)
 	{
-		// TODO: use hint
 		(void)hint;
 		return insert(val);
 	}
@@ -839,38 +733,27 @@ public:
 	size_type erase(const_reference val)
 	{
 		if (_root == _sentinelEnd)
-			return (0);
+			return 0;
 
 		Node *v = __find(_root, val);
 
 		if (!v)
-			return (0);
+			return 0;
 
-		size_type result = v->duplicates() + 1;
 		__erase(v);
 
-		_size -= result;
+		_size--;
 		if (empty())
 			clear();
-		return result;
+		return 1;
 	}
 
 	void erase(iterator it)
 	{
 		Node *node = it.ptr();
 
-		if (!node->duplicates())
-		{
-			__erase(node);
-			_size--;
-			return;
-		}
-		else if (node == node->equivalent_root())
-			node = node->remove_itself();
-		else
-			node->father()->remove_equivalent();
-
-		delete node;
+		__erase(node);
+		_size--;
 	}
 
 	void erase(iterator first, iterator last)
@@ -907,7 +790,7 @@ public:
 
 	size_type max_size() const
 	{
-		return std::numeric_limits<difference_type>().max() / sizeof(Node);
+		return allocator_node.max_size();
 	}
 
 	bool empty() const
@@ -937,7 +820,7 @@ public:
 	size_type count(const_reference val) const
 	{
 		Node *result = __find(_root, val);
-		return result ? result->duplicates() + 1 : 0;
+		return result ? 1 : 0;
 	}
 
 	iterator lower_bound(const_reference k)
@@ -1066,7 +949,7 @@ private:
 	{
 		bool isEq = false;
 
-		if (!_comp(val, node->data()) && !_comp(node->data(), val))
+		if (node && !_comp(val, node->data()) && !_comp(node->data(), val))
 			isEq = true;
 
 		if (node == NULL || node == _sentinelStart || node == _sentinelEnd || isEq)
@@ -1076,24 +959,20 @@ private:
 		return __find(node->left(), val);
 	}
 
-	Node *__insert(Node *node, Node *newNode, bool &dup)
+	Node *__insert(Node *node, Node *newNode)
 	{
 		Node *target = NULL, *x = node;
 
 		while (x != NULL && x != _sentinelStart && x != _sentinelEnd)
 		{
+			// Don't insert anything if duplicates
 			target = x;
 			if (_comp(newNode->data(), x->data()))
 				x = x->left();
 			else if (_comp(x->data(), newNode->data()))
 				x = x->right();
 			else
-			{
-				dup = true;
-				if (Duplicates)
-					x->add_equivalent(newNode);
-				return node;
-			}
+				return NULL;
 		}
 
 		if (!target)
@@ -1131,31 +1010,59 @@ private:
 
 	void __fix_insertion(Node *node)
 	{
-		while (node && node != _root && node->color() == Node::RED && node->father()->color() == Node::RED)
+		while (node->father()->color() == Node::RED)
 		{
-			if (node->uncle() && node->uncle()->color() == Node::RED)
-			{
-				node->father()->recolor();
-				node->uncle()->recolor();
-				node->grand_father()->recolor();
+			Node *father = node->father();
+			Node *grand_father = node->grand_father();
+			Node *uncle = node->uncle();
 
-				node = node->grand_father();
+			if (father == grand_father->right())
+			{
+				if (uncle && uncle->color() == Node::RED)
+				{
+					uncle->color() = father->color() = Node::BLACK;
+					grand_father->color() = Node::RED;
+					node = grand_father;
+				}
+				else
+				{
+					if (node == father->left())
+					{
+						node = father;
+						node->rotate(Node::RIGHT, _root);
+						father = node->father();
+						grand_father = node->grand_father();
+					}
+					father->color() = Node::BLACK;
+					grand_father->color() = Node::RED;
+					grand_father->rotate(Node::LEFT, _root);
+				}
 			}
 			else
 			{
-				bool rel_grand_father = node->grand_father()->left() == node->father();
-				bool rel_father = node->father()->left() == node;
-
-				if (rel_grand_father && rel_father)
-					__insert_left_left_rotation(node);
-				else if (rel_grand_father && !rel_father)
-					__insert_left_right_rotation(node);
-				else if (!rel_grand_father && !rel_father)
-					__insert_right_right_rotation(node);
+				if (uncle && uncle->color() == Node::RED)
+				{
+					uncle->color() = father->color() = Node::RED;
+					grand_father->color() = Node::RED;
+					node = grand_father;
+				}
 				else
-					__insert_right_left_rotation(node);
-				node = node->father();
+				{
+					if (node == father->right())
+					{
+						node = father;
+						node->rotate(Node::LEFT, _root);
+						father = node->father();
+						grand_father = node->grand_father();
+					}
+					father->color() = Node::BLACK;
+					grand_father->color() = Node::RED;
+					grand_father->rotate(Node::RIGHT, _root);
+				}
 			}
+
+			if (node == _root)
+				break;
 		}
 
 		_root->color() = Node::BLACK;
@@ -1200,10 +1107,7 @@ private:
 	Node *__BST_erase(Node *x) // Return the target erase
 	{
 		if (x->left() && x->right() && x->left() != _sentinelStart && x->right() != _sentinelEnd) // If node is internal node
-		{
-			Node *min = Node::min(x->right(), _sentinelStart);
-			return min->equivalent_root() ? min->equivalent_root() : min;
-		}
+			return Node::min(x->right(), _sentinelStart);
 		if (x->left() && x->left() != _sentinelStart) // If node has only left child
 			return x->left();
 		return x->right() == _sentinelEnd ? NULL : x->right(); // Other cases (only right child and no child at all)
@@ -1227,9 +1131,8 @@ private:
 			return u;
 		}
 
-		// v is internal node, therefore swap u and v and recurse
+		// v is internal node, so swap u and v and recurse
 		ft::swap(u->data(), v->data());
-		v->remove_equivalents(u);
 		return __erase(u);
 	}
 
@@ -1379,11 +1282,11 @@ private:
 
 #if defined DEBUG && DEBUG == 1
 
-	friend std::ostream &operator<<(std::ostream &os, const ft::RBTree<T, Compare, Alloc, Duplicates> &rbt)
+	friend std::ostream &operator<<(std::ostream &os, const ft::RBTree<T, Compare, Alloc> &rbt)
 	{
 		using std::endl;
 
-		typename ft::RBTree<T, Compare, Alloc, Duplicates>::Node *root = rbt._root;
+		typename ft::RBTree<T, Compare, Alloc>::Node *root = rbt._root;
 
 		os << "digraph Tree {" << endl;
 		if (!root)
@@ -1406,26 +1309,5 @@ private:
 
 #endif
 };
-
-#if defined DEBUG && DEBUG == 1
-
-#include <fstream>
-#include <string>
-
-template <typename T, typename Compare, typename Alloc, bool Duplicates>
-void dumpRBT(const ft::RBTree<T, Compare, Alloc, Duplicates> &rbt, const std::string &name = "rbt.dot")
-{
-	std::ofstream ofs(name.c_str());
-
-	std::cout << "\n\nSentinels :\n";
-	std::cout << "\t- start : " << rbt.getSentinelStart() << std::endl;
-	std::cout << "\t- end : " << rbt.getSentinelEnd() << std::endl;
-
-	ofs << rbt;
-
-	ofs.close();
-}
-
-#endif
 
 #endif

@@ -1,8 +1,8 @@
-VECTOR			=	1
+VECTOR			=	0
 STACK			=	0
-MAP				=	0
+MAP				=	1
 
-DEBUG			=	0
+DEBUG			=	1
 
 NAME			=	containers
 

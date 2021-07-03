@@ -51,7 +51,7 @@ public:
 	};
 
 private:
-	typedef RBTree<value_type, value_compare, allocator_type, false> Tree_type;
+	typedef RBTree<value_type, value_compare, allocator_type> Tree_type;
 
 public:
 	typedef typename Tree_type::reference reference;

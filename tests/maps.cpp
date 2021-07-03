@@ -14,30 +14,21 @@
 
 void maps()
 {
+	//srand(time(0));
 	ft::Map<int, int> m;
 	std::vector<ft::pair<int, int> > v;
 	typedef ft::Map<int, int>::iterator iterator;
 
 	for (int i = 0; i < 10; i++)
-		v.push_back(ft::make_pair(i % 10, i));
+		v.push_back(ft::make_pair(rand(), rand()));
 
 	m.insert(v.begin(), v.end());
 
-	std::cout << "before erase\n";
-	for (iterator it = m.begin(); it != m.end(); it++)
-		std::cout << it->first << " -> " << it->second << "\n";
-
 #if defined(DEBUG) && DEBUG == 1
-	m.dump_tree("map_before_erase.dot");
+	m.dump_tree("map1.dot");
 #endif
 
-	m.erase(m.find(6), ++(++m.find(6)));
-
-#if defined(DEBUG) && DEBUG == 1
-	m.dump_tree("map_after_erase.dot");
-#endif
-
-	std::cout << "after erase, size : " << m.size() << "\n";
-	for (iterator it = m.begin(); it != m.end(); it++)
+	size_t i = 0;
+	for (iterator it = m.begin(); i < v.size() && it != m.end(); it++, i++)
 		std::cout << it->first << " -> " << it->second << "\n";
 }
