@@ -13,257 +13,257 @@
 #ifndef MAP_HPP
 #define MAP_HPP
 
-#include "RBTree.hpp"
+//#include "RBTree.hpp"
 #include "MapUtils.hpp"
 
-namespace ft
-{
-	template <typename Key, typename T, typename Compare = less<Key>,
-			  typename Alloc = std::allocator<pair<Key, T> > >
-	class Map;
-}
+//namespace ft
+//{
+//	template <typename Key, typename T, typename Compare = less<Key>,
+//			  typename Alloc = std::allocator<pair<Key, T> > >
+//	class Map;
+//}
 
-template <typename Key, typename T, typename Compare, typename Alloc>
-class ft::Map
-{
-public:
-	typedef Key key_type;
-	typedef T mapped_type;
-	typedef pair<key_type, mapped_type> value_type;
-	typedef Alloc allocator_type;
+//template <typename Key, typename T, typename Compare, typename Alloc>
+//class ft::Map
+//{
+//public:
+//	typedef Key key_type;
+//	typedef T mapped_type;
+//	typedef pair<key_type, mapped_type> value_type;
+//	typedef Alloc allocator_type;
 
-	typedef Compare key_compare;
+//	typedef Compare key_compare;
 
-	class value_compare
-	{
-	public:
-		value_compare(const key_compare &compare) : _comp(compare)
-		{
-		}
+//	class value_compare
+//	{
+//	public:
+//		value_compare(const key_compare &compare) : _comp(compare)
+//		{
+//		}
 
-		bool operator()(const value_type &a, const value_type &b) const
-		{
-			return _comp(a.first, b.first);
-		}
+//		bool operator()(const value_type &a, const value_type &b) const
+//		{
+//			return _comp(a.first, b.first);
+//		}
 
-	private:
-		key_compare _comp;
-	};
+//	private:
+//		key_compare _comp;
+//	};
 
-private:
-	typedef RBTree<value_type, value_compare, allocator_type> Tree_type;
+//private:
+//	typedef RBTree<value_type, value_compare, allocator_type> Tree_type;
 
-public:
-	typedef typename Tree_type::reference reference;
-	typedef typename Tree_type::const_reference const_reference;
-	typedef typename Tree_type::pointer pointer;
-	typedef typename Tree_type::const_pointer const_pointer;
+//public:
+//	typedef typename Tree_type::reference reference;
+//	typedef typename Tree_type::const_reference const_reference;
+//	typedef typename Tree_type::pointer pointer;
+//	typedef typename Tree_type::const_pointer const_pointer;
 
-	typedef typename Tree_type::iterator iterator;
-	typedef typename Tree_type::const_iterator const_iterator;
-	typedef typename Tree_type::reverse_iterator reverse_iterator;
-	typedef typename Tree_type::const_reverse_iterator const_reverse_iterator;
+//	typedef typename Tree_type::iterator iterator;
+//	typedef typename Tree_type::const_iterator const_iterator;
+//	typedef typename Tree_type::reverse_iterator reverse_iterator;
+//	typedef typename Tree_type::const_reverse_iterator const_reverse_iterator;
 
-	typedef typename Tree_type::difference_type difference_type;
-	typedef typename Tree_type::size_type size_type;
+//	typedef typename Tree_type::difference_type difference_type;
+//	typedef typename Tree_type::size_type size_type;
 
-	explicit Map(const key_compare &comp = key_compare(), const allocator_type &alloc = allocator_type()) : _tree(comp, alloc), _comp(comp)
-	{
-	}
+//	explicit Map(const key_compare &comp = key_compare(), const allocator_type &alloc = allocator_type()) : _tree(comp, alloc), _comp(comp)
+//	{
+//	}
 
-	template <typename InputIterator>
-	Map(InputIterator first, InputIterator last, const key_compare &comp = key_compare(), const allocator_type &alloc = allocator_type()) : _tree(first, last, value_compare(comp), alloc), _comp(comp)
-	{
-	}
+//	template <typename InputIterator>
+//	Map(InputIterator first, InputIterator last, const key_compare &comp = key_compare(), const allocator_type &alloc = allocator_type()) : _tree(first, last, value_compare(comp), alloc), _comp(comp)
+//	{
+//	}
 
-	Map(const Map &other) : _tree(other._tree), _comp(other._comp)
-	{
-	}
+//	Map(const Map &other) : _tree(other._tree), _comp(other._comp)
+//	{
+//	}
 
-	~Map()
-	{
-	}
+//	~Map()
+//	{
+//	}
 
-	Map &operator=(const Map &other)
-	{
-		_tree = other._tree;
-		_comp = other._comp;
-	}
+//	Map &operator=(const Map &other)
+//	{
+//		_tree = other._tree;
+//		_comp = other._comp;
+//	}
 
-	iterator begin()
-	{
-		return _tree.begin();
-	}
+//	iterator begin()
+//	{
+//		return _tree.begin();
+//	}
 
-	iterator end()
-	{
-		return _tree.end();
-	}
+//	iterator end()
+//	{
+//		return _tree.end();
+//	}
 
-	const_iterator begin() const
-	{
-		return _tree.begin();
-	}
+//	const_iterator begin() const
+//	{
+//		return _tree.begin();
+//	}
 
-	const_iterator end() const
-	{
-		return _tree.end();
-	}
+//	const_iterator end() const
+//	{
+//		return _tree.end();
+//	}
 
-	reverse_iterator rbegin()
-	{
-		return _tree.rbegin();
-	}
+//	reverse_iterator rbegin()
+//	{
+//		return _tree.rbegin();
+//	}
 
-	reverse_iterator rend()
-	{
-		return _tree.rend();
-	}
+//	reverse_iterator rend()
+//	{
+//		return _tree.rend();
+//	}
 
-	const_reverse_iterator rbegin() const
-	{
-		return _tree.rbegin();
-	}
+//	const_reverse_iterator rbegin() const
+//	{
+//		return _tree.rbegin();
+//	}
 
-	const_reverse_iterator rend() const
-	{
-		return _tree.rend();
-	}
+//	const_reverse_iterator rend() const
+//	{
+//		return _tree.rend();
+//	}
 
-	bool empty() const
-	{
-		return _tree.empty();
-	}
+//	bool empty() const
+//	{
+//		return _tree.empty();
+//	}
 
-	size_type size() const
-	{
-		return _tree.size();
-	}
+//	size_type size() const
+//	{
+//		return _tree.size();
+//	}
 
-	size_type max_size() const
-	{
-		return _tree.max_size();
-	}
+//	size_type max_size() const
+//	{
+//		return _tree.max_size();
+//	}
 
-	mapped_type &operator[](const key_type &k)
-	{
-		return ((insert(make_pair(k, mapped_type()))).first)->second;
-	}
+//	mapped_type &operator[](const key_type &k)
+//	{
+//		return ((insert(make_pair(k, mapped_type()))).first)->second;
+//	}
 
-	pair<iterator, bool> insert(const_reference val)
-	{
-		iterator it = _tree.find(val);
-		return make_pair(it != end() ? it : _tree.insert(val), it == end());
-	}
+//	pair<iterator, bool> insert(const_reference val)
+//	{
+//		iterator it = _tree.find(val);
+//		return make_pair(it != end() ? it : _tree.insert(val), it == end());
+//	}
 
-	iterator insert(iterator hint, const_reference val)
-	{
-		return _tree.insert(hint, val);
-	}
+//	iterator insert(iterator hint, const_reference val)
+//	{
+//		return _tree.insert(hint, val);
+//	}
 
-	template <typename InputIterator>
-	void insert(InputIterator first, InputIterator last)
-	{
-		_tree.insert(first, last);
-	}
+//	template <typename InputIterator>
+//	void insert(InputIterator first, InputIterator last)
+//	{
+//		_tree.insert(first, last);
+//	}
 
-	void erase(iterator position)
-	{
-		_tree.erase(position);
-	}
+//	void erase(iterator position)
+//	{
+//		_tree.erase(position);
+//	}
 
-	size_type erase(const key_type &t)
-	{
-		return _tree.erase(make_pair(t, mapped_type()));
-	}
+//	size_type erase(const key_type &t)
+//	{
+//		return _tree.erase(make_pair(t, mapped_type()));
+//	}
 
-	void erase(iterator first, iterator last)
-	{
-		return _tree.erase(first, last);
-	}
+//	void erase(iterator first, iterator last)
+//	{
+//		return _tree.erase(first, last);
+//	}
 
-	void swap(Map &other)
-	{
-		_tree.swap(other.swap());
-	}
+//	void swap(Map &other)
+//	{
+//		_tree.swap(other.swap());
+//	}
 
-	void clear()
-	{
-		_tree.clear();
-	}
+//	void clear()
+//	{
+//		_tree.clear();
+//	}
 
-	key_compare key_comp() const
-	{
-		return _comp;
-	}
+//	key_compare key_comp() const
+//	{
+//		return _comp;
+//	}
 
-	value_compare value_comp() const
-	{
-		return value_compare(_comp);
-	}
+//	value_compare value_comp() const
+//	{
+//		return value_compare(_comp);
+//	}
 
-	iterator find(const key_type &t)
-	{
-		return _tree.find(make_pair(t, mapped_type()));
-	}
+//	iterator find(const key_type &t)
+//	{
+//		return _tree.find(make_pair(t, mapped_type()));
+//	}
 
-	const_iterator find(const key_type &t) const
-	{
-		return _tree.find(make_pair(t, mapped_type()));
-	}
+//	const_iterator find(const key_type &t) const
+//	{
+//		return _tree.find(make_pair(t, mapped_type()));
+//	}
 
-	size_type count(const key_type &t) const
-	{
-		return _tree.count(make_pair(t, mapped_type()));
-	}
+//	size_type count(const key_type &t) const
+//	{
+//		return _tree.count(make_pair(t, mapped_type()));
+//	}
 
-	iterator lower_bound(const key_type &t)
-	{
-		return _tree.lower_bound(make_pair(t, mapped_type()));
-	}
+//	iterator lower_bound(const key_type &t)
+//	{
+//		return _tree.lower_bound(make_pair(t, mapped_type()));
+//	}
 
-	const_iterator lower_bound(const key_type &t) const
-	{
-		return _tree.lower_bound(make_pair(t, mapped_type()));
-	}
+//	const_iterator lower_bound(const key_type &t) const
+//	{
+//		return _tree.lower_bound(make_pair(t, mapped_type()));
+//	}
 
-	iterator upper_bound(const key_type &t)
-	{
-		return _tree.upper_bound(make_pair(t, mapped_type()));
-	}
+//	iterator upper_bound(const key_type &t)
+//	{
+//		return _tree.upper_bound(make_pair(t, mapped_type()));
+//	}
 
-	const_iterator upper_bound(const key_type &t) const
-	{
-		return _tree.upper_bound(make_pair(t, mapped_type()));
-	}
+//	const_iterator upper_bound(const key_type &t) const
+//	{
+//		return _tree.upper_bound(make_pair(t, mapped_type()));
+//	}
 
-	iterator equal_range(const key_type &t)
-	{
-		return _tree.equal_range(make_pair(t, mapped_type()));
-	}
+//	iterator equal_range(const key_type &t)
+//	{
+//		return _tree.equal_range(make_pair(t, mapped_type()));
+//	}
 
-	const_iterator equal_range(const key_type &t) const
-	{
-		return _tree.equal_range(make_pair(t, mapped_type()));
-	}
+//	const_iterator equal_range(const key_type &t) const
+//	{
+//		return _tree.equal_range(make_pair(t, mapped_type()));
+//	}
 
-	allocator_type get_allocator() const
-	{
-		return _tree.get_allocator();
-	}
+//	allocator_type get_allocator() const
+//	{
+//		return _tree.get_allocator();
+//	}
 
-#if defined(DEBUG) && DEBUG == 1
+//#if defined(DEBUG) && DEBUG == 1
 
-	void dump_tree(const std::string &filename) const
-	{
-		dumpRBT(_tree, filename);
-	}
+//	void dump_tree(const std::string &filename) const
+//	{
+//		dumpRBT(_tree, filename);
+//	}
 
-#endif
+//#endif
 
-private:
-	Tree_type _tree;
-	key_compare _comp;
-};
+//private:
+//	Tree_type _tree;
+//	key_compare _comp;
+//};
 
 #endif

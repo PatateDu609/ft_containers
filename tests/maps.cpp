@@ -11,24 +11,28 @@
 /* ************************************************************************** */
 
 #include "tests.hpp"
+#include "RBTree.hpp"
 
 void maps()
 {
-	//srand(time(0));
-	ft::Map<int, int> m;
-	std::vector<ft::pair<int, int> > v;
-	typedef ft::Map<int, int>::iterator iterator;
+	ft::RBTree<int> rbt;
 
-	for (int i = 0; i < 10; i++)
-		v.push_back(ft::make_pair(rand(), rand()));
+	rbt.insert(8);
+	rbt.insert(3);
+	rbt.insert(1);
+	rbt.insert(6);
+	rbt.insert(10);
+	rbt.insert(14);
+	rbt.insert(13);
+	rbt.insert(7);
+	rbt.insert(4);
+	rbt.insert(55);
+	rbt.insert(54);
+	rbt.insert(407);
+	rbt.insert(154);
+	rbt.insert(100);
+	rbt.insert(5252);
 
-	m.insert(v.begin(), v.end());
-
-#if defined(DEBUG) && DEBUG == 1
-	m.dump_tree("map1.dot");
-#endif
-
-	size_t i = 0;
-	for (iterator it = m.begin(); i < v.size() && it != m.end(); it++, i++)
-		std::cout << it->first << " -> " << it->second << "\n";
+	std::cout << "size : " << rbt.size() << ", empty ? " << rbt.empty() << std::endl;
+	rbt.dump("done.dot");
 }

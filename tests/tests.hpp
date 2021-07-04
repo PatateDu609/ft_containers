@@ -17,11 +17,11 @@
 #include "Stack.hpp"
 #include "Map.hpp"
 
-#include <list>
 #include <vector>
-#include <queue>
 #include <stack>
 #include <map>
+
+#include <set>
 
 #include <iostream>
 #include <typeinfo>
@@ -44,9 +44,7 @@ std::string color(bool reset, int r = 0, int g = 0, int b = 0, bool fg = true);
 std::string construct(int number);
 std::string rich(Rich mode);
 void title(std::string str, int level = 0);
-void lists();
 void vectors();
-void queues();
 void stacks();
 void maps();
 
