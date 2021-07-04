@@ -33,6 +33,7 @@ void maps()
 	rbt.insert(100);
 	rbt.insert(5252);
 
-	std::cout << "size : " << rbt.size() << ", empty ? " << rbt.empty() << std::endl;
 	rbt.dump("done.dot");
+
+	rbt.print_tree();
 }

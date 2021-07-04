@@ -6,7 +6,7 @@
 /*   By: gboucett <gboucett@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/03 14:54:28 by gboucett          #+#    #+#             */
-/*   Updated: 2021/07/04 15:37:08 by gboucett         ###   ########.fr       */
+/*   Updated: 2021/07/04 20:34:11 by gboucett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@
 #endif
 
 #include "algorithm.hpp"
+#include "Iterator.hpp"
 
 namespace ft
 {
@@ -40,6 +41,12 @@ namespace ft
 
 	template <typename T, typename Compare = ft::less<T>, typename Alloc = std::allocator<T> >
 	class RBTree;
+
+	template <typename T>
+	class RBTreeIterator;
+
+	template <typename T>
+	class RBTreeConstIterator;
 }
 
 template <typename T>
@@ -177,6 +184,214 @@ struct ft::RBTreeNode
 		y->right = x;
 		x->parent = y;
 	}
+
+	static Node *successor(Node *n, Node *start)
+	{
+		if (n->right)
+			return min(n->right, start);
+
+		Node *parent = n->parent;
+		while (parent != NULL && n == parent->right)
+		{
+			n = parent;
+			parent = n->parent;
+		}
+		return parent;
+	}
+
+	static Node *predecessor(Node *n, Node *end)
+	{
+		if (n->left)
+			return max(n->left, end);
+
+		Node *parent = n->parent;
+		while (parent != NULL && n == parent->left)
+		{
+			n = parent;
+			parent = n->parent;
+		}
+		return parent;
+	}
+};
+
+template <typename T>
+class ft::RBTreeIterator
+{
+public:
+	typedef std::bidirectional_iterator_tag iterator_category;
+
+	typedef T value_type;
+	typedef value_type &reference;
+	typedef value_type *pointer;
+
+	typedef std::ptrdiff_t difference_type;
+
+private:
+	typedef RBTreeNode<T> Node;
+
+public:
+	RBTreeIterator(Node *n = NULL, Node *sstart = NULL, Node *send = NULL) : current(n), start(sstart), end(send)
+	{
+	}
+
+	RBTreeIterator(const RBTreeIterator &other)
+	{
+		*this = other;
+	}
+
+	RBTreeIterator &operator=(const RBTreeIterator &other)
+	{
+		current = other.current;
+		start = other.start;
+		end = other.end;
+
+		return *this;
+	}
+
+	~RBTreeIterator()
+	{
+	}
+
+	bool operator==(const RBTreeIterator &b) const
+	{
+		return current == b.current;
+	}
+
+	bool operator!=(const RBTreeIterator &b) const
+	{
+		return !(*this == b);
+	}
+
+	reference operator*() const
+	{
+		return current->data;
+	}
+
+	pointer operator->() const
+	{
+		return current->data_addr();
+	}
+
+	RBTreeIterator &operator++() // ++it
+	{
+		current = Node::successor(current, start);
+		return *this;
+	}
+
+	RBTreeIterator operator++(int) // it++
+	{
+		RBTreeIterator it(*this);
+		current = Node::successor(current, start);
+		return it;
+	}
+
+	RBTreeIterator &operator--() // --it
+	{
+		current = Node::predecessor(current, end);
+		return *this;
+	}
+
+	RBTreeIterator operator--(int) // it--
+	{
+		RBTreeIterator it(*this);
+		current = Node::predecessor(current, end);
+		return it;
+	}
+
+private:
+	Node *current;
+	Node *start;
+	Node *end;
+};
+
+template <typename T>
+class ft::RBTreeConstIterator
+{
+public:
+	typedef std::bidirectional_iterator_tag iterator_category;
+
+	typedef T value_type;
+	typedef const value_type &reference;
+	typedef const value_type *pointer;
+
+	typedef std::ptrdiff_t difference_type;
+
+private:
+	typedef RBTreeNode<T> Node;
+
+public:
+	RBTreeConstIterator(Node *n = NULL, Node *sstart = NULL, Node *send = NULL) : current(n), start(sstart), end(send)
+	{
+	}
+
+	RBTreeConstIterator(const RBTreeConstIterator &other)
+	{
+		*this = other;
+	}
+
+	RBTreeConstIterator &operator=(const RBTreeConstIterator &other)
+	{
+		current = other.current;
+		start = other.start;
+		end = other.end;
+
+		return *this;
+	}
+
+	~RBTreeConstIterator()
+	{
+	}
+
+	bool operator==(const RBTreeConstIterator &b) const
+	{
+		return current == b.current;
+	}
+
+	bool operator!=(const RBTreeConstIterator &b) const
+	{
+		return !(*this == b);
+	}
+
+	reference operator*() const
+	{
+		return current->data;
+	}
+
+	pointer operator->() const
+	{
+		return current->data_addr();
+	}
+
+	RBTreeConstIterator &operator++() // ++it
+	{
+		current = Node::successor(current, start);
+		return *this;
+	}
+
+	RBTreeConstIterator operator++(int) // it++
+	{
+		RBTreeConstIterator it(*this);
+		current = Node::successor(current, start);
+		return it;
+	}
+
+	RBTreeConstIterator &operator--() // --it
+	{
+		current = Node::predecessor(current, end);
+		return *this;
+	}
+
+	RBTreeConstIterator operator--(int) // it--
+	{
+		RBTreeConstIterator it(*this);
+		current = Node::predecessor(current, end);
+		return it;
+	}
+
+private:
+	Node *current;
+	Node *start;
+	Node *end;
 };
 
 template <typename T, typename Compare, typename Alloc>
@@ -199,9 +414,58 @@ private:
 	typedef RBTreeNode<value_type> Node;
 
 public:
+	typedef RBTreeIterator<value_type> iterator;
+	typedef RBTreeConstIterator<value_type> const_iterator;
+	typedef ft::ReverseIterator<iterator> reverse_iterator;
+	typedef ft::ReverseIterator<const_iterator> const_reverse_iterator;
+
 	RBTree(const compare_type &comp = compare_type(), const allocator_type &alloc = allocator_type()) : root(NULL), _size(0), sentinelStart(NULL), sentinelEnd(NULL), _comp(comp), _alloc(alloc)
 	{
 		__init_tree();
+	}
+
+	iterator begin()
+	{
+		if (empty())
+			return end();
+		return iterator(sentinelStart->parent, sentinelStart, sentinelEnd);
+	}
+
+	iterator end()
+	{
+		return iterator(sentinelEnd, sentinelStart, sentinelEnd);
+	}
+
+	const_iterator begin() const
+	{
+		if (empty())
+			return end();
+		return const_iterator(sentinelStart->parent, sentinelStart, sentinelEnd);
+	}
+
+	const_iterator end() const
+	{
+		return const_iterator(sentinelEnd, sentinelStart, sentinelEnd);
+	}
+
+	reverse_iterator rbegin()
+	{
+		return reverse_iterator(end());
+	}
+
+	reverse_iterator rend()
+	{
+		return reverse_iterator(begin());
+	}
+
+	const_reverse_iterator rbegin() const
+	{
+		return const_reverse_iterator(end());
+	}
+
+	const_reverse_iterator rend() const
+	{
+		return const_reverse_iterator(begin());
 	}
 
 	~RBTree()
@@ -283,6 +547,26 @@ public:
 			dumpTree(ofs, node->left);
 		if (node->right && node->right != sentinelEnd)
 			dumpTree(ofs, node->right);
+	}
+
+	void print_tree() const
+	{
+		{
+			const_iterator it = begin();
+
+			std::cout << *it++;
+			for (; it != end(); it++)
+				std::cout << ", " << *it;
+		}
+		std::cout << std::endl;
+		{
+			const_reverse_iterator it = rbegin();
+
+			std::cout << *it++;
+			for (size_type i = 0; i < size() && it != rend(); it++, i++)
+				std::cout << ", " << *it;
+		}
+		std::cout << std::endl;
 	}
 
 #endif
