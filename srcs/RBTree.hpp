@@ -6,7 +6,7 @@
 /*   By: gboucett <gboucett@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/03 14:54:28 by gboucett          #+#    #+#             */
-/*   Updated: 2021/07/04 20:34:11 by gboucett         ###   ########.fr       */
+/*   Updated: 2021/07/06 02:21:20 by gboucett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -424,6 +424,13 @@ public:
 		__init_tree();
 	}
 
+	~RBTree()
+	{
+		__clear();
+		destroy_node(sentinelEnd);
+		destroy_node(sentinelStart);
+	}
+
 	iterator begin()
 	{
 		if (empty())
@@ -468,13 +475,6 @@ public:
 		return const_reverse_iterator(begin());
 	}
 
-	~RBTree()
-	{
-		__clear();
-		destroy_node(sentinelEnd);
-		destroy_node(sentinelStart);
-	}
-
 	bool empty() const
 	{
 		return _size == 0;
@@ -507,7 +507,19 @@ public:
 		}
 
 		if (node->parent && node->parent->parent)
-			__rebalance_tree(node);
+			__insert_rebalance_tree(node);
+	}
+
+	size_type erase(const_reference val)
+	{
+		Node *node = __find(val);
+
+		if (!node)
+			return (0);
+
+		__bst_delete_node(node);
+
+		return (1);
 	}
 
 	void clear()
@@ -551,21 +563,23 @@ public:
 
 	void print_tree() const
 	{
-		{
-			const_iterator it = begin();
 
-			std::cout << *it++;
+		const_iterator it = begin();
+		std::cout << "Tree :";
+		if (it != end())
 			for (; it != end(); it++)
-				std::cout << ", " << *it;
-		}
+				std::cout << " " << *it;
+		else
+			std::cout << " empty";
 		std::cout << std::endl;
-		{
-			const_reverse_iterator it = rbegin();
 
-			std::cout << *it++;
-			for (size_type i = 0; i < size() && it != rend(); it++, i++)
-				std::cout << ", " << *it;
-		}
+		const_reverse_iterator rit = rbegin();
+		std::cout << "Tree :";
+		if (rit != rend())
+			for (; rit != rend(); rit++)
+				std::cout << " " << *rit;
+		else
+			std::cout << " empty";
 		std::cout << std::endl;
 	}
 
@@ -694,7 +708,7 @@ private:
 		return true; // If it is not a duplicate, insertion will go well
 	}
 
-	void __rebalance_tree(Node *node)
+	void __insert_rebalance_tree(Node *node)
 	{
 		while (node != root && node->parent->color == RED)
 		{
@@ -702,7 +716,7 @@ private:
 			Node *grand_parent = node->parent->parent;
 			Node *uncle;
 
-			if (parent == grand_parent->left)
+			if (parent == grand_parent->left) // Parent is left child
 			{
 				uncle = grand_parent->right;
 				if (uncle && uncle->color == RED)
@@ -713,7 +727,7 @@ private:
 				}
 				else
 				{
-					if (node == parent->right)
+					if (node == parent->right) // Current node is right child
 					{
 						node = parent;
 						__left_rotate(node);
@@ -723,7 +737,7 @@ private:
 					__right_rotate(node->parent->parent);
 				}
 			}
-			else
+			else // parent is right child
 			{
 				uncle = grand_parent->left;
 				if (uncle && uncle->color == RED)
@@ -734,7 +748,7 @@ private:
 				}
 				else
 				{
-					if (node == parent->left)
+					if (node == parent->left) // Current node is left child
 					{
 						node = parent;
 						__right_rotate(node);
@@ -747,6 +761,193 @@ private:
 		}
 
 		root->color = BLACK;
+	}
+
+	bool __is_null(Node *n)
+	{
+		return n == NULL || n == sentinelStart || n == sentinelEnd;
+	}
+
+	bool __is_black(Node *n)
+	{
+		return n == NULL || n->color == BLACK;
+	}
+
+	Node *__node_sibling(Node *n)
+	{
+		if (!n->parent)
+			return NULL;
+		else if (n == n->parent->left)
+			return n->parent->right;
+		else
+			return n->parent->left;
+	}
+
+	Node *__get_bst_replacement(Node *n)
+	{
+		if (!__is_null(n->left) && !__is_null(n->right))
+			return Node::successor(n, sentinelStart);
+		else if (__is_null(n->left) && __is_null(n->right))
+			return NULL;
+		else if (!__is_null(n->left))
+			return n->left;
+		else
+			return n->right;
+	}
+
+	void __bst_delete_leaf(Node *v, bool uvBlack)
+	{
+		Node *parent = v->parent;
+
+		if (v == root)
+		{
+			root = sentinelEnd;
+			sentinelEnd->parent = sentinelStart->parent = NULL; // Tree is empty
+			_size = 0;
+		}
+		else
+		{
+			if (uvBlack)
+				__delete_rebalance_tree(v);
+			else if (v == parent->left && parent->right) // check color of sibling
+				parent->right->color = RED;
+			else if (parent->left) // v is on right...
+				parent->left->color = RED;
+
+			if (v == parent->left)
+			{
+				parent->left = v->left;
+				if (v->left)
+					v->left->parent = parent;
+			}
+			else
+			{
+				parent->right = v->right;
+				if (v->right)
+					v->right->parent = parent;
+			}
+		}
+		destroy_node(v);
+	}
+
+	void __bst_delete_one_child(Node *u, Node *v, bool uvBlack)
+	{
+		Node *parent = v->parent;
+
+		if (v == root) // In this case, there is exactly 2 nodes in the tree...
+		{
+			swap(u->data, v->data);
+			v->left = sentinelStart;
+			v->right = sentinelEnd;
+			destroy_node(u); // Data swapped with v, to erase all at once...
+		}
+		else
+		{
+			if (v == parent->left) // Disconnect v from tree, and replace it with u
+				parent->left = u;
+			else
+				parent->right = u;
+			destroy_node(v);
+			u->parent = parent;
+
+			if (uvBlack)
+				__delete_rebalance_tree(u);
+			else
+				u->color = BLACK;
+		}
+	}
+
+	Node *__bst_delete_node(Node *v)
+	{
+		Node *u = __get_bst_replacement(v);
+		Node *succ = Node::successor(v, sentinelStart);
+
+		bool uvBlack = __is_black(u) && __is_black(v);
+
+		if (!u)
+		{
+			_size--;
+			__bst_delete_leaf(v, uvBlack);
+			return succ;
+		}
+		else if (__is_null(v->left) || __is_null(v->right))
+		{
+			_size--;
+			__bst_delete_one_child(u, v, uvBlack);
+			return succ;
+		}
+
+		swap(u->data, v->data);
+		__bst_delete_node(u);
+		return succ; // We want the original successor... before any swap...
+	}
+
+	void __delete_rebalance_tree(Node *x)
+	{
+		if (x == root)
+			return;
+
+		Node *sibling = __node_sibling(x), *parent = x->parent;
+		if (!sibling) // No sibling -> push black-black to parent
+		{
+			__delete_rebalance_tree(parent);
+			return;
+		}
+		if (sibling->color == RED) // sibling is red -> parent red + sibling black + rotate
+		{
+			parent->color = RED;
+			sibling->color = BLACK;
+			if (sibling == parent->left)
+				__right_rotate(parent);
+			else
+				__left_rotate(parent);
+			__delete_rebalance_tree(x);
+		}
+		else // Sibling is black...
+		{
+			if (!__is_black(sibling->left) || !__is_black(sibling->right)) // At least one red child
+			{
+				if (!__is_black(sibling->left)) // left child of sibling is red
+				{
+					if (sibling == parent->left)
+					{ // Left left
+						sibling->left->color = sibling->color;
+						sibling->color = parent->color; // pushing down color par -> sib -> child
+						__right_rotate(parent);
+					}
+					else
+					{ // left right
+						sibling->left->color = parent->color;
+						__right_rotate(sibling);
+						__left_rotate(parent);
+					}
+				}
+				else // right child of sibling is red...
+				{
+					if (sibling == parent->right) // Mirror cases...
+					{							  // Right right
+						sibling->right->color = sibling->color;
+						sibling->color = parent->color; // pushing down color par -> sib -> child
+						__left_rotate(parent);
+					}
+					else
+					{ // Right left
+						sibling->right->color = parent->color;
+						__left_rotate(sibling);
+						__right_rotate(parent);
+					}
+				}
+				parent->color = BLACK;
+			}
+			else
+			{
+				sibling->color = RED;
+				if (parent->color == BLACK)
+					__delete_rebalance_tree(parent);
+				else
+					parent->color = BLACK;
+			}
+		}
 	}
 };
 
