@@ -6,7 +6,7 @@
 /*   By: gboucett <gboucett@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/03 14:54:28 by gboucett          #+#    #+#             */
-/*   Updated: 2021/07/06 02:55:44 by gboucett         ###   ########.fr       */
+/*   Updated: 2021/07/06 03:46:00 by gboucett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -298,6 +298,11 @@ public:
 		return it;
 	}
 
+	Node *ptr()
+	{
+		return current;
+	}
+
 private:
 	Node *current;
 	Node *start;
@@ -441,6 +446,13 @@ public:
 
 	RBTree &operator=(const RBTree &other)
 	{
+		__clear();
+		if (sentinelStart)
+			destroy_node(sentinelStart);
+		if (sentinelEnd)
+			destroy_node(sentinelEnd);
+		root = sentinelStart = sentinelEnd = NULL;
+
 		if (!other.empty())
 		{
 			root = __copy_tree(other.root, NULL);
@@ -557,9 +569,65 @@ public:
 		return (1);
 	}
 
+	void erase(iterator position)
+	{
+		if (position == end())
+			return;
+
+		iterator last = position;
+		last++;
+		erase(position, last);
+	}
+
+	void erase(iterator first, iterator last)
+	{
+		if (first == end())
+			return;
+
+		if (first == begin() && last == end())
+		{
+			clear();
+			return;
+		}
+
+		size_type n = 0;
+		iterator f = first;
+		for (; f != last; f++) // Complexity n (insignificant in front of nlog(n))
+			n++;
+
+		if (n < _size / 2)
+		{
+			Node *nf = first.ptr();
+			value_type l = *last; // using l is possible thanks to the uniqueness of the values in the tree
+
+			while (nf->data != l)
+				nf = __bst_delete_node(nf);
+		}
+		else // Will regenerate tree only if more than the half of it must be erased...
+			__regenerate_tree(first, last);
+	}
+
 	void clear()
 	{
 		__clear();
+	}
+
+	iterator find(const_reference val)
+	{
+		Node *f = __find(val);
+
+		if (!f)
+			return end();
+		return iterator(f, sentinelStart, sentinelEnd);
+	}
+
+	const_iterator find(const_reference val) const
+	{
+		Node *f = __find(val);
+
+		if (!f)
+			return end();
+		return const_iterator(f, sentinelStart, sentinelEnd);
 	}
 
 	allocator_type get_allocator() const
@@ -917,7 +985,7 @@ private:
 
 		swap(u->data, v->data);
 		__bst_delete_node(u);
-		return succ; // We want the original successor... before any swap...
+		return v; // We want the position of the successor (which is v, because of the swap)
 	}
 
 	void __delete_rebalance_tree(Node *x)
@@ -986,6 +1054,28 @@ private:
 					parent->color = BLACK;
 			}
 		}
+	}
+
+	void __regenerate_tree(iterator first, iterator last) // Regenerates tree without unwanted elements
+	{
+		RBTree rbt(_comp, _alloc);
+
+		for (iterator it = begin(); it != end(); it++)
+		{
+			if (first == last || _comp(*it, *first) || _comp(*first, *it))
+				rbt.insert(*it);
+			else
+				first++;
+		}
+		rbt._clear = false; // Mandatory to block double free (rbt's destructor will not free anything)
+
+		__clear();
+		destroy_node(sentinelEnd);
+		destroy_node(sentinelStart);
+		root = rbt.root;
+		sentinelStart = rbt.sentinelStart;
+		sentinelEnd = rbt.sentinelEnd;
+		_size = rbt._size;
 	}
 
 	Node *__copy_tree(Node *n, Node *parent = NULL) // Copies tree starting from n

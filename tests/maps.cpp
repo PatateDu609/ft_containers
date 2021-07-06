@@ -33,5 +33,19 @@ void maps()
 	rbt.insert(100);
 	rbt.insert(5252);
 
+	typedef ft::RBTree<int>::iterator iterator;
+	iterator first = rbt.find(5252);
+	iterator last = rbt.find(755748);
+
+	std::cout << "Following numbers will be erased :";
+	for (iterator f = first; f != last; f++)
+		std::cout
+			<< " " << *f;
+	std::cout << std::endl;
+
+	std::cout << "size before erase : " << rbt.size() << std::endl;
+	rbt.erase(last);
+	std::cout << "size after erase : " << rbt.size() << std::endl;
+
 	rbt.dump("done.dot");
 }
