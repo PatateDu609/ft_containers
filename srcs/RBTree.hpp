@@ -6,7 +6,7 @@
 /*   By: gboucett <gboucett@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/03 14:54:28 by gboucett          #+#    #+#             */
-/*   Updated: 2021/07/06 02:21:20 by gboucett         ###   ########.fr       */
+/*   Updated: 2021/07/06 02:55:44 by gboucett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -419,16 +419,51 @@ public:
 	typedef ft::ReverseIterator<iterator> reverse_iterator;
 	typedef ft::ReverseIterator<const_iterator> const_reverse_iterator;
 
-	RBTree(const compare_type &comp = compare_type(), const allocator_type &alloc = allocator_type()) : root(NULL), _size(0), sentinelStart(NULL), sentinelEnd(NULL), _comp(comp), _alloc(alloc)
+	RBTree(const compare_type &comp = compare_type(), const allocator_type &alloc = allocator_type()) : root(NULL), _size(0), sentinelStart(NULL), sentinelEnd(NULL), _comp(comp), _alloc(alloc), _clear(true)
 	{
 		__init_tree();
 	}
 
+	RBTree(const RBTree &other) : root(NULL), _size(0), sentinelStart(NULL), sentinelEnd(NULL), _comp(other._comp), _alloc(other._alloc), _clear(true)
+	{
+		*this = other;
+	}
+
 	~RBTree()
 	{
-		__clear();
-		destroy_node(sentinelEnd);
-		destroy_node(sentinelStart);
+		if (_clear)
+		{
+			__clear();
+			destroy_node(sentinelEnd);
+			destroy_node(sentinelStart);
+		}
+	}
+
+	RBTree &operator=(const RBTree &other)
+	{
+		if (!other.empty())
+		{
+			root = __copy_tree(other.root, NULL);
+			_size = other._size;
+
+			Node *n = root;
+			while (n && n->left)
+				n = n->left;
+			sentinelStart = n;
+
+			n = root;
+			while (n && n->right)
+				n = n->right;
+			sentinelEnd = n;
+		}
+		else
+		{
+			root = sentinelEnd = create_node();
+			sentinelStart = create_node();
+			root->color = sentinelStart->color = BLACK;
+		}
+
+		return *this;
 	}
 
 	iterator begin()
@@ -592,6 +627,7 @@ private:
 	Node *sentinelEnd;
 	compare_type _comp;
 	allocator_type _alloc;
+	bool _clear;
 
 	typename allocator_type::template rebind<Node>::other allocator_node;
 
@@ -601,6 +637,8 @@ private:
 		sentinelStart = create_node();
 		sentinelEnd->color = sentinelStart->color = BLACK;
 		root = sentinelEnd;
+
+		_clear = true;
 	}
 
 	Node *create_node(const_reference val = value_type())
@@ -948,6 +986,20 @@ private:
 					parent->color = BLACK;
 			}
 		}
+	}
+
+	Node *__copy_tree(Node *n, Node *parent = NULL) // Copies tree starting from n
+	{
+		if (!n) // Hard copy of every node in the tree (including sentinels)
+			return NULL;
+
+		Node *node = create_node(n->data);
+		node->parent = parent;
+		node->color = n->color;
+		node->left = __copy_tree(n->left, node);
+		node->right = __copy_tree(n->right, node);
+
+		return node;
 	}
 };
 

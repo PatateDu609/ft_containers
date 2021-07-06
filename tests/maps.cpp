@@ -33,24 +33,5 @@ void maps()
 	rbt.insert(100);
 	rbt.insert(5252);
 
-	rbt.dump("before_delete.dot");
-
-	rbt.erase(8);
-	rbt.erase(3);
-	rbt.erase(13);
-	rbt.erase(10);
-	rbt.erase(55);
-	rbt.erase(100);
-	rbt.erase(14);
-	rbt.erase(645);
-	rbt.erase(154);
-	rbt.erase(4);
-	rbt.erase(54);
-	rbt.erase(407);
-	rbt.erase(5252);
-	rbt.erase(1);
-	rbt.erase(6);
-	rbt.erase(7);
-
-	rbt.dump("after_delete.dot");
+	rbt.dump("done.dot");
 }
