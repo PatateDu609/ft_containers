@@ -6,7 +6,7 @@
 /*   By: gboucett <gboucett@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/03 14:54:28 by gboucett          #+#    #+#             */
-/*   Updated: 2021/07/06 03:46:00 by gboucett         ###   ########.fr       */
+/*   Updated: 2021/07/06 22:39:32 by gboucett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -429,6 +429,13 @@ public:
 		__init_tree();
 	}
 
+	template <class InputIterator>
+	RBTree(InputIterator first, InputIterator last, const compare_type &comp = compare_type(), const allocator_type &alloc = allocator_type()) : root(NULL), _size(0), sentinelStart(NULL), sentinelEnd(NULL), _comp(comp), _alloc(alloc), _clear(true)
+	{
+		__init_tree();
+		insert(first, last);
+	}
+
 	RBTree(const RBTree &other) : root(NULL), _size(0), sentinelStart(NULL), sentinelEnd(NULL), _comp(other._comp), _alloc(other._alloc), _clear(true)
 	{
 		*this = other;
@@ -446,6 +453,7 @@ public:
 
 	RBTree &operator=(const RBTree &other)
 	{
+		// Reset tree before any assignation (no reset of _alloc and _comp)
 		__clear();
 		if (sentinelStart)
 			destroy_node(sentinelStart);
@@ -537,24 +545,39 @@ public:
 		return allocator_node.max_size();
 	}
 
-	void insert(const_reference val)
+	pair<iterator, bool> insert(const_reference val)
 	{
 		Node *node = create_node(val);
 
 		if (empty())
 		{
 			__insert_empty(node);
-			return;
+			return make_pair(iterator(root, sentinelStart, sentinelEnd), true);
 		}
 
-		if (!__insert_bst(node))
+		iterator it;
+		if ((it = __insert_bst(node)) != end())
 		{
 			destroy_node(node);
-			return;
+			return make_pair(it, false);
 		}
 
 		if (node->parent && node->parent->parent)
 			__insert_rebalance_tree(node);
+		return make_pair(iterator(node, sentinelStart, sentinelEnd), true);
+	}
+
+	iterator insert(iterator position, const_reference val)
+	{
+		(void)position; // TODO: hint
+		return insert(val).first;
+	}
+
+	template <class InputIterator>
+	void insert(InputIterator first, InputIterator last)
+	{
+		for (; first != last; first++)
+			insert(*first);
 	}
 
 	size_type erase(const_reference val)
@@ -571,9 +594,6 @@ public:
 
 	void erase(iterator position)
 	{
-		if (position == end())
-			return;
-
 		iterator last = position;
 		last++;
 		erase(position, last);
@@ -607,6 +627,13 @@ public:
 			__regenerate_tree(first, last);
 	}
 
+	void swap(RBTree &x)
+	{
+		RBTree tmp = x;
+		x = *this;
+		*this = tmp;
+	}
+
 	void clear()
 	{
 		__clear();
@@ -628,6 +655,53 @@ public:
 		if (!f)
 			return end();
 		return const_iterator(f, sentinelStart, sentinelEnd);
+	}
+
+	size_type count(const_reference val) const
+	{
+		return __find(val) ? 1 : 0;
+	}
+
+	iterator lower_bound(const_reference val)
+	{
+		iterator it;
+		for (it = begin(); it != end() && _comp(*it, val); it++)
+			;
+		return it;
+	}
+
+	const_iterator lower_bound(const_reference val) const
+	{
+		const_iterator it;
+		for (it = begin(); it != end() && _comp(*it, val); it++)
+			;
+		return it;
+	}
+
+	iterator upper_bound(const_reference val)
+	{
+		iterator it;
+		for (it = begin(); it != end() && !_comp(val, *it); it++)
+			;
+		return it;
+	}
+
+	const_iterator upper_bound(const_reference val) const
+	{
+		const_iterator it;
+		for (it = begin(); it != end() && !_comp(val, *it); it++)
+			;
+		return it;
+	}
+
+	pair<iterator, iterator> equal_range(const_reference val)
+	{
+		return make_pair(lower_bound(val), upper_bound(val));
+	}
+
+	pair<const_iterator, const_iterator> equal_range(const_reference val)
+	{
+		return make_pair(lower_bound(val), upper_bound(val));
 	}
 
 	allocator_type get_allocator() const
@@ -788,12 +862,13 @@ private:
 		root->color = BLACK;
 	}
 
-	bool __insert_bst(Node *node)
+	iterator __insert_bst(Node *node)
 	{
 		Node *target;
+		Node *n;
 
-		if (__find(node->data, &target)) // No duplicates
-			return false;
+		if ((n = __find(node->data, &target)))
+			return iterator(n, sentinelStart, sentinelEnd);
 
 		node->parent = target;
 		if (_comp(node->data, target->data))
@@ -811,7 +886,7 @@ private:
 			target->right = node;
 		}
 		_size++;
-		return true; // If it is not a duplicate, insertion will go well
+		return end(); // If it is not a duplicate, insertion will go well
 	}
 
 	void __insert_rebalance_tree(Node *node)
@@ -942,7 +1017,7 @@ private:
 
 		if (v == root) // In this case, there is exactly 2 nodes in the tree...
 		{
-			swap(u->data, v->data);
+			ft::swap(u->data, v->data);
 			v->left = sentinelStart;
 			v->right = sentinelEnd;
 			destroy_node(u); // Data swapped with v, to erase all at once...
@@ -983,7 +1058,7 @@ private:
 			return succ;
 		}
 
-		swap(u->data, v->data);
+		ft::swap(u->data, v->data);
 		__bst_delete_node(u);
 		return v; // We want the position of the successor (which is v, because of the swap)
 	}

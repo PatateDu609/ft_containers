@@ -13,6 +13,8 @@
 #include "tests.hpp"
 #include "RBTree.hpp"
 
+typedef ft::RBTree<int>::iterator iterator;
+
 void maps()
 {
 	ft::RBTree<int> rbt;
@@ -33,19 +35,11 @@ void maps()
 	rbt.insert(100);
 	rbt.insert(5252);
 
-	typedef ft::RBTree<int>::iterator iterator;
-	iterator first = rbt.find(5252);
-	iterator last = rbt.find(755748);
-
-	std::cout << "Following numbers will be erased :";
-	for (iterator f = first; f != last; f++)
-		std::cout
-			<< " " << *f;
-	std::cout << std::endl;
-
-	std::cout << "size before erase : " << rbt.size() << std::endl;
-	rbt.erase(last);
-	std::cout << "size after erase : " << rbt.size() << std::endl;
+	std::cout << "lower bound : " << *rbt.lower_bound(55) << std::endl;
+	std::cout << "upper bound : " << *rbt.upper_bound(55) << std::endl
+			  << std::endl;
+	std::cout << "lower bound : " << *rbt.lower_bound(9) << std::endl;
+	std::cout << "upper bound : " << *rbt.upper_bound(9) << std::endl;
 
 	rbt.dump("done.dot");
 }
