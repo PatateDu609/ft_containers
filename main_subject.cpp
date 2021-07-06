@@ -26,7 +26,7 @@ struct Buffer
 #define COUNT (MAX_RAM / (int)sizeof(Buffer))
 
 template <typename T>
-class MutantStack : public ft::Stack<T>
+class MutantStack : public ft::stack<T>
 {
 public:
 	MutantStack() {}
@@ -38,7 +38,7 @@ public:
 	}
 	~MutantStack() {}
 
-	typedef typename ft::Stack<T>::container_type::iterator iterator;
+	typedef typename ft::stack<T>::container_type::iterator iterator;
 
 	iterator begin() { return this->c.begin(); }
 	iterator end() { return this->c.end(); }
@@ -56,11 +56,11 @@ int main(int argc, char **argv)
 	const int seed = atoi(argv[1]);
 	srand(seed);
 
-	ft::Vector<std::string> vector_str;
-	ft::Vector<int> vector_int;
-	ft::Stack<int> stack_int;
-	ft::Vector<Buffer> vector_buffer;
-	ft::Stack<Buffer, std::deque<int> > stack_deq_buffer;
+	ft::vector<std::string> vector_str;
+	ft::vector<int> vector_int;
+	ft::stack<int> stack_int;
+	ft::vector<Buffer> vector_buffer;
+	ft::stack<Buffer, std::deque<int> > stack_deq_buffer;
 	ft::Map<int, int> map_int;
 
 	for (int i = 0; i < COUNT; i++)
@@ -73,7 +73,7 @@ int main(int argc, char **argv)
 		const int idx = rand() % COUNT;
 		vector_buffer[idx].idx = 5;
 	}
-	ft::Vector<Buffer>().swap(vector_buffer);
+	ft::vector<Buffer>().swap(vector_buffer);
 
 	try
 	{

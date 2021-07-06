@@ -6,7 +6,7 @@
 /*   By: gboucett <gboucett@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/03 14:54:28 by gboucett          #+#    #+#             */
-/*   Updated: 2021/07/06 22:39:32 by gboucett         ###   ########.fr       */
+/*   Updated: 2021/07/07 01:56:46 by gboucett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@
 
 #include "algorithm.hpp"
 #include "Iterator.hpp"
+#include "MapUtils.hpp"
 
 namespace ft
 {
@@ -39,7 +40,7 @@ namespace ft
 	template <typename T>
 	struct RBTreeNode;
 
-	template <typename T, typename Compare = ft::less<T>, typename Alloc = std::allocator<T> >
+	template <typename T, typename Compare, typename Alloc>
 	class RBTree;
 
 	template <typename T>
@@ -47,6 +48,48 @@ namespace ft
 
 	template <typename T>
 	class RBTreeConstIterator;
+
+	template <typename T, typename Compare, typename Alloc>
+	bool operator==(const RBTree<T, Compare, Alloc> &a, const RBTree<T, Compare, Alloc> &b)
+	{
+		typedef typename RBTree<T, Compare, Alloc>::iterator iterator;
+
+		iterator it1, it2;
+		for (it1 = a.begin(), it2 = b.begin(); it1 != a.end() && it2 != b.end(); it1++, it2++)
+			if (*it1 != *it2) // if inequality, just return false
+				return false;
+		return it1 == a.end() && it2 == b.end(); // Check size
+	}
+
+	template <typename T, typename Compare, typename Alloc>
+	bool operator!=(const RBTree<T, Compare, Alloc> &a, const RBTree<T, Compare, Alloc> &b)
+	{
+		return !(a == b);
+	}
+
+	template <typename T, typename Compare, typename Alloc>
+	bool operator<(const RBTree<T, Compare, Alloc> &a, const RBTree<T, Compare, Alloc> &b)
+	{
+		return lexicographical_compare(a.begin(), a.end(), b.begin(), b.end());
+	}
+
+	template <typename T, typename Compare, typename Alloc>
+	bool operator>(const RBTree<T, Compare, Alloc> &a, const RBTree<T, Compare, Alloc> &b)
+	{
+		return b < a;
+	}
+
+	template <typename T, typename Compare, typename Alloc>
+	bool operator<=(const RBTree<T, Compare, Alloc> &a, const RBTree<T, Compare, Alloc> &b)
+	{
+		return !(a > b);
+	}
+
+	template <typename T, typename Compare, typename Alloc>
+	bool operator>=(const RBTree<T, Compare, Alloc> &a, const RBTree<T, Compare, Alloc> &b)
+	{
+		return !(a < b);
+	}
 }
 
 template <typename T>
@@ -699,7 +742,7 @@ public:
 		return make_pair(lower_bound(val), upper_bound(val));
 	}
 
-	pair<const_iterator, const_iterator> equal_range(const_reference val)
+	pair<const_iterator, const_iterator> equal_range(const_reference val) const
 	{
 		return make_pair(lower_bound(val), upper_bound(val));
 	}

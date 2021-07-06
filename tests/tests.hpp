@@ -13,9 +13,9 @@
 #ifndef TESTS_HPP
 #define TESTS_HPP
 
-#include "Vector.hpp"
-#include "Stack.hpp"
-#include "Map.hpp"
+#include "vector.hpp"
+#include "stack.hpp"
+#include "map.hpp"
 
 #include <vector>
 #include <stack>

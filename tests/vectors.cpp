@@ -15,13 +15,13 @@
 bool print = true;
 
 template <typename T>
-static std::ostream &operator<<(std::ostream &os, const ft::Vector<T> &x)
+static std::ostream &operator<<(std::ostream &os, const ft::vector<T> &x)
 {
 	if (x.empty() && print)
 		return os << "is empty";
 	else if (x.empty())
 		return os;
-	for (typename ft::Vector<T>::const_iterator it = x.begin(), it1 = ++x.begin(); it != x.end(); ++it)
+	for (typename ft::vector<T>::const_iterator it = x.begin(), it1 = ++x.begin(); it != x.end(); ++it)
 	{
 		os << *it;
 		if (it1 != x.end())
@@ -39,27 +39,27 @@ static void test_vector_constructors()
 
 	{
 		title("Default constructor", 1);
-		ft::Vector<int> v;
+		ft::vector<int> v;
 		std::cout << "The vector : " << v << std::endl;
 	}
 	{
 		title("Fill constructor (with default value)", 1);
-		ft::Vector<int>::size_type size = 5;
-		ft::Vector<int> v(size);
+		ft::vector<int>::size_type size = 5;
+		ft::vector<int> v(size);
 		std::cout << "The vector (should contain " << size << " element(s)) : " << v << std::endl;
 	}
 	{
 		title("Fill constructor (with given value)", 1);
-		ft::Vector<int>::size_type size = 5;
+		ft::vector<int>::size_type size = 5;
 		int value = 55;
-		ft::Vector<int> v(size, value);
+		ft::vector<int> v(size, value);
 		std::cout << "The vector (should contain " << size << " " << value << ") : " << v << std::endl;
 	}
 	{
 		title("Range constructor", 1);
-		ft::Vector<int>::size_type size = 10;
-		ft::Vector<int> v(size, 25);
-		ft::Vector<int> vt(v.begin(), v.end());
+		ft::vector<int>::size_type size = 10;
+		ft::vector<int> v(size, 25);
+		ft::vector<int> vt(v.begin(), v.end());
 
 		std::cout << "The vector constructed by fill constructor  : " << v << std::endl;
 		std::cout << "The vector constructed by range constructor : " << vt << std::endl;
@@ -70,8 +70,8 @@ static void test_vector_copy()
 {
 	title("TEST VECTOR ASSIGNATION OPERATOR");
 
-	ft::Vector<std::string> v(5, "bonjour");
-	ft::Vector<std::string> v1;
+	ft::vector<std::string> v(5, "bonjour");
+	ft::vector<std::string> v1;
 	v1 = v;
 	std::cout << "The vector constructed by fill constructor : " << v << std::endl;
 	std::cout << "The vector after the copy                  : " << v1 << std::endl;
@@ -85,35 +85,35 @@ static void test_vector_capacity()
 
 	{
 		title("Is the vector empty ?", 1);
-		ft::Vector<int> v;
+		ft::vector<int> v;
 		std::cout << "The vector (" << v << ") is " << (v.empty() ? "empty" : "not empty") << std::endl;
-		ft::Vector<int> v1(5, 10);
+		ft::vector<int> v1(5, 10);
 		std::cout << "The vector (" << v1 << ") is " << (v1.empty() ? "empty" : "not empty") << std::endl;
 	}
 	{
 		title("The size of the vector", 1);
-		ft::Vector<int> l;
+		ft::vector<int> l;
 		std::cout << "The vector (" << l << ") has " << l.size() << " element(s)" << std::endl;
-		ft::Vector<int> l1(5, 10);
+		ft::vector<int> l1(5, 10);
 		std::cout << "The vector (" << l1 << ") has " << l1.size() << " element(s)" << std::endl;
-		ft::Vector<int> l2(1, 100);
+		ft::vector<int> l2(1, 100);
 		std::cout << "The vector (" << l2 << ") has " << l2.size() << " element(s)" << std::endl;
 	}
 	{
 		title("The capacity of the vector", 1);
-		ft::Vector<int> v;
-		ft::Vector<int>::size_type oldCapacity = -1;
+		ft::vector<int> v;
+		ft::vector<int>::size_type oldCapacity = -1;
 		for (int i = 0; i < 1000; i++)
 		{
 			if (oldCapacity != v.capacity())
 				std::cout << "Size : " << v.size() << ", "
-						<< "Capacity : " << (oldCapacity = v.capacity()) << std::endl;
+						  << "Capacity : " << (oldCapacity = v.capacity()) << std::endl;
 			v.push_back(i);
 		}
 	}
 	{
 		title("The maximum size of a vector is :", 1);
-		std::cout << "My vector  : " << ft::Vector<int>().max_size() << std::endl;
+		std::cout << "My vector  : " << ft::vector<int>().max_size() << std::endl;
 		std::cout << "STL vector : " << std::vector<int>().max_size() << std::endl;
 	}
 
@@ -124,9 +124,9 @@ static void test_vector_relational()
 {
 	title("TEST VECTOR RELATIONAL OPERATIONS");
 
-	ft::Vector<int> a;
-	ft::Vector<int> b;
-	ft::Vector<int> c;
+	ft::vector<int> a;
+	ft::vector<int> b;
+	ft::vector<int> c;
 
 	a.push_back(10);
 	a.push_back(20);
@@ -157,8 +157,8 @@ static void test_vector_relational()
 static void test_vector_swap_non_member()
 {
 	title("TEST VECTOR SWAP (NON MEMBER FUNCTION)");
-	ft::Vector<int> foo(3, 100); // three ints with a value of 100
-	ft::Vector<int> bar(5, 200); // five ints with a value of 200
+	ft::vector<int> foo(3, 100); // three ints with a value of 100
+	ft::vector<int> bar(5, 200); // five ints with a value of 200
 
 	title("Before swapping :", 1);
 	std::cout << "foo contains: " << foo << std::endl;
@@ -174,8 +174,8 @@ static void test_vector_swap_non_member()
 static void test_vector_swap_member()
 {
 	title("TEST VECTOR SWAP (MEMBER FUNCTION)");
-	ft::Vector<int> foo(3, 100); // three ints with a value of 100
-	ft::Vector<int> bar(5, 200); // five ints with a value of 200
+	ft::vector<int> foo(3, 100); // three ints with a value of 100
+	ft::vector<int> bar(5, 200); // five ints with a value of 200
 
 	title("Before swapping :", 1);
 	std::cout << "foo contains: " << foo << std::endl;
@@ -194,7 +194,7 @@ static void test_vector_modifiers_insertions()
 
 	{
 		title("Testing push_back", 1);
-		ft::Vector<int> v;
+		ft::vector<int> v;
 		for (int i = 0; i <= 5; i++)
 		{
 			std::cout << "The vector :\t\t" << v << std::endl;
@@ -206,10 +206,10 @@ static void test_vector_modifiers_insertions()
 		title("Testing insert", 1);
 		{
 			title("Inserting a single element", 2);
-			ft::Vector<int> v(5, 10);
+			ft::vector<int> v(5, 10);
 			std::cout << "The vector before the insertion : " << v << std::endl;
-			ft::Vector<int>::iterator it = v.begin() + (v.end() - v.begin() - 1);
-			ft::Vector<int>::iterator res = v.insert(it, 111);
+			ft::vector<int>::iterator it = v.begin() + (v.end() - v.begin() - 1);
+			ft::vector<int>::iterator res = v.insert(it, 111);
 			std::cout << "The vector after the insertion : " << v << std::endl;
 			std::cout << "iterator returned : " << *res << std::endl;
 			res = v.insert(v.begin(), 222);
@@ -221,12 +221,12 @@ static void test_vector_modifiers_insertions()
 		}
 		{
 			title("Inserting new elements", 2);
-			ft::Vector<int> v(5, 10);
+			ft::vector<int> v(5, 10);
 			std::cout << "The vector before the insertion : " << v << std::endl;
-			ft::Vector<int>::iterator it = v.begin();
-			for (ft::Vector<int>::size_type i = 0; i < v.size() - 1; i++)
+			ft::vector<int>::iterator it = v.begin();
+			for (ft::vector<int>::size_type i = 0; i < v.size() - 1; i++)
 				it++;
-			ft::Vector<int>::iterator res = v.insert(it, 5, -11);
+			ft::vector<int>::iterator res = v.insert(it, 5, -11);
 			std::cout << "The vector after the insertion : " << v << std::endl;
 			std::cout << "iterator returned : " << *res << std::endl;
 			res = v.insert(v.begin(), 3, 100);
@@ -238,11 +238,11 @@ static void test_vector_modifiers_insertions()
 		}
 		{
 			title("Inserting a range of new elements", 2);
-			ft::Vector<int> v;
+			ft::vector<int> v;
 			v.push_back(1);
 			v.push_back(2);
 			v.push_back(3);
-			ft::Vector<int> v1(5, 10);
+			ft::vector<int> v1(5, 10);
 			std::cout << "The vector before the insertion : " << v1 << std::endl;
 			v1.insert(v1.end(), v.rbegin(), v.rend());
 			std::cout << "The vector after the insertion : " << v1 << std::endl;
@@ -253,12 +253,12 @@ static void test_vector_modifiers_insertions()
 static void test_vector_accessers()
 {
 	title("TEST VECTOR ACCESSERS");
-	ft::Vector<int> v;
+	ft::vector<int> v;
 	v.push_back(1);
 	v.push_back(2);
 	v.push_back(3);
 
-	const ft::Vector<int> v1 = v;
+	const ft::vector<int> v1 = v;
 	std::cout << "The vector of the test : " << v << std::endl;
 
 	{
@@ -283,11 +283,11 @@ static void test_vector_accessers()
 			std::cout << "Back element : " << v.back() << std::endl;
 		}
 		{
-			title("Accessing the front element for const Vector", 2);
+			title("Accessing the front element for const vector", 2);
 			std::cout << "Front element : " << v1.front() << std::endl;
 		}
 		{
-			title("Accessing the back element for const Vector", 2);
+			title("Accessing the back element for const vector", 2);
 			std::cout << "Back element : " << v1.back() << std::endl;
 		}
 	}
@@ -295,37 +295,41 @@ static void test_vector_accessers()
 	{
 		title("Testing operator[] and at", 1);
 		{
-			title("Testing operator[] with non const Vector", 2);
-			for (ft::Vector<int>::size_type i = 0; i < v.size(); i++)
+			title("Testing operator[] with non const vector", 2);
+			for (ft::vector<int>::size_type i = 0; i < v.size(); i++)
 				std::cout << "element " << i << " : " << v[i] << std::endl;
 		}
 		{
-			title("Testing operator[] with const Vector", 2);
-			for (ft::Vector<int>::size_type i = 0; i < v1.size(); i++)
+			title("Testing operator[] with const vector", 2);
+			for (ft::vector<int>::size_type i = 0; i < v1.size(); i++)
 				std::cout << "element " << i << " : " << v1[i] << std::endl;
 		}
 		{
-			title("Testing at with non const Vector", 2);
-			for (ft::Vector<int>::size_type i = 0; i < v.size(); i++)
+			title("Testing at with non const vector", 2);
+			for (ft::vector<int>::size_type i = 0; i < v.size(); i++)
 				std::cout << "element " << i << " : " << v.at(i) << std::endl;
 		}
 		{
-			title("Testing at with const Vector", 2);
-			for (ft::Vector<int>::size_type i = 0; i < v1.size(); i++)
+			title("Testing at with const vector", 2);
+			for (ft::vector<int>::size_type i = 0; i < v1.size(); i++)
 				std::cout << "element " << i << " : " << v1.at(i) << std::endl;
 		}
 		{
 			title("Testing at with wrong pos", 2);
-			try {
+			try
+			{
 				v.at(4);
 			}
-			catch (const std::out_of_range& e) {
+			catch (const std::out_of_range &e)
+			{
 				std::cout << e.what() << std::endl;
 			}
-			try {
+			try
+			{
 				v.at(-1);
 			}
-			catch (const std::out_of_range& e) {
+			catch (const std::out_of_range &e)
+			{
 				std::cout << e.what() << std::endl;
 			}
 		}
@@ -337,7 +341,7 @@ static void test_vector_reverse_iterators()
 {
 	title("TEST LIST ITERATORS (AS LVALUE AND RVALUE)");
 
-	ft::Vector<int> v;
+	ft::vector<int> v;
 	v.push_back(1);
 	v.push_back(2);
 	v.push_back(3);
@@ -347,16 +351,16 @@ static void test_vector_reverse_iterators()
 	std::cout << "The vector (displayed with the standard iterator)\t: " << v << std::endl;
 
 	std::cout << "The vector (displayed with the reverse iterator)\t:";
-	for (ft::Vector<int>::reverse_iterator revit = v.rbegin(); revit != v.rend(); revit++)
+	for (ft::vector<int>::reverse_iterator revit = v.rbegin(); revit != v.rend(); revit++)
 		std::cout << " " << *revit;
 	std::cout << std::endl;
-	const ft::Vector<int> v1(v);
+	const ft::vector<int> v1(v);
 	std::cout << "The vector (displayed with the const iterator)\t\t:";
-	for (ft::Vector<int>::const_iterator it = v1.begin(); it != v1.end(); it++)
+	for (ft::vector<int>::const_iterator it = v1.begin(); it != v1.end(); it++)
 		std::cout << " " << *it;
 	std::cout << std::endl;
 	std::cout << "The vector (displayed with the const reverse iterator)\t:";
-	for (ft::Vector<int>::const_reverse_iterator revit = v1.rbegin(); revit != v1.rend(); revit++)
+	for (ft::vector<int>::const_reverse_iterator revit = v1.rbegin(); revit != v1.rend(); revit++)
 		std::cout << " " << *revit;
 	std::cout << std::endl;
 }
@@ -367,26 +371,26 @@ static void test_vector_resize()
 
 	{
 		title("Shrinking vector", 1);
-		ft::Vector<int> l(10, 22);
-		std::cout << "Vector before calling resize : " << l << std::endl;
+		ft::vector<int> l(10, 22);
+		std::cout << "vector before calling resize : " << l << std::endl;
 		l.resize(5);
-		std::cout << "Vector after calling resize :  " << l << std::endl;
+		std::cout << "vector after calling resize :  " << l << std::endl;
 	}
 	{
 		title("Extending vector", 1);
 		{
 			title("With default value", 2);
-			ft::Vector<int> l(2, 22);
-			std::cout << "Vector before calling resize : " << l << std::endl;
+			ft::vector<int> l(2, 22);
+			std::cout << "vector before calling resize : " << l << std::endl;
 			l.resize(5);
-			std::cout << "Vector after calling resize :  " << l << std::endl;
+			std::cout << "vector after calling resize :  " << l << std::endl;
 		}
 		{
 			title("With given value", 2);
-			ft::Vector<int> l(2, 22);
-			std::cout << "Vector before calling resize : " << l << std::endl;
+			ft::vector<int> l(2, 22);
+			std::cout << "vector before calling resize : " << l << std::endl;
 			l.resize(5, 11);
-			std::cout << "Vector after calling resize :  " << l << std::endl;
+			std::cout << "vector after calling resize :  " << l << std::endl;
 		}
 	}
 }
@@ -395,7 +399,7 @@ static void test_vector_reserve()
 {
 	title("TEST VECTOR RESERVE");
 
-	ft::Vector<int> v;
+	ft::vector<int> v;
 	std::cout << "Capacity before reserve : " << v.capacity() << std::endl;
 	std::cout << "Size before reserve : " << v.size() << std::endl;
 	v.reserve(10);
@@ -417,7 +421,7 @@ static void test_vector_deleting_elements()
 
 	{
 		title("Test of pop_back", 1);
-		ft::Vector<int> v;
+		ft::vector<int> v;
 		v.push_back(1);
 		v.push_back(2);
 		v.push_back(3);
@@ -436,7 +440,7 @@ static void test_vector_deleting_elements()
 	}
 	{
 		title("Test of clear", 1);
-		ft::Vector<int> v(10, 5);
+		ft::vector<int> v(10, 5);
 		std::cout << "The vector before clearing it : " << v << std::endl;
 		v.clear();
 		std::cout << "The vector after clearing it : " << v << std::endl;
@@ -445,7 +449,7 @@ static void test_vector_deleting_elements()
 		title("Tests of erase", 1);
 		{
 			title("Erasing a single element", 2);
-			ft::Vector<int> v;
+			ft::vector<int> v;
 			v.push_back(1);
 			v.push_back(2);
 			v.push_back(3);
@@ -460,7 +464,7 @@ static void test_vector_deleting_elements()
 
 			while (!v.empty())
 			{
-				ft::Vector<int>::iterator res = v.erase(v.begin());
+				ft::vector<int>::iterator res = v.erase(v.begin());
 				std::cout << "The vector now (element following the erased one : ";
 				if (!v.empty())
 					std::cout << *res;
@@ -469,7 +473,7 @@ static void test_vector_deleting_elements()
 		}
 		{
 			title("Erasing a range of elements", 2);
-			ft::Vector<int> v;
+			ft::vector<int> v;
 			v.push_back(1);
 			v.push_back(2);
 			v.push_back(3);
@@ -482,14 +486,14 @@ static void test_vector_deleting_elements()
 			v.push_back(10);
 			std::cout << "The list before erasing anything : " << v << std::endl;
 
-			ft::Vector<int>::iterator it = v.begin();
+			ft::vector<int>::iterator it = v.begin();
 			for (int i = 0; i < 3; i++)
 				it++;
-			ft::Vector<int>::iterator it1 = it;
+			ft::vector<int>::iterator it1 = it;
 			for (int i = 0; i < 3; i++)
 				it1++;
 			std::cout << "Range to erase :";
-			for (ft::Vector<int>::iterator i = it; i != it1; i++)
+			for (ft::vector<int>::iterator i = it; i != it1; i++)
 				std::cout << " " << *i;
 			std::cout << std::endl;
 			v.erase(it, it1);

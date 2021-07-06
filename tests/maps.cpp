@@ -11,35 +11,20 @@
 /* ************************************************************************** */
 
 #include "tests.hpp"
-#include "RBTree.hpp"
 
-typedef ft::RBTree<int>::iterator iterator;
+typedef ft::map<int, int>::iterator iterator;
 
 void maps()
 {
-	ft::RBTree<int> rbt;
+	ft::map<int, int> map;
 
-	rbt.insert(8);
-	rbt.insert(3);
-	rbt.insert(1);
-	rbt.insert(6);
-	rbt.insert(10);
-	rbt.insert(14);
-	rbt.insert(13);
-	rbt.insert(7);
-	rbt.insert(4);
-	rbt.insert(55);
-	rbt.insert(54);
-	rbt.insert(407);
-	rbt.insert(154);
-	rbt.insert(100);
-	rbt.insert(5252);
+	map[0] = 0;
+	map[1] = 1;
+	map[2] = 2;
+	map[3] = 3;
+	map[4] = 4;
+	map[1] = 4564;
 
-	std::cout << "lower bound : " << *rbt.lower_bound(55) << std::endl;
-	std::cout << "upper bound : " << *rbt.upper_bound(55) << std::endl
-			  << std::endl;
-	std::cout << "lower bound : " << *rbt.lower_bound(9) << std::endl;
-	std::cout << "upper bound : " << *rbt.upper_bound(9) << std::endl;
-
-	rbt.dump("done.dot");
+	for (iterator it = map.begin(); it != map.end(); it++)
+		std::cout << it->first << " - " << it->second << "\n";
 }

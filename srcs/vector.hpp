@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Vector.hpp                                         :+:      :+:    :+:   */
+/*   vector.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gboucett <gboucett@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -28,7 +28,7 @@
 namespace ft
 {
 	template <typename T, typename Alloc = std::allocator<T> >
-	class Vector;
+	class vector;
 
 	template <typename T>
 	class VectorIterator;
@@ -40,49 +40,49 @@ namespace ft
 	}
 
 	template <typename T>
-	void swap(Vector<T> &a, Vector<T> &b)
+	void swap(vector<T> &a, vector<T> &b)
 	{
 		a.swap(b);
 	}
 
 	template <typename T>
-	bool operator==(const Vector<T> &lhs, const Vector<T> &rhs)
+	bool operator==(const vector<T> &lhs, const vector<T> &rhs)
 	{
 		if (lhs.size() != rhs.size())
 			return false;
 
-		for (typename Vector<T>::size_type i = 0; i < lhs.size(); i++)
+		for (typename vector<T>::size_type i = 0; i < lhs.size(); i++)
 			if (lhs[i] != rhs[i])
 				return false;
 		return (true);
 	}
 
 	template <typename T>
-	bool operator!=(const Vector<T> &lhs, const Vector<T> &rhs)
+	bool operator!=(const vector<T> &lhs, const vector<T> &rhs)
 	{
 		return !(lhs == rhs);
 	}
 
 	template <typename T>
-	bool operator<(const Vector<T> &lhs, const Vector<T> &rhs)
+	bool operator<(const vector<T> &lhs, const vector<T> &rhs)
 	{
 		return lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
 	}
 
 	template <typename T>
-	bool operator>(const Vector<T> &lhs, const Vector<T> &rhs)
+	bool operator>(const vector<T> &lhs, const vector<T> &rhs)
 	{
 		return rhs < lhs;
 	}
 
 	template <typename T>
-	bool operator<=(const Vector<T> &lhs, const Vector<T> &rhs)
+	bool operator<=(const vector<T> &lhs, const vector<T> &rhs)
 	{
 		return !(rhs < lhs);
 	}
 
 	template <typename T>
-	bool operator>=(const Vector<T> &lhs, const Vector<T> &rhs)
+	bool operator>=(const vector<T> &lhs, const vector<T> &rhs)
 	{
 		return !(lhs < rhs);
 	}
@@ -249,7 +249,7 @@ private:
 };
 
 template <typename T, typename Alloc>
-class ft::Vector
+class ft::vector
 {
 public:
 	typedef T value_type;
@@ -268,34 +268,34 @@ public:
 	typedef typename allocator_type::size_type size_type;
 	typedef typename allocator_type::difference_type difference_type;
 
-	explicit Vector(const allocator_type &alloc = allocator_type()) : _data(NULL), _capacity(0), _size(0), allocator(alloc)
+	explicit vector(const allocator_type &alloc = allocator_type()) : _data(NULL), _capacity(0), _size(0), allocator(alloc)
 	{
 	}
 
-	explicit Vector(size_type n, const value_type &val = value_type(), const allocator_type &alloc = allocator_type()) : _data(NULL), _capacity(0), _size(0), allocator(alloc)
+	explicit vector(size_type n, const value_type &val = value_type(), const allocator_type &alloc = allocator_type()) : _data(NULL), _capacity(0), _size(0), allocator(alloc)
 	{
 		assign(n, val);
 	}
 
 	template <class InputIterator>
-	Vector(InputIterator first, InputIterator last, const allocator_type &alloc = allocator_type()) : _data(NULL), _capacity(0), _size(0), allocator(alloc)
+	vector(InputIterator first, InputIterator last, const allocator_type &alloc = allocator_type()) : _data(NULL), _capacity(0), _size(0), allocator(alloc)
 	{
 		typedef typename __is_integer<InputIterator>::__type Integral;
 		_init_vec(first, last, Integral());
 	}
 
-	Vector(const Vector &x, const allocator_type &alloc = allocator_type()) : _data(NULL), _capacity(0), _size(0), allocator(alloc)
+	vector(const vector &x, const allocator_type &alloc = allocator_type()) : _data(NULL), _capacity(0), _size(0), allocator(alloc)
 	{
 		*this = x;
 	}
 
-	~Vector()
+	~vector()
 	{
 		clear();
 		allocator.deallocate(_data, _capacity);
 	}
 
-	Vector &operator=(const Vector<value_type> &x)
+	vector &operator=(const vector<value_type> &x)
 	{
 		allocator = x.allocator;
 		assign(x.begin(), x.end());
@@ -496,9 +496,9 @@ public:
 		return iterator(_data + start);
 	}
 
-	void swap(Vector &x)
+	void swap(vector &x)
 	{
-		Vector tmp = *this;
+		vector tmp = *this;
 
 		*this = x;
 		x = tmp;
@@ -525,7 +525,7 @@ private:
 			return;
 		std::ostringstream oss;
 
-		oss << "Vector::range_check: n (which is " << n << ") >= this->size() (which is " << _size << ")";
+		oss << "vector::range_check: n (which is " << n << ") >= this->size() (which is " << _size << ")";
 		throw std::out_of_range(oss.str());
 	}
 

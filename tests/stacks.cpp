@@ -12,7 +12,7 @@
 
 #include "tests.hpp"
 template <typename T, typename Container>
-std::ostream& operator<<(std::ostream& os, ft::Stack<T, Container> stack)
+std::ostream &operator<<(std::ostream &os, ft::stack<T, Container> stack)
 {
 	if (stack.empty())
 		return os << "empty";
@@ -32,7 +32,7 @@ static void test_stack_constructor()
 
 	{
 		title("Constructor with no argument", 1);
-		ft::Stack<int> q;
+		ft::stack<int> q;
 		std::cout << "The stack : " << q << std::endl;
 	}
 	{
@@ -44,7 +44,7 @@ static void test_stack_constructor()
 		for (int i = 0; i < 10; i++)
 			std::cout << " " << d[i];
 		std::cout << std::endl;
-		ft::Stack<int, std::deque<int> > q(d);
+		ft::stack<int, std::deque<int> > q(d);
 		std::cout << "The stack : " << q << std::endl;
 	}
 }
@@ -53,7 +53,7 @@ static void test_stack_size_push()
 {
 	title("TEST QUEUE SIZE/EMPTY/PUSH");
 
-	ft::Stack<int> q;
+	ft::stack<int> q;
 	title("Test of empty", 1);
 	std::cout << "The stack : " << q << std::endl;
 	title("Test of size and push", 1);
@@ -69,11 +69,11 @@ static void test_stack_size_push()
 static void test_stack_accessers()
 {
 	title("TEST QUEUE ACCESSERS");
-	ft::Stack<int> q;
+	ft::stack<int> q;
 	q.push(1);
 	q.push(2);
 	q.push(3);
-	const ft::Stack<int> q1 = q;
+	const ft::stack<int> q1 = q;
 
 	std::cout << "The stack before the tests : " << q << std::endl;
 	std::cout << "top element : " << q.top() << std::endl;
