@@ -1,10 +1,10 @@
-VECTOR			=	1
-STACK			=	1
-MAP				=	0
+VECTOR			=	0
+STACK			=	0
+MAP				=	1
 
 DEBUG			=	0
 
-STL				=	1
+STL				=	0
 
 NAME			=	containers
 

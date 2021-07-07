@@ -14,6 +14,8 @@
 
 int main()
 {
+	srand(time(NULL));
+
 	if (VECTOR)
 		vectors();
 	if (STACK)

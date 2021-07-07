@@ -12,7 +12,7 @@
 
 #include "tests.hpp"
 
-bool print = true;
+static bool print = true;
 
 template <typename T>
 static std::ostream &operator<<(std::ostream &os, const ft::vector<T> &x)

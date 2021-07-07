@@ -6,7 +6,7 @@
 /*   By: gboucett <gboucett@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/06 23:02:15 by gboucett          #+#    #+#             */
-/*   Updated: 2021/07/07 01:58:13 by gboucett         ###   ########.fr       */
+/*   Updated: 2021/07/07 21:02:09 by gboucett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,7 @@ public:
 	}
 
 	template <class InputIterator>
-	map(InputIterator &first, InputIterator &last, const key_compare &comp = key_compare(), const allocator_type &alloc = allocator_type()) : _tree(first, last, value_compare(comp), alloc), _comp(comp)
+	map(const InputIterator &first, const InputIterator &last, const key_compare &comp = key_compare(), const allocator_type &alloc = allocator_type()) : _tree(first, last, value_compare(comp), alloc), _comp(comp)
 	{
 	}
 

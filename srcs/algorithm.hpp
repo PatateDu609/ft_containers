@@ -36,7 +36,7 @@ namespace ft
 	};
 
 	template <typename T>
-	struct great
+	struct greater
 	{
 		bool operator()(const T &a, const T &b) const
 		{

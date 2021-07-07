@@ -53,17 +53,4 @@ struct ft::pair
 	}
 };
 
-#if defined(DEBUG) && DEBUG == 1
-
-#include <iostream>
-
-template <typename T1, typename T2>
-std::ostream &operator<<(std::ostream &os, const ft::pair<T1, T2> &p)
-{
-	os << "(" << p.first << ", " << p.second << ")";
-	return os;
-}
-
-#endif
-
 #endif
