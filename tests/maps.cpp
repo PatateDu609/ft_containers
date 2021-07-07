@@ -12,8 +12,6 @@
 
 #include "tests.hpp"
 
-typedef ft::map<int, int>::iterator iterator;
-
 void maps()
 {
 	ft::map<int, int> map;
@@ -25,6 +23,6 @@ void maps()
 	map[4] = 4;
 	map[1] = 4564;
 
-	for (iterator it = map.begin(); it != map.end(); it++)
-		std::cout << it->first << " - " << it->second << "\n";
+	//for (iterator it = map.begin(); it != map.end(); it++)
+	//std::cout << it->first << " - " << it->second << "\n";
 }

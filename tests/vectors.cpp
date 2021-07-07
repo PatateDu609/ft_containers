@@ -113,8 +113,7 @@ static void test_vector_capacity()
 	}
 	{
 		title("The maximum size of a vector is :", 1);
-		std::cout << "My vector  : " << ft::vector<int>().max_size() << std::endl;
-		std::cout << "STL vector : " << std::vector<int>().max_size() << std::endl;
+		std::cout << "max_size : " << ft::vector<int>().max_size() << std::endl;
 	}
 
 	print = true;
@@ -226,15 +225,12 @@ static void test_vector_modifiers_insertions()
 			ft::vector<int>::iterator it = v.begin();
 			for (ft::vector<int>::size_type i = 0; i < v.size() - 1; i++)
 				it++;
-			ft::vector<int>::iterator res = v.insert(it, 5, -11);
+			v.insert(it, 5, -11);
 			std::cout << "The vector after the insertion : " << v << std::endl;
-			std::cout << "iterator returned : " << *res << std::endl;
-			res = v.insert(v.begin(), 3, 100);
+			v.insert(v.begin(), 3, 100);
 			std::cout << "The vector after the insertion : " << v << std::endl;
-			std::cout << "iterator returned = " << *res << std::endl;
-			res = v.insert(v.end(), 7, 189);
+			v.insert(v.end(), 7, 189);
 			std::cout << "The vector after the insertion : " << v << std::endl;
-			std::cout << "iterator returned = " << *res << std::endl;
 		}
 		{
 			title("Inserting a range of new elements", 2);

@@ -13,15 +13,19 @@
 #ifndef TESTS_HPP
 #define TESTS_HPP
 
+#if STL == 0
 #include "vector.hpp"
 #include "stack.hpp"
 #include "map.hpp"
-
+#else
 #include <vector>
 #include <stack>
 #include <map>
-
 #include <set>
+namespace ft = std;
+#endif
+
+#include <deque>
 
 #include <iostream>
 #include <typeinfo>

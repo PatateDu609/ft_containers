@@ -462,19 +462,19 @@ public:
 
 	iterator insert(iterator position, const value_type &val)
 	{
-		return insert(position, 1, val);
+		return _fill_insert(position, 1, val);
 	}
 
-	iterator insert(iterator position, size_type n, const value_type &val)
+	void insert(iterator position, size_type n, const value_type &val)
 	{
-		return _fill_insert(position, n, val);
+		_fill_insert(position, n, val);
 	}
 
 	template <typename InputIterator>
-	iterator insert(iterator position, InputIterator first, InputIterator last)
+	void insert(iterator position, InputIterator first, InputIterator last)
 	{
 		typedef typename __is_integer<InputIterator>::__type _Integral;
-		return _dispatch_insert(position, first, last, _Integral());
+		_dispatch_insert(position, first, last, _Integral());
 	}
 
 	iterator erase(iterator position)

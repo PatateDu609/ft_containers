@@ -1,21 +1,20 @@
 #include <iostream>
 #include <string>
 #include <deque>
-#if 0 //CREATE A REAL STL EXAMPLE
+#if 1 //CREATE A REAL STL EXAMPLE
 #include <map>
 #include <stack>
 #include <vector>
 namespace ft = std;
 #else
-#include "Map.hpp"
-#include "Stack.hpp"
-#include "Vector.hpp"
+#include <map.hpp>
+#include <stack.hpp>
+#include <vector.hpp>
 #endif
 
 #include <stdlib.h>
-#include <climits>
 
-#define MAX_RAM INT_MAX / 100
+#define MAX_RAM 4294967296 / 10
 #define BUFFER_SIZE 4096
 struct Buffer
 {
@@ -61,7 +60,7 @@ int main(int argc, char **argv)
 	ft::stack<int> stack_int;
 	ft::vector<Buffer> vector_buffer;
 	ft::stack<Buffer, std::deque<int> > stack_deq_buffer;
-	ft::Map<int, int> map_int;
+	ft::map<int, int> map_int;
 
 	for (int i = 0; i < COUNT; i++)
 	{
@@ -103,7 +102,7 @@ int main(int argc, char **argv)
 	std::cout << "should be constant with the same seed: " << sum << std::endl;
 
 	{
-		ft::Map<int, int> copy = map_int;
+		ft::map<int, int> copy = map_int;
 	}
 	MutantStack<char> iterable_stack;
 	for (char letter = 'a'; letter <= 'z'; letter++)

@@ -1,8 +1,10 @@
-VECTOR			=	0
-STACK			=	0
-MAP				=	1
+VECTOR			=	1
+STACK			=	1
+MAP				=	0
 
 DEBUG			=	0
+
+STL				=	1
 
 NAME			=	containers
 
@@ -26,6 +28,7 @@ CFLAGS			+=	-DVECTOR=$(VECTOR)		\
 					-DSTACK=$(STACK)		\
 					-DMAP=$(MAP)			\
 					-DDEBUG=$(DEBUG)		\
+					-DSTL=$(STL)			\
 
 ifeq ($(DEBUG), 1)
 	ifeq ($(CC), "clang++")
