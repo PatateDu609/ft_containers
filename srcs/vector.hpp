@@ -30,11 +30,11 @@ namespace ft
 	template <typename T, typename Alloc = std::allocator<T> >
 	class vector;
 
-	template <typename T>
+	template <typename T, typename T1>
 	class VectorIterator;
 
-	template <typename T>
-	VectorIterator<T> operator+(typename VectorIterator<T>::difference_type n, const VectorIterator<T> a)
+	template <typename T, typename T1>
+	VectorIterator<T, T1> operator+(typename VectorIterator<T, T1>::difference_type n, const VectorIterator<T, T1> a)
 	{
 		return a + n;
 	}
@@ -88,7 +88,7 @@ namespace ft
 	}
 } // namespace ft
 
-template <typename T>
+template <typename T, typename T1>
 class ft::VectorIterator
 {
 private:
@@ -119,9 +119,20 @@ public:
 		*this = other;
 	}
 
+	VectorIterator(const VectorIterator<T1, T> &other)
+	{
+		*this = other;
+	}
+
 	VectorIterator &operator=(const VectorIterator &other)
 	{
 		_ptr = other._ptr;
+		return *this;
+	}
+
+	VectorIterator &operator=(const VectorIterator<T1, T> &other)
+	{
+		_ptr = other.ptr();
 		return *this;
 	}
 
@@ -244,6 +255,11 @@ public:
 		return *(_ptr + n);
 	}
 
+	pointer ptr() const
+	{
+		return _ptr;
+	}
+
 private:
 	pointer _ptr;
 };
@@ -260,8 +276,8 @@ public:
 	typedef typename allocator_type::pointer pointer;
 	typedef typename allocator_type::const_pointer const_pointer;
 
-	typedef VectorIterator<pointer> iterator;
-	typedef VectorIterator<const_pointer> const_iterator;
+	typedef VectorIterator<pointer, const_pointer> iterator;
+	typedef VectorIterator<const_pointer, pointer> const_iterator;
 	typedef ReverseIterator<iterator> reverse_iterator;
 	typedef ReverseIterator<const_iterator> const_reverse_iterator;
 

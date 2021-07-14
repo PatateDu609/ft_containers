@@ -1,5 +1,5 @@
-VECTOR			=	0
-STACK			=	0
+VECTOR			=	1
+STACK			=	1
 MAP				=	1
 
 DEBUG			=	0

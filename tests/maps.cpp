@@ -6,7 +6,7 @@
 /*   By: gboucett <gboucett@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/07 20:44:44 by gboucett          #+#    #+#             */
-/*   Updated: 2021/07/07 21:22:03 by gboucett         ###   ########.fr       */
+/*   Updated: 2021/07/14 21:12:06 by gboucett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,10 +119,52 @@ static void test_map_copy()
 	}
 }
 
+static void test_map_reverse_iterators()
+{
+	title("TEST MAP ITERATORS");
+
+	typedef ft::map<int, int>::reverse_iterator reverse_iterator;
+	typedef ft::map<int, int>::const_reverse_iterator const_reverse_iterator;
+	typedef ft::map<int, int>::const_iterator const_iterator;
+
+	std::vector<ft::pair<int, int> > v = generate_data(10);
+	ft::map<int, int> m(v.begin(), v.end());
+	const ft::map<int, int> m1(m);
+
+	{
+		title("Testing with non-const map", 1);
+		std::cout << "The map (displayed with reverse_iterator):";
+		for (reverse_iterator rit = m.rbegin(); rit != m.rend(); rit++)
+			std::cout << " " << *rit;
+		std::cout << std::endl;
+		std::cout << "The map (displayed with const_iterator):";
+		for (const_iterator it = m.begin(); it != m.end(); it++)
+			std::cout << " " << *it;
+		std::cout << std::endl;
+		std::cout << "The map (displayed with const_reverse_iterator):";
+		for (const_reverse_iterator rit = m.rbegin(); rit != m.rend(); rit++)
+			std::cout << " " << *rit;
+		std::cout << std::endl;
+	}
+	{
+		title("Testing with const map", 1);
+
+		std::cout << "The map (displayed with const_iterator):";
+		for (const_iterator it = m1.begin(); it != m1.end(); it++)
+			std::cout << " " << *it;
+		std::cout << std::endl;
+		std::cout << "The map (displayed with const_reverse_iterator):";
+		for (const_reverse_iterator rit = m1.rbegin(); rit != m1.rend(); rit++)
+			std::cout << " " << *rit;
+		std::cout << std::endl;
+	}
+}
+
 void maps()
 {
 	title("TESTS ABOUT FT::MAP", -1);
 	test_map_constructors();
 	test_map_comparators();
 	test_map_copy();
+	test_map_reverse_iterators();
 }

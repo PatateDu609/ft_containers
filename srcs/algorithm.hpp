@@ -18,7 +18,7 @@
 namespace ft
 {
 	template <typename T>
-	void swap(T &a, T &b)
+	void __swap(T &a, T &b)
 	{
 		T temp = a;
 

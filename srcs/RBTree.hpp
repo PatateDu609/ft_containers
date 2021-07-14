@@ -6,7 +6,7 @@
 /*   By: gboucett <gboucett@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/03 14:54:28 by gboucett          #+#    #+#             */
-/*   Updated: 2021/07/07 01:56:46 by gboucett         ###   ########.fr       */
+/*   Updated: 2021/07/14 21:45:41 by gboucett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ namespace ft
 	template <typename T, typename Compare, typename Alloc>
 	bool operator<(const RBTree<T, Compare, Alloc> &a, const RBTree<T, Compare, Alloc> &b)
 	{
-		return lexicographical_compare(a.begin(), a.end(), b.begin(), b.end());
+		return ft::lexicographical_compare(a.begin(), a.end(), b.begin(), b.end());
 	}
 
 	template <typename T, typename Compare, typename Alloc>
@@ -341,9 +341,19 @@ public:
 		return it;
 	}
 
-	Node *ptr()
+	Node *ptr() const
 	{
 		return current;
+	}
+
+	Node *start_ptr() const
+	{
+		return start;
+	}
+
+	Node *end_ptr() const
+	{
+		return end;
 	}
 
 private:
@@ -377,6 +387,11 @@ public:
 		*this = other;
 	}
 
+	RBTreeConstIterator(const RBTreeIterator<value_type> &other)
+	{
+		*this = other;
+	}
+
 	RBTreeConstIterator &operator=(const RBTreeConstIterator &other)
 	{
 		current = other.current;
@@ -384,6 +399,20 @@ public:
 		end = other.end;
 
 		return *this;
+	}
+
+	RBTreeConstIterator &operator=(const RBTreeIterator<value_type> &other)
+	{
+		current = other.ptr();
+		start = other.start_ptr();
+		end = other.end_ptr();
+
+		return *this;
+	}
+
+	operator RBTreeIterator<value_type>() const
+	{
+		return RBTreeIterator<value_type>(current, start, end);
 	}
 
 	~RBTreeConstIterator()
@@ -595,24 +624,24 @@ public:
 		if (empty())
 		{
 			__insert_empty(node);
-			return make_pair(iterator(root, sentinelStart, sentinelEnd), true);
+			return ft::make_pair(iterator(root, sentinelStart, sentinelEnd), true);
 		}
 
 		iterator it;
 		if ((it = __insert_bst(node)) != end())
 		{
 			destroy_node(node);
-			return make_pair(it, false);
+			return ft::make_pair(it, false);
 		}
 
 		if (node->parent && node->parent->parent)
 			__insert_rebalance_tree(node);
-		return make_pair(iterator(node, sentinelStart, sentinelEnd), true);
+		return ft::make_pair(iterator(node, sentinelStart, sentinelEnd), true);
 	}
 
 	iterator insert(iterator position, const_reference val)
 	{
-		(void)position; // TODO: hint
+		(void)position;
 		return insert(val).first;
 	}
 
@@ -672,9 +701,11 @@ public:
 
 	void swap(RBTree &x)
 	{
-		RBTree tmp = x;
-		x = *this;
-		*this = tmp;
+		ft::__swap(root, x.root);
+		ft::__swap(sentinelStart, x.sentinelStart);
+		ft::__swap(sentinelEnd, x.sentinelEnd);
+		ft::__swap(_size, x._size);
+		ft::__swap(_clear, x._clear);
 	}
 
 	void clear()
@@ -739,12 +770,12 @@ public:
 
 	pair<iterator, iterator> equal_range(const_reference val)
 	{
-		return make_pair(lower_bound(val), upper_bound(val));
+		return ft::make_pair(lower_bound(val), upper_bound(val));
 	}
 
 	pair<const_iterator, const_iterator> equal_range(const_reference val) const
 	{
-		return make_pair(lower_bound(val), upper_bound(val));
+		return ft::make_pair(lower_bound(val), upper_bound(val));
 	}
 
 	allocator_type get_allocator() const
@@ -845,6 +876,24 @@ private:
 	}
 
 	Node *__find(const_reference val, Node **leaf = NULL)
+	{
+		Node *node = root;
+
+		while (node && node != sentinelEnd && node != sentinelStart)
+		{
+			if (leaf)
+				*leaf = node;
+			if (_comp(val, node->data))
+				node = node->left;
+			else if (_comp(node->data, val))
+				node = node->right;
+			else
+				return node;
+		}
+		return NULL;
+	}
+
+	Node *__find(const_reference val, Node **leaf = NULL) const
 	{
 		Node *node = root;
 
@@ -1060,7 +1109,7 @@ private:
 
 		if (v == root) // In this case, there is exactly 2 nodes in the tree...
 		{
-			ft::swap(u->data, v->data);
+			ft::__swap(u->data, v->data);
 			v->left = sentinelStart;
 			v->right = sentinelEnd;
 			destroy_node(u); // Data swapped with v, to erase all at once...
@@ -1101,7 +1150,7 @@ private:
 			return succ;
 		}
 
-		ft::swap(u->data, v->data);
+		ft::__swap(u->data, v->data);
 		__bst_delete_node(u);
 		return v; // We want the position of the successor (which is v, because of the swap)
 	}

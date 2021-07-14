@@ -78,6 +78,11 @@ public:
 	{
 	}
 
+	template <typename _It>
+	ReverseIterator(const ReverseIterator<_It> &x) : current(x.cur())
+	{
+	}
+
 	ReverseIterator &operator=(const ReverseIterator &rev)
 	{
 		current = rev.current;
@@ -136,16 +141,16 @@ public:
 		return *--tmp;
 	}
 
-	reference operator->()
+	pointer operator->()
 	{
 		It tmp = current;
-		return *--tmp;
+		return (--tmp).operator->();
 	}
 
 	ReverseIterator &operator++()
 	{
 		--current;
-		return current;
+		return *this;
 	}
 
 	ReverseIterator operator++(int)
@@ -193,6 +198,11 @@ public:
 	reference operator[](difference_type n) const
 	{
 		return *(*this + n);
+	}
+
+	It cur() const
+	{
+		return current;
 	}
 
 private:

@@ -6,7 +6,7 @@
 /*   By: gboucett <gboucett@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/06 23:02:15 by gboucett          #+#    #+#             */
-/*   Updated: 2021/07/07 21:02:09 by gboucett         ###   ########.fr       */
+/*   Updated: 2021/07/14 21:18:27 by gboucett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #define MAP_HPP
 
 #include "RBTree.hpp"
+#include <iostream>
 
 namespace ft
 {
@@ -29,7 +30,7 @@ namespace ft
 	template <typename Key, typename T, typename Compare, typename Alloc>
 	bool operator==(const map<Key, T, Compare, Alloc> &x, const map<Key, T, Compare, Alloc> &y)
 	{
-		return !(x > y) && !(x < y);
+		return !(y < x) && !(x < y);
 	}
 
 	template <typename Key, typename T, typename Compare, typename Alloc>
@@ -47,6 +48,12 @@ namespace ft
 	bool operator>=(const map<Key, T, Compare, Alloc> &x, const map<Key, T, Compare, Alloc> &y)
 	{
 		return !(x < y);
+	}
+
+	template <typename Key, typename T, typename Compare, typename Alloc>
+	void swap(map<Key, T, Compare, Alloc> &x, map<Key, T, Compare, Alloc> &y)
+	{
+		x.swap(y);
 	}
 }
 
@@ -75,7 +82,7 @@ private:
 		{
 		}
 
-		bool operator()(const value_type &x, const value_type &y)
+		bool operator()(const value_type &x, const value_type &y) const
 		{
 			return comp(x.first, y.first);
 		}
@@ -177,7 +184,7 @@ public:
 
 	mapped_type &operator[](const key_type &k)
 	{
-		return (insert(make_pair(k, mapped_type())).first)->second;
+		return (insert(ft::make_pair(k, mapped_type())).first)->second;
 	}
 
 	pair<iterator, bool> insert(const_reference val)
@@ -203,7 +210,7 @@ public:
 
 	size_type erase(const key_type &k)
 	{
-		return _tree.erase(make_pair(k, mapped_type()));
+		return _tree.erase(ft::make_pair(k, mapped_type()));
 	}
 
 	void erase(iterator first, iterator last)
@@ -213,7 +220,7 @@ public:
 
 	void swap(map &x)
 	{
-		_tree.swap(x.swap);
+		_tree.swap(x._tree);
 	}
 
 	void clear()
@@ -233,47 +240,47 @@ public:
 
 	iterator find(const key_type &key)
 	{
-		return _tree.find(make_pair(key, mapped_type()));
+		return _tree.find(ft::make_pair(key, mapped_type()));
 	}
 
 	const_iterator find(const key_type &key) const
 	{
-		return _tree.find(make_pair(key, mapped_type()));
+		return _tree.find(ft::make_pair(key, mapped_type()));
 	}
 
 	size_type count(const key_type &key) const
 	{
-		return _tree.count(make_pair(key, mapped_type()));
+		return _tree.count(ft::make_pair(key, mapped_type()));
 	}
 
 	iterator lower_bound(const key_type &key)
 	{
-		return _tree.lower_bound(make_pair(key, mapped_type()));
+		return _tree.lower_bound(ft::make_pair(key, mapped_type()));
 	}
 
 	const_iterator lower_bound(const key_type &key) const
 	{
-		return _tree.lower_bound(make_pair(key, mapped_type()));
+		return _tree.lower_bound(ft::make_pair(key, mapped_type()));
 	}
 
 	iterator upper_bound(const key_type &key)
 	{
-		return _tree.upper_bound(make_pair(key, mapped_type()));
+		return _tree.upper_bound(ft::make_pair(key, mapped_type()));
 	}
 
 	const_iterator upper_bound(const key_type &key) const
 	{
-		return _tree.upper_bound(make_pair(key, mapped_type()));
+		return _tree.upper_bound(ft::make_pair(key, mapped_type()));
 	}
 
-	iterator equal_range(const key_type &key)
+	pair<iterator, iterator> equal_range(const key_type &key)
 	{
-		return _tree.equal_range(make_pair(key, mapped_type()));
+		return _tree.equal_range(ft::make_pair(key, mapped_type()));
 	}
 
-	const_iterator equal_range(const key_type &key) const
+	pair<const_iterator, const_iterator> equal_range(const key_type &key) const
 	{
-		return _tree.count(make_pair(key, mapped_type()));
+		return _tree.equal_range(ft::make_pair(key, mapped_type()));
 	}
 
 	allocator_type get_allocator() const
@@ -281,7 +288,7 @@ public:
 		return _tree.get_allocator();
 	}
 
-	friend bool operator<(map &x, map &y)
+	friend bool operator<(const map &x, const map &y)
 	{
 		return x._tree < y._tree;
 	}

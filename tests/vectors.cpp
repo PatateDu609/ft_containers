@@ -335,7 +335,7 @@ static void test_vector_accessers()
 
 static void test_vector_reverse_iterators()
 {
-	title("TEST LIST ITERATORS (AS LVALUE AND RVALUE)");
+	title("TEST VECTOR ITERATORS (AS LVALUE AND RVALUE)");
 
 	ft::vector<int> v;
 	v.push_back(1);
@@ -343,6 +343,10 @@ static void test_vector_reverse_iterators()
 	v.push_back(3);
 	v.push_back(4);
 	v.push_back(5);
+
+	ft::vector<int>::const_iterator itt = v.begin();
+	//for (int)
+	(void)itt;
 
 	std::cout << "The vector (displayed with the standard iterator)\t: " << v << std::endl;
 
