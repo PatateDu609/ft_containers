@@ -16,7 +16,14 @@ endif
 
 OBJS			=	$(SRCS:.cpp=.o)
 CFLAGS			=	-Wall -Werror -Wextra -g -I./srcs -std=c++98
-LDFLAGS			=	-fsanitize=address -fsanitize=leak -g
+
+UNAME			=	$(shell uname -s)
+
+LDFLAGS			=	-fsanitize=address -g
+
+ifeq ($(UNAME), Linux)
+	LDFLAGS		+=	-fsanitize=leak
+endif
 
 SRCS_BASENAME	=	main.cpp		\
 					rich.cpp		\
