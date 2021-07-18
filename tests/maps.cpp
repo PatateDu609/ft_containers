@@ -437,6 +437,43 @@ void test_map_operation()
 	}
 }
 
+static void test_map_relational()
+{
+	title("TESTING RELATIONAL OPERATORS");
+
+	ft::map<int, int> m, m1, m2;
+
+	m[0] = 121;
+	m[-12] = 1;
+	m[20] = 0;
+
+	m1[1] = 121;
+	m1[-12] = 2;
+	m1[12] = 0;
+
+	m2 = m;
+
+	std::cout << "Displaying m : " << m << std::endl;
+	std::cout << "Displaying m1 : " << m1 << std::endl;
+	std::cout << "Displaying m2 : " << m2 << std::endl;
+
+	std::cout << std::boolalpha;
+	std::cout << "m == m1 = " << (m == m1) << std::endl;
+	std::cout << "m != m1 = " << (m != m1) << std::endl;
+	std::cout << "m < m1 = " << (m < m1) << std::endl;
+	std::cout << "m <= m1 = " << (m <= m1) << std::endl;
+	std::cout << "m > m1 = " << (m > m1) << std::endl;
+	std::cout << "m >= m1 = " << (m >= m1) << std::endl << std::endl;
+
+	std::cout << "m == m2 = " << (m == m2) << std::endl;
+	std::cout << "m != m2 = " << (m != m2) << std::endl;
+	std::cout << "m < m2 = " << (m < m2) << std::endl;
+	std::cout << "m <= m2 = " << (m <= m2) << std::endl;
+	std::cout << "m > m2 = " << (m > m2) << std::endl;
+	std::cout << "m >= m2 = " << (m >= m2) << std::endl;
+	std::cout << std::noboolalpha;
+}
+
 void maps()
 {
 	title("TESTS ABOUT FT::MAP", -1);
@@ -449,4 +486,5 @@ void maps()
 	test_map_capacity();
 	test_map_swap();
 	test_map_operation();
+	test_map_relational();
 }
