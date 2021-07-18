@@ -63,4 +63,7 @@ fclean:			clean
 
 re:				fclean all
 
+test_subject:	main_subject.o
+				$(CC) $(LDFLAGS) main_subject.o -o test_subject
+
 .PHONY:			all clean fclean re
