@@ -23,7 +23,7 @@ namespace ft
 	};
 
 	template <class T>
-	struct __is_integer
+	struct is_integral
 	{
 		enum
 		{
@@ -33,7 +33,7 @@ namespace ft
 	};
 
 	template <>
-	struct __is_integer<int>
+	struct is_integral<int>
 	{
 		enum
 		{
@@ -43,7 +43,7 @@ namespace ft
 	};
 
 	template <>
-	struct __is_integer<unsigned int>
+	struct is_integral<unsigned int>
 	{
 		enum
 		{
@@ -53,7 +53,7 @@ namespace ft
 	};
 
 	template <>
-	struct __is_integer<char>
+	struct is_integral<char>
 	{
 		enum
 		{
@@ -63,7 +63,7 @@ namespace ft
 	};
 
 	template <>
-	struct __is_integer<signed char>
+	struct is_integral<signed char>
 	{
 		enum
 		{
@@ -73,7 +73,7 @@ namespace ft
 	};
 
 	template <>
-	struct __is_integer<unsigned char>
+	struct is_integral<unsigned char>
 	{
 		enum
 		{
@@ -83,7 +83,7 @@ namespace ft
 	};
 
 	template <>
-	struct __is_integer<float>
+	struct is_integral<float>
 	{
 		enum
 		{
@@ -93,7 +93,7 @@ namespace ft
 	};
 
 	template <>
-	struct __is_integer<double>
+	struct is_integral<double>
 	{
 		enum
 		{
@@ -103,7 +103,7 @@ namespace ft
 	};
 
 	template <>
-	struct __is_integer<long>
+	struct is_integral<long>
 	{
 		enum
 		{
@@ -113,7 +113,7 @@ namespace ft
 	};
 
 	template <>
-	struct __is_integer<unsigned long>
+	struct is_integral<unsigned long>
 	{
 		enum
 		{
@@ -123,7 +123,7 @@ namespace ft
 	};
 
 	template <>
-	struct __is_integer<long long>
+	struct is_integral<long long>
 	{
 		enum
 		{
@@ -133,7 +133,7 @@ namespace ft
 	};
 
 	template <>
-	struct __is_integer<unsigned long long>
+	struct is_integral<unsigned long long>
 	{
 		enum
 		{
@@ -143,7 +143,7 @@ namespace ft
 	};
 
 	template <>
-	struct __is_integer<short>
+	struct is_integral<short>
 	{
 		enum
 		{
@@ -153,7 +153,7 @@ namespace ft
 	};
 
 	template <>
-	struct __is_integer<unsigned short>
+	struct is_integral<unsigned short>
 	{
 		enum
 		{
@@ -163,7 +163,7 @@ namespace ft
 	};
 
 	template <>
-	struct __is_integer<bool>
+	struct is_integral<bool>
 	{
 		enum
 		{

@@ -296,7 +296,7 @@ public:
 	template <class InputIterator>
 	vector(InputIterator first, InputIterator last, const allocator_type &alloc = allocator_type()) : _data(NULL), _capacity(0), _size(0), allocator(alloc)
 	{
-		typedef typename __is_integer<InputIterator>::__type Integral;
+		typedef typename is_integral<InputIterator>::__type Integral;
 		_init_vec(first, last, Integral());
 	}
 
@@ -453,7 +453,7 @@ public:
 	template <typename InputIterator>
 	void assign(InputIterator first, InputIterator last)
 	{
-		typedef typename __is_integer<InputIterator>::__type _Integral;
+		typedef typename is_integral<InputIterator>::__type _Integral;
 		clear();
 		_dispatch_assignation(first, last, _Integral());
 	}
@@ -489,7 +489,7 @@ public:
 	template <typename InputIterator>
 	void insert(iterator position, InputIterator first, InputIterator last)
 	{
-		typedef typename __is_integer<InputIterator>::__type _Integral;
+		typedef typename is_integral<InputIterator>::__type _Integral;
 		_dispatch_insert(position, first, last, _Integral());
 	}
 
