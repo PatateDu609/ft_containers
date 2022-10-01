@@ -1,6 +1,7 @@
-VECTOR			=	1
-STACK			=	1
-MAP				=	1
+VECTOR			=	0
+STACK			=	0
+MAP				=	0
+SET				=	1
 
 DEBUG			=	0
 
@@ -30,10 +31,12 @@ SRCS_BASENAME	=	main.cpp		\
 					vectors.cpp		\
 					stacks.cpp		\
 					maps.cpp		\
+					sets.cpp		\
 
 CFLAGS			+=	-DVECTOR=$(VECTOR)		\
 					-DSTACK=$(STACK)		\
 					-DMAP=$(MAP)			\
+					-DSET=$(SET)			\
 					-DDEBUG=$(DEBUG)		\
 					-DSTL=$(STL)			\
 

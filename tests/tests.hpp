@@ -17,6 +17,7 @@
 #include "vector.hpp"
 #include "stack.hpp"
 #include "map.hpp"
+#include "set.hpp"
 #else
 #include <vector>
 #include <stack>
@@ -51,5 +52,6 @@ void title(std::string str, int level = 0);
 void vectors();
 void stacks();
 void maps();
+void sets();
 
 #endif

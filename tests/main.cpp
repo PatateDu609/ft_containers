@@ -22,5 +22,7 @@ int main()
 		stacks();
 	if (MAP)
 		maps();
+	if (SET)
+		sets();
 	return (0);
 }
